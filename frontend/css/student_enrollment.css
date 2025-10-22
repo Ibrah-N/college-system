@@ -26,7 +26,6 @@ body {
 
 div#header {
     background-color: #4782ff;
-    margin-bottom: 50px;
 }
 
 h1, h2 {
@@ -127,8 +126,9 @@ section {
 
 #first-row input {
   display: inline-block;
-  width: 230px;
+  width: 100px;
   height: 25px;
+  margin-left: 10px;
 }
 
 
@@ -140,11 +140,11 @@ section {
 
 #second-row .form-row {
   display: inline-block;
-  margin-right: 110px;
+  margin-right: 23px;
 }
 
 #second-row label {
-    margin-right: 15px;
+    margin-right: 5px;
     font-size: 15px;
     font-weight: 700;
 }
@@ -153,6 +153,29 @@ section {
   display: inline-block;
   width: 165px;
   height: 25px;
+}
+
+select {
+    width: 155px;            /* set width */
+    padding: 8px 8px;       /* inner spacing */
+    border: 1px solid #007bff;  /* border color */
+    border-radius: 6px;      /* rounded corners */
+    background-color: #fff;  /* background */
+    font-size: 15px;         /* text size */
+    color: #333;             /* text color */
+    appearance: none;        /* remove default arrow (Chrome, Safari) */
+    -moz-appearance: none;   /* remove default arrow (Firefox) */
+    -webkit-appearance: none;/* remove default arrow (WebKit) */
+    background-repeat: no-repeat;
+    background-position: right 10px center; /* position of custom arrow */
+    background-size: 12px 8px;             /* arrow size */
+    text-align: center;
+}
+
+select:focus {
+  border-color: #007bff;  /* change border color on focus */
+  outline: none;
+  box-shadow: 0 0 3px #007bff;
 }
 
 
@@ -166,7 +189,7 @@ section {
 
 #third-row .form-row {
   display: inline-block;
-  margin-right: 20px;
+  margin-right: 5px;
 }
 
 #third-row label {
@@ -177,33 +200,10 @@ section {
 
 #third-row input {
   display: inline-block;
-  width: 420px;
+  width: 100px;
   height: 25px;
+  margin-left: 50px;
+
 }
-
-
-select {
-    width: 150px;            /* set width */
-    padding: 8px 8px;       /* inner spacing */
-    border: 1px solid #007bff;  /* border color */
-    border-radius: 6px;      /* rounded corners */
-    background-color: #fff;  /* background */
-    font-size: 15px;         /* text size */
-    color: #333;             /* text color */
-    appearance: none;        /* remove default arrow (Chrome, Safari) */
-    -moz-appearance: none;   /* remove default arrow (Firefox) */
-    -webkit-appearance: none;/* remove default arrow (WebKit) */
-    background-repeat: no-repeat;
-    background-position: right 10px center; /* position of custom arrow */
-    background-size: 12px 8px;             /* arrow size */
-}
-
-select:focus {
-  border-color: #007bff;  /* change border color on focus */
-  outline: none;
-  box-shadow: 0 0 3px #007bff;
-}
-
-
 
 

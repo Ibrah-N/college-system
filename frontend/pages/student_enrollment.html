@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enrollment</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/student_enrollment.css">
+
+</head>
+<body>
+  <div class="form-container">
+
+    <div id="header"> 
+    <h1>Student Enrollment Form</h1>
+    </div>
+
+    <form id="studentEnrollmentForm">
+      <section>
+        <h3>Personal Information</h3>
+
+        
+        <!-- first row -->
+        <div id="first-row">
+            <div class="form-row">
+            <label>Student ID:</label>
+            <input type="text" name="student_id" required>
+            </div>
+
+        </div>
+
+
+        <div id="second-row">
+            <div class="form-row">
+            <label>Department:</label>
+            <select id="department">
+                <option value="">-- Select Dept --</option>
+                <option value="s_c">Short-Courses</option>
+                <option value="m">Medical</option>
+                <option value="it">IT</option>
+            </select>
+            </div>
+
+
+            <div class="form-row">
+            <label>Course:</label>
+            <select id="course">
+                <option value="">-- Select Course --</option>
+            </select>
+            </div>
+
+
+            <div class="form-row">
+            <label>Shift:</label>
+            <select>
+                <option value="">-- Select Shift --</option>
+                <option value="morning">Morning</option>
+                <option value="evening">Evening</option>
+            </select>
+            </div>
+        </div>
+
+        
+        <div id="second-row">
+            <div class="form-row">
+            <label>Class Code:</label>
+            <select>
+                <option value="">-- Select Code --</option>
+                <option value="">0001</option>
+                <option value="">0002</option>
+                <option value="">0003</option>
+            </select>
+            </div>
+
+
+            <div class="form-row">
+            <label>Admission:</label>
+            <select>
+                <option value="">-- Select Type --</option>
+                <option value="">Semester</option>
+                <option value="">OneTime</option>
+                <option value="">Year</option>
+            </select>
+            </div>
+
+
+            <div class="form-row">
+            <label>Semester:</label>
+            <select>
+                <option value="">-- Select Semester --</option>
+                <option>1 Semester</option>
+                <option>2 Semester</option>
+                <option>3 Semester</option>
+                <option>4 Semester</option>
+            </select>
+            </div>
+        </div>
+
+
+        <div id="third-row">
+            <div class="form-row">
+            <label>Fee:</label>
+            <input type="text" name="fee" placeholder="2000">
+            </div>
+        </div>
+      </section>
+
+      <div class="submit-container">
+        <button type="submit">Submit Form</button>
+        <button type="submit">Close</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="../js/student_enrollment.js"></script>
+</body>
+</html>

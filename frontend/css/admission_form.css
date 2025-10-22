@@ -51,6 +51,7 @@ hr {
 
 input {
     border: 1px solid #4782ff;
+    border-radius: 3px;
     font-size: 15px;
 }
 
@@ -211,7 +212,7 @@ select:focus {
 }
 
 #fourth-row .form-row {
-  display: inline-block;
+  display: static;
   margin-right: 5px;
 }
 
@@ -222,8 +223,8 @@ select:focus {
 }
 
 #fourth-row input {
-  display: inline-block;
-  width: 240px;
+  display: static;
+  width: 800px;
   height: 25px;
 }
 
