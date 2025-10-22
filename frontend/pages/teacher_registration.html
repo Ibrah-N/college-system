@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enrollment</title>
+  <title>Teacher Registration</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="../css/student_enrollment.css">
+  <link rel="stylesheet" href="../css/teacher_registration.css">
 
 </head>
 <body>
   <div class="form-container">
 
     <div id="header"> 
-    <h1>Student Enrollment Form</h1>
+    <h1>Teacher Registration Form</h1>
     </div>
 
-    <form id="studentEnrollmentForm">
+    <form id="teacherRegistractionForm">
       <section>
         <h3>Information</h3>
 
@@ -23,8 +23,8 @@
         <!-- first row -->
         <div id="first-row">
             <div class="form-row">
-            <label>Student ID:</label>
-            <input type="text" name="student_id" required>
+            <label>Teacher ID:</label>
+            <input type="text" name="teacher_id" required>
             </div>
 
         </div>
@@ -63,19 +63,8 @@
         
         <div id="second-row">
             <div class="form-row">
-            <label>Class Code:</label>
-            <select>
-                <option value="">-- Select Code --</option>
-                <option value="">0001</option>
-                <option value="">0002</option>
-                <option value="">0003</option>
-            </select>
-            </div>
-
-
-            <div class="form-row">
-            <label>Admission:</label>
-            <select>
+            <label>Salary:</label>
+            <select id="salary_s">
                 <option value="">-- Select Type --</option>
                 <option value="">Semester</option>
                 <option value="">OneTime</option>
@@ -99,8 +88,8 @@
 
         <div id="third-row">
             <div class="form-row">
-            <label>Fee:</label>
-            <input type="text" name="fee" placeholder="2000">
+            <label>Salary:</label>
+            <input type="text" name="salary" placeholder="2000">
             </div>
         </div>
       </section>
@@ -112,6 +101,6 @@
     </form>
   </div>
 
-  <script src="../js/student_enrollment.js"></script>
+  <script src="../js/teacher_registration.js"></script>
 </body>
 </html>
