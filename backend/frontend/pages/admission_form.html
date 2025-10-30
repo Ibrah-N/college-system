@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admission Form</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="../css/admission_form.css">
+
+<link href="{{ url_for('static', path='/css/admission_form.css') }}" rel="stylesheet">
 
 </head>
 <body>
@@ -15,7 +15,7 @@
     <h1>Admission Form</h1>
     </div>
 
-    <form id="admissionForm">
+    <form id="admissionForm", action="/student/add", method="POST">
       <section>
         <h3>Personal Information</h3>
 
@@ -24,12 +24,12 @@
         <div id="first-row">
             <div class="form-row">
             <label>Student Name:</label>
-            <input type="text" name="student_name" required>
+            <input type="text" name="student_name">
             </div>
 
             <div class="form-row">
             <label>Father/Guardian Name:</label>
-            <input type="text" name="father_name" required>
+            <input type="text" name="father_name">
             </div>
         </div>
 
@@ -37,7 +37,7 @@
         <div id="second-row">
             <div class="form-row">
             <label>Date of Birth:</label>
-            <input type="date" name="dob" required>
+            <input type="date" name="dob">
             </div>
 
 
@@ -48,7 +48,7 @@
 
             <div class="form-row">
             <label>Gender:</label>
-            <select name="gender" required>
+            <select name="gender">
                 <option value="">Select</option>
                 <option>Male</option>
                 <option>Female</option>
@@ -121,6 +121,6 @@
     </form>
   </div>
 
-  <script src="js/form.js"></script>
+  <!-- <script src="js/form.js"></script> -->
 </body>
 </html>
