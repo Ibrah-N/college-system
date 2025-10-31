@@ -37,13 +37,13 @@
         <div id="second-row">
             <div class="form-row">
             <label>Date of Birth:</label>
-            <input type="date" name="dob">
+            <input type="date" name="date_of_birth">
             </div>
 
 
             <div class="form-row">
             <label>Nationality:</label>
-            <input type="text" name="nationality" placeholder="Pakistani">
+            <input type="text" name="nationality" value="Pakistani" placeholder="Pakistani">
             </div>
 
             <div class="form-row">
@@ -70,7 +70,7 @@
 
             <div class="form-row">
             <label>Emergency Contact:</label>
-            <input type="text" name="emergency" placeholder="0318-9938698">
+            <input type="text" name="emergency_no" placeholder="0318-9938698">
             </div>
         </div>
 
@@ -116,11 +116,12 @@
 
       <div class="submit-container">
         <button type="submit">Submit Form</button>
-        <button type="submit">Close</button>
+        <button type="button" onclick="window.location.reload()">Close</button>
       </div>
     </form>
   </div>
 
-  <!-- <script src="js/form.js"></script> -->
+  <div id="toast">Record saved successfully!</div>
+  <script src="{{ url_for('static', path='/js/admission_form.js') }}"></script>
 </body>
 </html>

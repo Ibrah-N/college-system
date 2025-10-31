@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{{ url_for('static', path='/css/admission_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Students Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/search_student">
+            <input type="text" name="id_search" placeholder="Search By ID">
+            <input type="text" name="name_search" placeholder="Search By Name">
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Father Name</th>
+            <th>Gender</th>
+            <th>DOB</th>
+            <th>Nationality</th>
+            <th>CNIC</th>
+            <th>Mobile</th>
+            <th>Emergency</th>
+            <th>Temp Address</th>
+            <th>Permtt Address</th>
+            <th>Degree</th>
+            <th>Year</th>
+            <th>Institute Name</th>
+            <th>Grade</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in students %}
+        <tr>
+            <td>{{s.student_id}}</td>
+            <td>{{s.name}}</td>
+            <td>{{s.father_name}}</td>
+            <td>{{s.gender}}</td>
+            <td>{{s.date_of_birth}}</td>
+            <td>{{s.nationality}}</td>
+            <td>{{s.cnic}}</td>
+            <td>{{s.mobile}}</td>
+            <td>{{s.emergency}}</td>
+            <td>{{s.temporary_address}}</td>
+            <td>{{s.permanent_address}}</td>
+            <td>{{s.degree}}</td>
+            <td>{{s.year}}</td>
+            <td>{{s.name_of_institute}}</td>
+            <td>{{s.grade}}</td>
+            <td>
+                <button onclick="deleteStudent('{{ s.student_id }}')">Delete</button>
+                <button onclick="updateStudent('{{ s.student_id }}')">Update</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script src="{{ url_for('static', path='/js/admission_table.js')}}"></script>
+</body>
+</html>
+
+
