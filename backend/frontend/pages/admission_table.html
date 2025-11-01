@@ -12,11 +12,12 @@
     </div>
 
     <div class="search_and_buttons">
-        <form action="/search_student">
-            <input type="text" name="id_search" placeholder="Search By ID">
+        <form action="/student/search_student" method="get">
+            <input type="number" name="id_search" placeholder="Search By ID">
             <input type="text" name="name_search" placeholder="Search By Name">
-
+            
             <button type="submit">Search</button>
+            <button type="reset">Reset</button>
         </form>
     </div>
 

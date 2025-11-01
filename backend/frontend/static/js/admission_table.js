@@ -16,7 +16,5 @@ async function deleteStudent(student_id) {
 }
 
 async function updateStudent(student_id) {
-    const response = await fetch(`/student/update_stage_1/${student_id}`, {
-        method: "POST",
-    });
+    window.location.href = `/student/update_stage_1/${student_id}`;
 }
