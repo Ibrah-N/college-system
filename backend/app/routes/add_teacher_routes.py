@@ -42,25 +42,84 @@ def get_teacher(request: Request):
 #       R E A D  -  T E A C H E R       #
 # ========================================
 @add_teacher_router.get("/all", response_class=HTMLResponse)
-def get_all_teacher(request: Request):
-    pass
+def get_all_teacher(request: Request, db: Session = Depends(get_db)):
+    all_teachers = db.query(AddTeacher).all()
+
+    return templates.TemplateResponse("pages/teacher/add_teacher_table.html", 
+                                        {"request": request, "teachers": all_teachers})
 
 
 # ========================================
 #       A D D  -  T E A C H E R          #
 # ========================================
+@add_teacher_router.post("/add")
+async def add_teacher(request: Request, db: Session = Depends(get_db)):
+    form_data = await request.form()
+
+    new_teacher = AddTeacher(name=form_data.get("teacher_name"), father_name=form_data.get("father_name"),
+        qualification=form_data.get("qualification"), gender=form_data.get("gender"), 
+        contact=form_data.get("contact"), address=form_data.get("address")
+    )
+    db.add(new_teacher)
+    db.commit()
+    db.refresh(new_teacher)
+
+    return RedirectResponse("/teacher/all", status_code=303)
 
 
 
 # ========================================
 #      U P D A T E -  T E A C H E R      #
 # ========================================
+@add_teacher_router.get("/update_stage_1/{teacher_id}", response_class=HTMLResponse)
+def update_stage_1(request: Request, teacher_id: int, db: Session = Depends(get_db)):
+    old_teacher = db.query(AddTeacher).filter(AddTeacher.teacher_id==teacher_id).first()
+
+    if not old_teacher:
+        return JSONResponse(content={"message": "Teacher Not Found"}, status_code=404)
+
+    return templates.TemplateResponse(
+        "pages/teacher/update_add_teacher.html",
+        {"request": request, "old_teacher": old_teacher}
+    )
+
+
+@add_teacher_router.post("/update_add_teacher")
+async def update_add_teacher(request: Request, db: Session = Depends(get_db)):
+    form_data = await request.form()
+    teacher_id = form_data.get("teacher_id")
+
+    teacher = db.query(AddTeacher).filter(AddTeacher.teacher_id == teacher_id).first()
+    if not teacher:
+        return JSONResponse(content={"message": "Teacher Not Found"}, status_code=404)
+
+    teacher.name = form_data.get("teacher_name")
+    teacher.father_name = form_data.get("father_name")
+    teacher.qualification = form_data.get("qualification")
+    teacher.gender = form_data.get("gender")
+    teacher.contact = form_data.get("contact")
+    teacher.address = form_data.get("address")
+    db.commit()
+
+    return RedirectResponse(url="/teacher/all", status_code=303)
 
 
 
 # ========================================
 #    D E L E T E  -  T E A C H E R       #
 # ========================================
+@add_teacher_router.delete("/delete/{teacher_id}")
+def delete_teacher(teacher_id: int, db: Session = Depends(get_db)):
+    teacher = db.query(AddTeacher).filter(AddTeacher.teacher_id==teacher_id).first()
+
+    if not teacher:
+        return JSONResponse(content = {"message": "Teacher not found"}, status_code=404)
+
+    db.delete(teacher)
+    db.commit()
+
+    return JSONResponse(content = {"message": "Teacher Deleted Successfully"}, status_code=200)
+
 
 
 

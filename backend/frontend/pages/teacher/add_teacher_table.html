@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="{{ url_for('static', path='/css/teacher/add_teacher_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Teacher Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/teacher/search_teacher" method="get">
+            <input type="number" name="id_search" placeholder="Search By ID">
+            <input type="text" name="name_search" placeholder="Search By Name">
+            
+            <button type="submit">Search</button>
+            <button type="reset">Reset</button>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Father Name</th>
+            <th>Gender</th>
+            <th>Qualification</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+
+
+        {% for t in teachers %}
+        <tr>
+            <td>{{t.teacher_id}}</td>
+            <td>{{t.name}}</td>
+            <td>{{t.father_name}}</td>
+            <td>{{t.gender}}</td>
+            <td>{{t.qualification}}</td>
+            <td>{{t.contact}}</td>
+            <td>{{t.address}}</td>
+            <td>
+                <button onclick="deleteTeacher('{{ t.teacher_id }}')">Delete</button>
+                <button onclick="updateTeacher('{{ t.teacher_id }}')">Update</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script src="{{ url_for('static', path='/js/teacher/add_teacher_table.js')}}"></script>
+</body>
+</html>
+
+

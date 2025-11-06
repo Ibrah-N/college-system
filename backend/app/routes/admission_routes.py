@@ -51,7 +51,8 @@ def get_students(request: Request):
 def get_all_students(request: Request, db: Session = Depends(get_db)):
     students = db.query(Student).all()
     
-    return templates.TemplateResponse("pages/student/admission_table.html", {"request": request, "students": students})
+    return templates.TemplateResponse("pages/student/admission_table.html", 
+                                        {"request": request, "students": students})
 
 
 
@@ -84,7 +85,6 @@ async def add_student(request: Request, db: Session = Depends(get_db)):
     db.refresh(new_student)
 
     return RedirectResponse(url="/student/all", status_code=303)
-
 
 
 

@@ -14,3 +14,4 @@ class AddTeacher(Base):
     qualification = Column(String(50))
     gender = Column(String(10)) 
     contact = Column(String(15))
+    address = Column(String(100))
