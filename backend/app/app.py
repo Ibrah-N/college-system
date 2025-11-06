@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from app.routes.admission_routes import student_router
+from app.routes.admission_routes import admission_router
+from app.routes.add_teacher_routes import add_teacher_router
 
 
 from app.config.db_connect import Base, engine
@@ -14,7 +15,8 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 
 # Include the student router
-app.include_router(student_router)
+app.include_router(admission_router)
+app.include_router(add_teacher_router)
 
 
 @app.get("/")

@@ -3,33 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admission Form</title>
+  <title>Update Student Form</title>
 
-<link href="{{ url_for('static', path='/css/admission_form.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', path='/css/student/update_student.css') }}" rel="stylesheet">
 
 </head>
 <body>
   <div class="form-container">
 
     <div id="header"> 
-    <h1>Admission Form</h1>
+    <h1>Update Student Form</h1>
     </div>
 
-    <form id="admissionForm", action="/student/add", method="POST">
+    <form id="admissionForm", action="/student/update_student", method="POST">
       <section>
         <h3>Personal Information</h3>
 
         
         <!-- first row -->
+        <div id="zero-row">
+            <div class="form-row">
+            <label>Student ID:</label>
+            <input type="number" name="student_id" value="{{old_student.student_id}}">
+            </div>
+        </div>
+
         <div id="first-row">
             <div class="form-row">
             <label>Student Name:</label>
-            <input type="text" name="student_name">
+            <input type="text" name="student_name" value="{{old_student.name}}">
             </div>
 
             <div class="form-row">
             <label>Father/Guardian Name:</label>
-            <input type="text" name="father_name">
+            <input type="text" name="father_name" value="{{old_student.father_name}}">
             </div>
         </div>
 
@@ -37,21 +44,21 @@
         <div id="second-row">
             <div class="form-row">
             <label>Date of Birth:</label>
-            <input type="date" name="date_of_birth">
+            <input type="date" name="date_of_birth" value="{{old_student.date_of_birth}}">
             </div>
 
 
             <div class="form-row">
             <label>Nationality:</label>
-            <input type="text" name="nationality" value="Pakistani" placeholder="Pakistani">
+            <input type="text" name="nationality" value="{{old_student.nationality}}" placeholder="Pakistani">
             </div>
 
             <div class="form-row">
             <label>Gender:</label>
-            <select name="gender">
+            <select name="gender">    
                 <option value="">Select</option>
-                <option>Male</option>
-                <option>Female</option>
+                <option value="Male" {% if old_student.gender|lower == 'male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if old_student.gender|lower == 'female' %}selected{% endif %}>Female</option>
             </select>
             </div>
         </div>
@@ -60,29 +67,29 @@
         <div id="third-row">
             <div class="form-row">
             <label>CNIC:</label>
-            <input type="text" name="cnic" placeholder="21201-27329837323-1">
+            <input type="text" name="cnic" placeholder="21201-27329837323-1" value="{{old_student.cnic}}">
             </div>
 
             <div class="form-row">
             <label>Mobile:</label>
-            <input type="text" name="mobile" placeholder="0318-9938698">
+            <input type="text" name="mobile" placeholder="0318-9938698" value="{{old_student.mobile}}">
             </div>
 
             <div class="form-row">
             <label>Emergency Contact:</label>
-            <input type="text" name="emergency_no" placeholder="0318-9938698">
+            <input type="text" name="emergency_no" placeholder="0318-9938698" value="{{old_student.emergency}}">
             </div>
         </div>
 
         <div id="fourth-row">
             <div class="form-row">
             <label>Temporary Address:</label>
-            <input type="text" name="temp_address"></input>
+            <input type="text" name="temp_address" value="{{old_student.temporary_address}}"></input>
             </div>
 
             <div class="form-row">
             <label>Permanent Address:</label>
-            <input type="text" name="perm_address"></input>
+            <input type="text" name="perm_address" value="{{old_student.permanent_address}}"></input>
             </div>
         </div>
       </section>
@@ -92,36 +99,36 @@
         <div id="fifth-row">
             <div class="form-row">
             <label>Degree:</label>
-            <input type="text" name="degree"></input>
+            <input type="text" name="degree" value="{{old_student.degree}}"></input>
             </div>
 
             <div class="form-row">
             <label>Name Of Institute:</label>
-            <input type="text" name="name_of_institute"></input>
+            <input type="text" name="name_of_institute" value="{{old_student.name_of_institute}}"></input>
             </div>
         </div>
 
         <div id="sixth-row">
             <div class="form-row">
             <label>Year:</label>
-            <input type="text" name="academic-year" placeholder="2025"></input>
+            <input type="text" name="academic-year" placeholder="2025" value="{{old_student.year}}"></input>
             </div>
 
             <div class="form-row" id="grade-id" >
             <label>Grade:</label>
-            <input type="text" name="grade"></input>
+            <input type="text" name="grade" value="{{old_student.grade}}"></input>
             </div>
         </div>
       </section>
 
       <div class="submit-container">
-        <button type="submit">Submit Form</button>
+        <button type="submit">Update Student</button>
         <button type="button" onclick="window.location.reload()">Close</button>
       </div>
     </form>
   </div>
 
   <div id="toast">Record saved successfully!</div>
-  <script src="{{ url_for('static', path='/js/admission_form.js') }}"></script>
+  <script src="{{ url_for('static', path='/js/student/update_student.js') }}"></script>
 </body>
 </html>

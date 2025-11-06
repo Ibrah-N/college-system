@@ -6,14 +6,12 @@ from typing import Optional
 from fastapi import Query
 
 
-
-
 from sqlalchemy.orm import Session
 from app.config.db_connect import SessionLocal
 from app.models.admission_orm import Student
 
 
-student_router = APIRouter(prefix="/student", tags=["Student"])
+admission_router = APIRouter(prefix="/student", tags=["Student"])
 templates = Jinja2Templates(directory="frontend")
 
 
@@ -27,23 +25,33 @@ def get_db():
 
 
 
+
+# ========================================
+#  S T U D E N T S - M A I N - F O R M   #
+# ========================================
+@admission_router.get("/", response_class=HTMLResponse)
+def student(request: Request):
+    return templates.TemplateResponse("pages/main/student.html", {"request":request})
+
+
+
 # ========================================
 #  L O A D - S T U D E N T S - F O R M   #
 # ========================================
-@student_router.get("/", response_class=HTMLResponse)
+@admission_router.get("/admission", response_class=HTMLResponse)
 def get_students(request: Request):
-    return templates.TemplateResponse("pages/admission_form.html", {"request":request})
+    return templates.TemplateResponse("pages/student/admission_form.html", {"request":request})
 
 
 
 # ========================================
 #       R E A D  -  S T U D E N T S      #
 # ========================================
-@student_router.get("/all")
+@admission_router.get("/all")
 def get_all_students(request: Request, db: Session = Depends(get_db)):
     students = db.query(Student).all()
     
-    return templates.TemplateResponse("pages/admission_table.html", {"request": request, "students": students})
+    return templates.TemplateResponse("pages/student/admission_table.html", {"request": request, "students": students})
 
 
 
@@ -51,7 +59,7 @@ def get_all_students(request: Request, db: Session = Depends(get_db)):
 # ========================================
 #       A D D  -  S T U D E N T          #
 # ========================================
-@student_router.post("/add")
+@admission_router.post("/add")
 async def add_student(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
     
@@ -75,7 +83,7 @@ async def add_student(request: Request, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_student)
 
-    return JSONResponse(content={"message": "Student added successfully"}, status_code=200)
+    return RedirectResponse(url="/student/all", status_code=303)
 
 
 
@@ -83,7 +91,7 @@ async def add_student(request: Request, db: Session = Depends(get_db)):
 # ========================================
 #      U P D A T E -  S T U D E N T      #
 # ========================================
-@student_router.get("/update_stage_1/{student_id}", response_class=HTMLResponse)
+@admission_router.get("/update_stage_1/{student_id}", response_class=HTMLResponse)
 async def update_stage_1_student(request: Request, student_id: int, db: Session = Depends(get_db)):
     student_old = db.query(Student).filter(Student.student_id == student_id).first()
 
@@ -92,11 +100,11 @@ async def update_stage_1_student(request: Request, student_id: int, db: Session 
 
     # -- load the data to update form --
     return templates.TemplateResponse(
-        "pages/update_student.html",
+        "pages/student/update_student.html",
         {"request": request, "old_student": student_old})
 
 
-@student_router.post("/update_student")
+@admission_router.post("/update_student")
 async def update_student(request: Request, db: Session = Depends(get_db)):
     
     # -- recieve form data --
@@ -141,7 +149,7 @@ async def update_student(request: Request, db: Session = Depends(get_db)):
 # ========================================
 #    D E L E T E  -  S T U D E N T       #
 # ========================================
-@student_router.delete("/delete/{student_id}")
+@admission_router.delete("/delete/{student_id}")
 def delete_student(student_id: int, db: Session = Depends(get_db)):
     student = db.query(Student).filter(Student.student_id == student_id).first()
 
@@ -159,7 +167,7 @@ def delete_student(student_id: int, db: Session = Depends(get_db)):
 # ========================================
 #     S E A R C H -  S T U D E N T       #
 # ========================================
-@student_router.get("/search_student")
+@admission_router.get("/search_student")
 async def search_student(request: Request, id_search,
                 name_search, db: Session = Depends(get_db)
             ):
@@ -177,6 +185,6 @@ async def search_student(request: Request, id_search,
         students = []
 
     return templates.TemplateResponse(
-        "pages/admission_table.html", 
+        "pages/student/admission_table.html", 
         {"request": request, "students": students}
     )
