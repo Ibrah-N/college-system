@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy import ForeignKey
 from app.config.db_connect import Base
 
 
@@ -28,31 +29,13 @@ class Department(Base):
     department_name = Column(String(100))
 
 
-
-# -- IT courses table --
-class ITCourse(Base):
-    __tablename__ = "it_course"
-
-    course_id = Column(Integer, primary_key=True)
-    course_name = Column(String(100))
-
-
-
-# -- short course table --
-class ShortCourse(Base):
-    __tablename__ = "short_course"
+# -- course table --
+class Course(Base):
+    __tablename__ = "course"
 
     course_id = Column(Integer, primary_key=True)
-    course_name = Column(String(100))
-
-
-# -- medical courses table --
-class MedicalCourse(Base):
-    __tablename__ = "medical_course"
-
-    course_id = Column(Integer, primary_key=True)
-    course_name = Column(String(100))
-
+    name = Column(String)
+    department_id = Column(Integer, ForeignKey("department.department_id"))
 
 
 # -- shift table --

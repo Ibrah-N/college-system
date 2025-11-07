@@ -56,7 +56,6 @@ def get_all_students(request: Request, db: Session = Depends(get_db)):
 
 
 
-
 # ========================================
 #       A D D  -  S T U D E N T          #
 # ========================================

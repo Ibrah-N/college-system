@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Enrollment</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="../css/student_enrollment.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/student/student_enrollment.css') }}">
 
 </head>
 <body>
@@ -35,9 +35,6 @@
             <label>Department:</label>
             <select id="department">
                 <option value="">-- Select Dept --</option>
-                <option value="s_c">Short-Courses</option>
-                <option value="m">Medical</option>
-                <option value="it">IT</option>
             </select>
             </div>
 
@@ -52,10 +49,8 @@
 
             <div class="form-row">
             <label>Shift:</label>
-            <select>
+            <select id="shift">
                 <option value="">-- Select Shift --</option>
-                <option value="morning">Morning</option>
-                <option value="evening">Evening</option>
             </select>
             </div>
         </div>
@@ -64,34 +59,24 @@
         <div id="second-row">
             <div class="form-row">
             <label>Class Code:</label>
-            <select>
+            <select id="class_code">
                 <option value="">-- Select Code --</option>
-                <option value="">0001</option>
-                <option value="">0002</option>
-                <option value="">0003</option>
             </select>
             </div>
 
 
             <div class="form-row">
             <label>Admission:</label>
-            <select>
+            <select id="admission_type">
                 <option value="">-- Select Type --</option>
-                <option value="">Semester</option>
-                <option value="">OneTime</option>
-                <option value="">Year</option>
             </select>
             </div>
 
 
             <div class="form-row">
             <label>Semester:</label>
-            <select>
+            <select id="semester">
                 <option value="">-- Select Semester --</option>
-                <option>1 Semester</option>
-                <option>2 Semester</option>
-                <option>3 Semester</option>
-                <option>4 Semester</option>
             </select>
             </div>
         </div>
@@ -112,6 +97,6 @@
     </form>
   </div>
 
-  <script src="../js/student_enrollment.js"></script>
+  <script src="{{ url_for('static', path='/js/student/student_enrollment.js')}}"></script>
 </body>
 </html>
