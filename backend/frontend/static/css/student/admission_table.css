@@ -33,6 +33,20 @@ h1, h2 {
 
 
 /* --- Searches & buttons --- */
+.search_and_buttons form {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px; /* small spacing between elements */
+}
+
+.search_and_buttons #srch-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 80px; /* small gap between input and buttons */
+}
+
 div.search_and_buttons {
     color: #f2f2f2;
     margin: 5px 0;
@@ -59,7 +73,6 @@ div.search_and_buttons {
 
 
 /*  BUTTON  */
-
 .search_and_buttons button {
   background-color: #007bff;      /* primary blue */
   color: white;                   /* white text */
@@ -68,7 +81,7 @@ div.search_and_buttons {
   border-radius: 8px;             /* rounded edges */
   font-size: 16px;
   font-weight: 600;
-  margin-left: 100px;
+  margin-left: 10px;
   cursor: pointer;
   transition: all 0.3s ease;      /* smooth hover effect */
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* subtle glow */
@@ -91,6 +104,39 @@ div.search_and_buttons {
   border: 1px solid #002db3;
   color: white;
 }
+
+
+
+/* -- Button Links -- */
+/* Make <a> tags look like the styled buttons */
+.search_and_buttons a {
+  display: inline-block;
+  background-color: #007bff;      /* same blue */
+  color: white;                   /* same text color */
+  border: none;                   /* no border */
+  padding: 7px 10px;              /* same padding */
+  border-radius: 8px;             /* same shape */
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 10px;
+  cursor: pointer;
+  text-decoration: none;          /* remove underline */
+  transition: all 0.3s ease;      /* same hover animation */
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* same glow */
+}
+
+.search_and_buttons a:hover {
+  background-color: #0056b3;      /* darker blue on hover */
+  box-shadow: 0 6px 14px rgba(0, 123, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.search_and_buttons a:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
+}
+
+
 
 
 /* --- Table --- */

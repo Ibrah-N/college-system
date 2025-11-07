@@ -126,6 +126,27 @@ def delete_teacher(teacher_id: int, db: Session = Depends(get_db)):
 # ========================================
 #     S E A R C H -  T E A C H E R       #
 # ========================================
+@add_teacher_router.get("/search_add_teacher")
+def search_add_teacher(request: Request, id_search,
+                        name_search, db: Session = Depends(get_db)):
 
+    teachers = None
+    if id_search:
+        teachers = db.query(AddTeacher).filter(AddTeacher.teacher_id==id_search).first()
+        
+    elif name_search:
+        teachers = db.query(AddTeacher).filter(AddTeacher.name.ilike(f"%{name_search}%")).all()
+
+
+    if isinstance(teachers, AddTeacher):
+        teachers = [teachers]
+    
+    if not teachers:
+        teachers = []
+
+    return templates.TemplateResponse(
+        "pages/teacher/add_teacher_table.html", 
+        {"request": request, "teachers": teachers}
+    )
 
 

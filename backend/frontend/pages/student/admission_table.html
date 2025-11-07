@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Admission Table</title>
     <link href="{{ url_for('static', path='/css/student/admission_table.css') }}" rel="stylesheet">
 
 </head>
@@ -16,8 +17,12 @@
             <input type="number" name="id_search" placeholder="Search By ID">
             <input type="text" name="name_search" placeholder="Search By Name">
             
-            <button type="submit">Search</button>
-            <button type="reset">Reset</button>
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/student/all'">Reset</button>
+                <a href="/student/admission">Add</a>
+                <a href="/student">Close</a>
+            </div>
         </form>
     </div>
 
