@@ -15,7 +15,7 @@
     <h1>Student Enrollment Form</h1>
     </div>
 
-    <form id="studentEnrollmentForm">
+    <form id="studentEnrollmentForm" action="/student/add_enrollment" method="POST">
       <section>
         <h3>Information</h3>
 
@@ -26,14 +26,13 @@
             <label>Student ID:</label>
             <input type="text" name="student_id" required>
             </div>
-
         </div>
 
 
         <div id="second-row">
             <div class="form-row">
             <label>Department:</label>
-            <select id="department">
+            <select id="department" name="department">
                 <option value="">-- Select Dept --</option>
             </select>
             </div>
@@ -41,7 +40,7 @@
 
             <div class="form-row">
             <label>Course:</label>
-            <select id="course">
+            <select id="course" name="course">
                 <option value="">-- Select Course --</option>
             </select>
             </div>
@@ -49,7 +48,7 @@
 
             <div class="form-row">
             <label>Shift:</label>
-            <select id="shift">
+            <select id="shift" name="shift">
                 <option value="">-- Select Shift --</option>
             </select>
             </div>
@@ -59,7 +58,7 @@
         <div id="second-row">
             <div class="form-row">
             <label>Class Code:</label>
-            <select id="class_code">
+            <select id="class_code" name="class_code">
                 <option value="">-- Select Code --</option>
             </select>
             </div>
@@ -67,7 +66,7 @@
 
             <div class="form-row">
             <label>Admission:</label>
-            <select id="admission_type">
+            <select id="admission_type" name="admission_type">
                 <option value="">-- Select Type --</option>
             </select>
             </div>
@@ -75,7 +74,7 @@
 
             <div class="form-row">
             <label>Semester:</label>
-            <select id="semester">
+            <select id="semester" name="semester">
                 <option value="">-- Select Semester --</option>
             </select>
             </div>
