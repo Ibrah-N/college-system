@@ -60,7 +60,7 @@ def get_shift(db: Session = Depends(get_db)):
 
 
 @helper_router.get("/get_class_code")
-def get_courses(db: Session = Depends(get_db)):
+def get_class_code(db: Session = Depends(get_db)):
     class_codes = db.query(ClassCode).all()
     return JSONResponse(
         content={
@@ -72,7 +72,7 @@ def get_courses(db: Session = Depends(get_db)):
 
 
 @helper_router.get("/get_admission_type")
-def get_courses(db: Session = Depends(get_db)):
+def get_admission_type(db: Session = Depends(get_db)):
     admission_type = db.query(AdmissionType).all()
     return JSONResponse(
         content={
@@ -83,7 +83,7 @@ def get_courses(db: Session = Depends(get_db)):
     )
 
 @helper_router.get("/get_semester")
-def get_courses(db: Session = Depends(get_db)):
+def get_semester(db: Session = Depends(get_db)):
     semesters = db.query(Semester).all()
     return JSONResponse(
         content={

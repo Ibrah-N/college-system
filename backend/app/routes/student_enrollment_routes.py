@@ -54,9 +54,9 @@ def list_enrolled(request: Request, db: Session = Depends(get_db)):
     )
 
     # -- jsonify record for fastapi responses --
-    enrollmnet_data = []
+    enrollment_data = []
     for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
-        enrollmnet_data.append({
+        enrollment_data.append({
             "student_id": enrollment.student_id,
             "student_name": student.name,
             "father_name": student.father_name,
@@ -80,7 +80,7 @@ def list_enrolled(request: Request, db: Session = Depends(get_db)):
         "pages/student/student_enrollment_table.html", 
         {
             "request": request,
-            "enrollment": enrollmnet_data
+            "enrollment": enrollment_data
         }
     )
 
@@ -173,7 +173,7 @@ def delete_enrollment(student_id: int, class_code_id: int,
 @enrollment_router.post("/enrollment_search")
 async def search_enrollment(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
-
+    enrollment_data = []
 
     # -- extract record usign joins --
     query = (
@@ -193,14 +193,80 @@ async def search_enrollment(request: Request, db: Session = Depends(get_db)):
     # on the basis of id else it will look for 
     # all other filter combinaly
     if form_data.get("id_search"):
-        query = query.filter(Student.student_id == int(form_data.get("id_search")))
+        query = query.filter(Student.student_id==int(form_data.get("id_search")))
+        result = query.all()
+        for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
+            enrollment_data.append({
+                "student_id": enrollment.student_id,
+                "student_name": student.name,
+                "father_name": student.father_name,
+                "department": department.department_name,
+                "department_id": department.department_id,
+                "course": course.name,
+                "course_id": course.course_id,
+                "shift": shift.shift_name,
+                "shift_id": shift.shift_id,
+                "class_code": classcode.class_code_name,
+                "class_code_id": classcode.class_code_id,
+                "admission_type": admissiontype.admission_type,
+                "admission_type_id": admissiontype.admission_type_id,
+                "semester": semester.semester,
+                "semester_id": semester.semester_id,
+                "fee": enrollment.fee
+            })
 
-        return templates.HTMLResponse(
+        return templates.TemplateResponse(
             "pages/student/student_enrollment_table.html", 
             {"request": request, "enrollment": enrollment_data}
         )
 
+    print(form_data.get("name_search"))
+    if form_data.get("name_search"):
+        query = query.filter(Student.name.ilike(f"%{form_data.get('name_search')}%"))
+    if form_data.get("class_code_id"):
+        query = query.filter(ClassCode.class_code_id==int(form_data.get("class_code_id")))
+    if form_data.get("department_id"):
+        query = query.filter(Department.department_id==int(form_data.get("department_id")))
+    if form_data.get(("course_id")):
+        query = query.filter(Course.course_id==int(form_data.get("course_id")))
+    if form_data.get("admission_type_id"):
+        query = query.filter(AdmissionType.admission_type_id==int(form_data.get("admission_type_id")))
+    if form_data.get("semester_id"):
+        query = query.filter(Semester.semester_id==int(form_data.get("semester_id")))
+    if form_data.get("shift_id"):
+        query = query.filter(Shift.shift_id==int(form_data.get("shift_id")))
+    result = query.all()
 
+    
+    # -- jsonify record for fastapi responses --
+    for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
+        enrollment_data.append({
+            "student_id": enrollment.student_id,
+            "student_name": student.name,
+            "father_name": student.father_name,
+            "department": department.department_name,
+            "department_id": department.department_id,
+            "course": course.name,
+            "course_id": course.course_id,
+            "shift": shift.shift_name,
+            "shift_id": shift.shift_id,
+            "class_code": classcode.class_code_name,
+            "class_code_id": classcode.class_code_id,
+            "admission_type": admissiontype.admission_type,
+            "admission_type_id": admissiontype.admission_type_id,
+            "semester": semester.semester,
+            "semester_id": semester.semester_id,
+            "fee": enrollment.fee
+        })
+
+    # -- return response -- 
+    return templates.TemplateResponse(
+        "pages/student/student_enrollment_table.html", 
+        {
+            "request": request,
+            "enrollment": enrollment_data
+        }
+    )
 
 
 

@@ -38,12 +38,11 @@ async function loadCourses() {
 
 
 async function loadSelection() {
-
   // == shift ==
   const response1 = await fetch(`/helper/get_shift`);
   const shiftData = await response1.json();
 
-  const shiftSelect = document.getElementById("shift_id");
+  const shiftSelect = document.getElementById("shift");
   shiftSelect.innerHTML = '<option value="">-- Select Shift --</option>';
   shiftData.shift.forEach(sh => {
     const option = document.createElement("option");
@@ -52,12 +51,11 @@ async function loadSelection() {
     shiftSelect.appendChild(option);
   });
 
-
   // == class code ==
   const response2 = await fetch(`/helper/get_class_code`);
   const classCode_data = await response2.json();
 
-  const classcodeSelect = document.getElementById("class_code_id");
+  const classcodeSelect = document.getElementById("class_code");
   classcodeSelect.innerHTML = '<option value="">-- Select Code --</option>';
   classCode_data.class_codes.forEach(cls_codes => {
     const option = document.createElement("option");
@@ -66,13 +64,11 @@ async function loadSelection() {
     classcodeSelect.appendChild(option);
   });
 
-
-
   // == admission type ==
   const response3 = await fetch(`/helper/get_admission_type`);
   const admissionType_data = await response3.json();
 
-  const admissiontypeSelect = document.getElementById("admission_type_id");
+  const admissiontypeSelect = document.getElementById("admission_type");
   admissiontypeSelect.innerHTML = '<option value="">-- Select Type --</option>';
   admissionType_data.admission_type.forEach(adm_type => {
     const option = document.createElement("option");
@@ -81,14 +77,11 @@ async function loadSelection() {
     admissiontypeSelect.appendChild(option);
   });
 
-
-
-
   // == semester ==
   const response4 = await fetch(`/helper/get_semester`);
   const semester_data = await response4.json();
 
-  const semesterSelect = document.getElementById("semester_id");
+  const semesterSelect = document.getElementById("semester");
   semesterSelect.innerHTML = '<option value="">-- Select Semester --</option>';
   semester_data.semesters.forEach(semes => {
     const option = document.createElement("option");
