@@ -43,9 +43,9 @@ h1, h2 {
 .search_and_buttons #srch-button {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 3px;
   margin-left: 20px; /* small gap between input and buttons */
-  margin-right: 20px;
+  margin-right: 5px;
 }
 
 div.search_and_buttons {
@@ -76,7 +76,9 @@ div.search_and_buttons {
 #left-input {
   margin-right: 20px;
 }
-
+#right-input {
+  width: 70px;
+}
 
 /*  BUTTON  */
 .search_and_buttons button {

@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-
+from fastapi.responses import (HTMLResponse, JSONResponse,
+                                RedirectResponse, StreamingResponse)
+import pandas as pd
+import io
 
 from sqlalchemy.orm import Session 
 from app.config.db_connect import SessionLocal
@@ -273,6 +275,118 @@ async def search_enrollment(request: Request, db: Session = Depends(get_db)):
 # ============================================================
 #    E X P O R T -  S T U D E N T - E N R O L M E N T       #
 # ============================================================
+@enrollment_router.post("/export_enrollment")
+async def export_enrollment(request: Request, db: Session = Depends(get_db)):
+    form_data = await request.form()
+    enrollment_data = []
+    search_flag = False
+
+    # -- extract record usign joins --
+    query = (
+        db.query(StudentEnrollment, Student, Department, Course, 
+                Shift, ClassCode, AdmissionType, Semester
+                )
+        .join(Student, StudentEnrollment.student_id == Student.student_id)
+        .join(Department, StudentEnrollment.department_id == Department.department_id)
+        .join(Course, StudentEnrollment.course_id == Course.course_id)
+        .join(Shift, StudentEnrollment.shift_id == Shift.shift_id)
+        .join(ClassCode, StudentEnrollment.class_code_id == ClassCode.class_code_id)
+        .join(AdmissionType, StudentEnrollment.admission_type_id == AdmissionType.admission_type_id)
+        .join(Semester, StudentEnrollment.semester_id == Semester.semester_id)
+    )
+    # -- search filters --
+    # if id-search enabled it will only search
+    # on the basis of id else it will look for 
+    # all other filter combinaly
+    if form_data.get("id_search"):
+        search_flag = True
+        query = query.filter(Student.student_id==int(form_data.get("id_search")))
+        result = query.all()
+        for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
+            enrollment_data.append({
+                "student_id": enrollment.student_id,
+                "student_name": student.name,
+                "father_name": student.father_name,
+                "class_code": classcode.class_code_name,
+                "department": department.department_name,
+                "course": course.name,
+                "admission_type": admissiontype.admission_type,
+                "semester": semester.semester,
+                "shift": shift.shift_name,
+                "fee": enrollment.fee
+            })
+
+        # -- write csv --
+        df = pd.DataFrame(enrollment_data)
+
+        # # --- Export as Excel ---
+        output = io.BytesIO()
+        df.to_csv(output, index=False)
+        output.seek(0)
+
+        return StreamingResponse(
+            output,
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=enrollment_export.csv"}
+        )
 
 
+    # -- search filters --
+    if form_data.get("name_search"):
+        query = query.filter(Student.name.ilike(f"%{form_data.get('name_search')}%"))
+        search_flag = True
+    if form_data.get("class_code_id"):
+        query = query.filter(ClassCode.class_code_id==int(form_data.get("class_code_id")))
+        search_flag = True
+    if form_data.get("department_id"):
+        query = query.filter(Department.department_id==int(form_data.get("department_id")))
+        search_flag = True
+    if form_data.get(("course_id")):
+        query = query.filter(Course.course_id==int(form_data.get("course_id")))
+        search_flag = True
+    if form_data.get("admission_type_id"):
+        query = query.filter(AdmissionType.admission_type_id==int(form_data.get("admission_type_id")))
+        search_flag = True
+    if form_data.get("semester_id"):
+        query = query.filter(Semester.semester_id==int(form_data.get("semester_id")))
+        search_flag = True
+    if form_data.get("shift_id"):
+        query = query.filter(Shift.shift_id==int(form_data.get("shift_id")))
+        search_flag = True
+
+    result = None
+    if search_flag:
+        result = query.all()
+    else:
+        result = query.all()
+
+    
+    # -- jsonify record for fastapi responses --
+    for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
+        enrollment_data.append({
+            "student_id": enrollment.student_id,
+            "student_name": student.name,
+            "father_name": student.father_name,
+            "class_code": classcode.class_code_name,
+            "department": department.department_name,
+            "course": course.name,
+            "admission_type": admissiontype.admission_type,
+            "semester": semester.semester,
+            "shift": shift.shift_name,
+            "fee": enrollment.fee
+        })
+
+    # -- write csv --
+    df = pd.DataFrame(enrollment_data)
+
+    # # --- Export as Excel ---
+    output = io.BytesIO()
+    df.to_csv(output, index=False)
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=enrollment_export.csv"}
+    )
 

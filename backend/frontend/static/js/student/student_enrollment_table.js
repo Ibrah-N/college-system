@@ -139,3 +139,27 @@ async function deleteEnrollment(
 }
 
 
+async function exportEnrollment() {
+  const form = document.querySelector("form");
+  const formData = new FormData(form); // collects all inputs & selects
+
+  const response = await fetch("/student/export_enrollment", {
+    method: "POST",
+    body: formData
+  });
+
+  if (!response.ok) {
+    alert("Export failed");
+    return;
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "enrollment_export.csv"; // or .csv
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}
