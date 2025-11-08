@@ -43,7 +43,7 @@ async function loadSelection() {
   const response1 = await fetch(`/helper/get_shift`);
   const shiftData = await response1.json();
 
-  const shiftSelect = document.getElementById("shift");
+  const shiftSelect = document.getElementById("shift_id");
   shiftSelect.innerHTML = '<option value="">-- Select Shift --</option>';
   shiftData.shift.forEach(sh => {
     const option = document.createElement("option");
@@ -57,7 +57,7 @@ async function loadSelection() {
   const response2 = await fetch(`/helper/get_class_code`);
   const classCode_data = await response2.json();
 
-  const classcodeSelect = document.getElementById("class_code");
+  const classcodeSelect = document.getElementById("class_code_id");
   classcodeSelect.innerHTML = '<option value="">-- Select Code --</option>';
   classCode_data.class_codes.forEach(cls_codes => {
     const option = document.createElement("option");
@@ -72,7 +72,7 @@ async function loadSelection() {
   const response3 = await fetch(`/helper/get_admission_type`);
   const admissionType_data = await response3.json();
 
-  const admissiontypeSelect = document.getElementById("admission_type");
+  const admissiontypeSelect = document.getElementById("admission_type_id");
   admissiontypeSelect.innerHTML = '<option value="">-- Select Type --</option>';
   admissionType_data.admission_type.forEach(adm_type => {
     const option = document.createElement("option");
@@ -88,7 +88,7 @@ async function loadSelection() {
   const response4 = await fetch(`/helper/get_semester`);
   const semester_data = await response4.json();
 
-  const semesterSelect = document.getElementById("semester");
+  const semesterSelect = document.getElementById("semester_id");
   semesterSelect.innerHTML = '<option value="">-- Select Semester --</option>';
   semester_data.semesters.forEach(semes => {
     const option = document.createElement("option");

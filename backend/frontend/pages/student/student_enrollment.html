@@ -24,7 +24,7 @@
         <div id="first-row">
             <div class="form-row">
             <label>Student ID:</label>
-            <input type="text" name="student_id" required>
+            <input type="text" name="student_id">
             </div>
         </div>
 
@@ -32,7 +32,7 @@
         <div id="second-row">
             <div class="form-row">
             <label>Department:</label>
-            <select id="department" name="department">
+            <select id="department" name="department_id">
                 <option value="">-- Select Dept --</option>
             </select>
             </div>
@@ -40,7 +40,7 @@
 
             <div class="form-row">
             <label>Course:</label>
-            <select id="course" name="course">
+            <select id="course" name="course_id">
                 <option value="">-- Select Course --</option>
             </select>
             </div>
@@ -48,7 +48,7 @@
 
             <div class="form-row">
             <label>Shift:</label>
-            <select id="shift" name="shift">
+            <select id="shift" name="shift_id">
                 <option value="">-- Select Shift --</option>
             </select>
             </div>
@@ -58,7 +58,7 @@
         <div id="second-row">
             <div class="form-row">
             <label>Class Code:</label>
-            <select id="class_code" name="class_code">
+            <select id="class_code" name="class_code_id">
                 <option value="">-- Select Code --</option>
             </select>
             </div>
@@ -66,7 +66,7 @@
 
             <div class="form-row">
             <label>Admission:</label>
-            <select id="admission_type" name="admission_type">
+            <select id="admission_type" name="admission_type_id">
                 <option value="">-- Select Type --</option>
             </select>
             </div>
@@ -74,7 +74,7 @@
 
             <div class="form-row">
             <label>Semester:</label>
-            <select id="semester" name="semester">
+            <select id="semester" name="semester_id">
                 <option value="">-- Select Semester --</option>
             </select>
             </div>
@@ -91,7 +91,7 @@
 
       <div class="submit-container">
         <button type="submit">Submit Form</button>
-        <button type="submit">Close</button>
+        <button type="button" onclick="window.location.href='/student'">Close</button>
       </div>
     </form>
   </div>

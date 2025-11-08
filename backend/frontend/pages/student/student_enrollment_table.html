@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enrollment Table</title>
+    <link href="{{ url_for('static', path='/css/student/student_enrollment_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Student Enrollment Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/student/enrollment_search" method="POST">
+            <!-- INPUTS  -->
+            <input type="number" name="id_search" placeholder="Srch By ID">
+            <input type="text" id="left-input" name="name_search" placeholder="Srch By Name">
+            
+            <!-- DROP DOWNS -->
+            <select name="department_id">
+                <option value="">--Department--</option>
+            </select>
+
+            <select name="course_id">
+                <option value="">--Course--</option>
+            </select>
+
+            <select name="admission_type_id">
+                <option value="">--Adm Type--</option>
+            </select>
+
+            <select name="semester_id">
+                <option value="">--Semester--</option>
+            </select>
+
+            <select name="shift_id">
+                <option value="">--Shift--</option>
+            </select>
+
+
+            <!-- BUTTONS -->
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/student/list_enrolled'">Reset</button>
+                <a href="/student/enrollment">Add</a>
+                <a href="/student">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Father Name</th>
+            <th>Class-Code</th>
+            <th>Department</th>
+            <th>Course</th>
+            <th>Admission-Type</th>
+            <th>Semester</th>
+            <th>Shift</th>
+            <th>Fee</th>
+            <th>Actions</th>
+        </tr>
+        {% for e in enrollment %}
+        <tr>
+            <td>{{e.student_id}}</td>
+            <td>{{e.student_name}}</td>
+            <td>{{e.father_name}}</td>
+            <td>{{e.class_code}}</td>
+            <td>{{e.department}}</td>
+            <td>{{e.course}}</td>
+            <td>{{e.admission_type}}</td>
+            <td>{{e.semester}}</td>
+            <td>{{e.shift}}</td>
+            <td>{{e.fee}}</td>
+            <td>
+                <button onclick="deleteEnrollment(
+                    '{{ e.student_id }}', '{{ e.class_code_id }}',
+                    '{{ e.department_id }}', '{{ e.course_id }}',
+                    '{{ e.admission_type_id}}', '{{ e.semester_id }}',
+                    '{{e.shift_id}}'
+                )">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script src="{{ url_for('static', path='/js/student/student_enrollment_table.js')}}"></script>
+</body>
+</html>
+
+

@@ -49,6 +49,7 @@ def get_courses(department_id: int, db: Session = Depends(get_db)):
 @helper_router.get("/get_shift")
 def get_shift(db: Session = Depends(get_db)):
     shift = db.query(Shift).all()
+    
     return JSONResponse(
         content={
             "shift": [
