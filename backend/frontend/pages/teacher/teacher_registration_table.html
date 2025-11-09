@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Table</title>
+    <link href="{{ url_for('static', path='/css/teacher/teacher_registration_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Teacher Registration Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/teacher/registration_search" method="POST">
+            <!-- INPUTS  -->
+            <input type="number" id="right-input" name="id_search" placeholder="Srch ID">
+            <input type="text" id="left-input" name="name_search" placeholder="Srch By Name">
+            
+            <!-- DROP DOWNS -->
+            <select name="department_id" id="department">
+                <option value="">-Department-</option>
+            </select>
+
+            <select name="course_id" id="course">
+                <option value="">-Course-</option>
+            </select>
+
+            <select name="salary_type_id" id="salary_type_id">
+                <option value="">-Salary Type-</option>
+            </select>
+
+            <select name="semester_id" id="semester_id">
+                <option value="">-Semester-</option>
+            </select>
+
+            <select name="shift_id" id="shift_id">
+                <option value="">-Shift-</option>
+            </select>
+
+
+            <!-- BUTTONS -->
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/teacher/list_registration'">Reset</button>
+                <a href="/teacher/registration">Add</a>
+                <button type="button" onclick="exportRegistration()">Export</button>
+                <a href="/teacher">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Father Name</th>
+            <th>Department</th>
+            <th>Course</th>
+            <th>Salary Type</th>
+            <th>Semester</th>
+            <th>Shift</th>
+            <th>Salary</th>
+            <th>Actions</th>
+        </tr>
+        {% for r in registrations %}
+        <tr>
+            <td>{{r.teacher_id}}</td>
+            <td>{{r.teacher_name}}</td>
+            <td>{{r.father_name}}</td>
+            <td>{{r.department}}</td>
+            <td>{{r.course}}</td>
+            <td>{{r.salary_type}}</td>
+            <td>{{r.semester}}</td>
+            <td>{{r.shift}}</td>
+            <td>{{r.salary}}</td>
+            <td>
+                <button onclick="deleteRegistration(
+                    '{{ r.teacher_id }}', '{{ r.department_id }}',
+                    '{{ r.course_id }}', '{{ r.salary_type_id }}',
+                    '{{ r.semester_id }}', '{{ r.shift_id }}'
+                )">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script src="{{ url_for('static', path='/js/teacher/teacher_registration_table.js')}}"></script>
+</body>
+</html>
+
+

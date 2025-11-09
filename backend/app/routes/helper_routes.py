@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.config.db_connect import SessionLocal
 from app.models.helper_orm import Department
 
-from app.models.helper_orm import (Department, Course,
+from app.models.helper_orm import (Department, Course, SalaryType,
                                     Shift, ClassCode, AdmissionType, Semester)
 
 
@@ -92,3 +92,17 @@ def get_semester(db: Session = Depends(get_db)):
             ]
         }
     )
+
+@helper_router.get("/get_salary_type")
+def get_salary_type(db: Session = Depends(get_db)):
+    salary_types = db.query(SalaryType).all()
+
+    return JSONResponse(
+        content={
+            "salary_type" : [
+                {"id": s_t.salary_type_id, "name": s_t.salary_type_name} for s_t in salary_types
+            ]
+        }
+    )
+
+    

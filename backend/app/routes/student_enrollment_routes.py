@@ -98,9 +98,11 @@ async def add_enrollment(request: Request, db : Session = Depends(get_db)):
     # -- check whether ID student enrolled --
     admission = db.query(Student).filter(Student.student_id==form_data.get("student_id"))
     if not admission:
-        return JSONResponse(content={
-            "message": f"The student with ID {form_data.get("student_id")} not found in the in admission"
-        })
+        return JSONResponse(
+            content = { 
+                "message": f"The student with ID {form_data.get("student_id")} not found in the in admission"
+            }
+        )
 
     # -- check enrollment --
     enrollment = db.query(StudentEnrollment).filter_by(
@@ -195,7 +197,7 @@ async def search_enrollment(request: Request, db: Session = Depends(get_db)):
     # on the basis of id else it will look for 
     # all other filter combinaly
     if form_data.get("id_search"):
-        query = query.filter(Student.student_id==int(form_data.get("id_search")))
+        query = query.filter(StudentEnrollment.student_id==int(form_data.get("id_search")))
         result = query.all()
         for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
             enrollment_data.append({
@@ -226,17 +228,17 @@ async def search_enrollment(request: Request, db: Session = Depends(get_db)):
     if form_data.get("name_search"):
         query = query.filter(Student.name.ilike(f"%{form_data.get('name_search')}%"))
     if form_data.get("class_code_id"):
-        query = query.filter(ClassCode.class_code_id==int(form_data.get("class_code_id")))
+        query = query.filter(StudentEnrollment.class_code_id==int(form_data.get("class_code_id")))
     if form_data.get("department_id"):
-        query = query.filter(Department.department_id==int(form_data.get("department_id")))
+        query = query.filter(StudentEnrollment.department_id==int(form_data.get("department_id")))
     if form_data.get(("course_id")):
-        query = query.filter(Course.course_id==int(form_data.get("course_id")))
+        query = query.filter(StudentEnrollment.course_id==int(form_data.get("course_id")))
     if form_data.get("admission_type_id"):
-        query = query.filter(AdmissionType.admission_type_id==int(form_data.get("admission_type_id")))
+        query = query.filter(StudentEnrollment.admission_type_id==int(form_data.get("admission_type_id")))
     if form_data.get("semester_id"):
-        query = query.filter(Semester.semester_id==int(form_data.get("semester_id")))
+        query = query.filter(StudentEnrollment.semester_id==int(form_data.get("semester_id")))
     if form_data.get("shift_id"):
-        query = query.filter(Shift.shift_id==int(form_data.get("shift_id")))
+        query = query.filter(StudentEnrollment.shift_id==int(form_data.get("shift_id")))
     result = query.all()
 
     
@@ -300,7 +302,7 @@ async def export_enrollment(request: Request, db: Session = Depends(get_db)):
     # all other filter combinaly
     if form_data.get("id_search"):
         search_flag = True
-        query = query.filter(Student.student_id==int(form_data.get("id_search")))
+        query = query.filter(StudentEnrollment.student_id==int(form_data.get("id_search")))
         result = query.all()
         for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
             enrollment_data.append({
@@ -336,22 +338,22 @@ async def export_enrollment(request: Request, db: Session = Depends(get_db)):
         query = query.filter(Student.name.ilike(f"%{form_data.get('name_search')}%"))
         search_flag = True
     if form_data.get("class_code_id"):
-        query = query.filter(ClassCode.class_code_id==int(form_data.get("class_code_id")))
+        query = query.filter(StudentEnrollment.class_code_id==int(form_data.get("class_code_id")))
         search_flag = True
     if form_data.get("department_id"):
-        query = query.filter(Department.department_id==int(form_data.get("department_id")))
+        query = query.filter(StudentEnrollment.department_id==int(form_data.get("department_id")))
         search_flag = True
     if form_data.get(("course_id")):
-        query = query.filter(Course.course_id==int(form_data.get("course_id")))
+        query = query.filter(StudentEnrollment.course_id==int(form_data.get("course_id")))
         search_flag = True
     if form_data.get("admission_type_id"):
-        query = query.filter(AdmissionType.admission_type_id==int(form_data.get("admission_type_id")))
+        query = query.filter(StudentEnrollment.admission_type_id==int(form_data.get("admission_type_id")))
         search_flag = True
     if form_data.get("semester_id"):
-        query = query.filter(Semester.semester_id==int(form_data.get("semester_id")))
+        query = query.filter(StudentEnrollment.semester_id==int(form_data.get("semester_id")))
         search_flag = True
     if form_data.get("shift_id"):
-        query = query.filter(Shift.shift_id==int(form_data.get("shift_id")))
+        query = query.filter(StudentEnrollment.shift_id==int(form_data.get("shift_id")))
         search_flag = True
 
     result = None

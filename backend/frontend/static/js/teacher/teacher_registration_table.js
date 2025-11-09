@@ -4,7 +4,7 @@ async function loadDepartment() {
   const data = await response.json();
 
   const select = document.getElementById("department");
-  select.innerHTML = '<option value="">-- Select Dept --</option>';
+  select.innerHTML = '<option value="">-Department-</option>';
 
 
   data.departments.forEach(dep => {
@@ -21,7 +21,7 @@ async function loadDepartment() {
 async function loadCourses() {
   const dept_id = this.value;
   const courseSelect = document.getElementById("course");
-  courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
+  courseSelect.innerHTML = '<option value="">-Course-</option>';
 
   if (!dept_id) return; // no department selected
 
@@ -44,7 +44,7 @@ async function loadSelection() {
   const shiftData = await response1.json();
 
   const shiftSelect = document.getElementById("shift_id");
-  shiftSelect.innerHTML = '<option value="">-- Select Shift --</option>';
+  shiftSelect.innerHTML = '<option value="">-Shift-</option>';
   shiftData.shift.forEach(sh => {
     const option = document.createElement("option");
     option.value = sh.id;
@@ -52,18 +52,18 @@ async function loadSelection() {
     shiftSelect.appendChild(option);
   });
 
-
+  
   // == salary type ==
-  const response2 = await fetch(`/helper/get_salary_type`);
-  const classCode_data = await response2.json();
+  const response3 = await fetch(`/helper/get_salary_type`);
+  const admissionType_data = await response3.json();
 
-  const salarytypeSelect = document.getElementById("salary_type_id");
-  salarytypeSelect.innerHTML = '<option value="">-- Select Type --</option>';
-  classCode_data.salary_type.forEach(s_t => {
+  const salary_typeSelect = document.getElementById("salary_type_id");
+  salary_typeSelect.innerHTML = '<option value="">-Salary Type-</option>';
+  admissionType_data.salary_type.forEach(s_t => {
     const option = document.createElement("option");
     option.value = s_t.id;
     option.textContent = s_t.name;
-    salarytypeSelect.appendChild(option);
+    salary_typeSelect.appendChild(option);
   });
 
 
@@ -72,7 +72,7 @@ async function loadSelection() {
   const semester_data = await response4.json();
 
   const semesterSelect = document.getElementById("semester_id");
-  semesterSelect.innerHTML = '<option value="">-- Select Semester --</option>';
+  semesterSelect.innerHTML = '<option value="">-Semester-</option>';
   semester_data.semesters.forEach(semes => {
     const option = document.createElement("option");
     option.value = semes.id;
@@ -86,3 +86,63 @@ window.onload = function() {
   loadDepartment();
   loadSelection();
 };
+
+
+async function deleteRegistration(
+  teacher_id,
+  department_id,
+  course_id,
+  salary_type_id,
+  semester_id,
+  shift_id
+) {
+  const confirmed = confirm("Are you sure you want to delete this registration?");
+  if (!confirmed) return;
+
+  const params = new URLSearchParams({
+    teacher_id,
+    department_id,
+    course_id,
+    salary_type_id,
+    semester_id,
+    shift_id
+  });
+
+  const response = await fetch(`/teacher/delete_registration?${params.toString()}`, {
+    method: "DELETE",
+  });
+
+  if (response.ok) {
+    alert("Registration deleted successfully");
+    window.location.reload();
+  } else {
+    const err = await response.json();
+    alert(`Error: ${err.message || "Failed to delete Registration"}`);
+  }
+}
+
+
+async function exportRegistration() {
+  const form = document.querySelector("form");
+  const formData = new FormData(form); // collects all inputs & selects
+
+  const response = await fetch("/teacher/export_registration", {
+    method: "POST",
+    body: formData
+  });
+
+  if (!response.ok) {
+    alert("Export failed");
+    return;
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "registration_export.csv"; // or .csv
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}

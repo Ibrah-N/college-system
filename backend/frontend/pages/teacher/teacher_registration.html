@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Registration</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="../css/teacher_registration.css">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/teacher/teacher_registration.css') }}">
 
 </head>
 <body>
@@ -15,7 +14,7 @@
     <h1>Teacher Registration Form</h1>
     </div>
 
-    <form id="teacherRegistractionForm">
+    <form id="teacherRegistractionForm" action="/teacher/register_teacher" method="POST">
       <section>
         <h3>Information</h3>
 
@@ -24,7 +23,7 @@
         <div id="first-row">
             <div class="form-row">
             <label>Teacher ID:</label>
-            <input type="text" name="teacher_id" required>
+            <input type="text" name="teacher_id">
             </div>
 
         </div>
@@ -33,18 +32,15 @@
         <div id="second-row">
             <div class="form-row">
             <label>Department:</label>
-            <select id="department">
+            <select id="department" name="department_id">
                 <option value="">-- Select Dept --</option>
-                <option value="s_c">Short-Courses</option>
-                <option value="m">Medical</option>
-                <option value="it">IT</option>
             </select>
             </div>
 
 
             <div class="form-row">
             <label>Course:</label>
-            <select id="course">
+            <select id="course" name="course_id">
                 <option value="">-- Select Course --</option>
             </select>
             </div>
@@ -52,10 +48,8 @@
 
             <div class="form-row">
             <label>Shift:</label>
-            <select>
+            <select id="shift_id" name="shift_id">
                 <option value="">-- Select Shift --</option>
-                <option value="morning">Morning</option>
-                <option value="evening">Evening</option>
             </select>
             </div>
         </div>
@@ -64,23 +58,16 @@
         <div id="second-row">
             <div class="form-row">
             <label>Salary:</label>
-            <select id="salary_s">
+            <select id="salary_type_id" name="salary_type_id">
                 <option value="">-- Select Type --</option>
-                <option value="">Semester</option>
-                <option value="">OneTime</option>
-                <option value="">Year</option>
             </select>
             </div>
 
 
             <div class="form-row">
             <label>Semester:</label>
-            <select>
+            <select id="semester_id" name="semester_id">
                 <option value="">-- Select Semester --</option>
-                <option>1 Semester</option>
-                <option>2 Semester</option>
-                <option>3 Semester</option>
-                <option>4 Semester</option>
             </select>
             </div>
         </div>
@@ -96,11 +83,11 @@
 
       <div class="submit-container">
         <button type="submit">Submit Form</button>
-        <button type="submit">Close</button>
+        <button onclick="window.location.href='/teacher'">Close</button>
       </div>
     </form>
   </div>
 
-  <script src="../js/teacher_registration.js"></script>
+  <script src="{{ url_for('static', path='/js/teacher/teacher_registration.js')}}"></script>
 </body>
 </html>

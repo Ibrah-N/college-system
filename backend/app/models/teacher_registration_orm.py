@@ -1,5 +1,7 @@
 from sqlalchemy import Integer, Float, ForeignKey, Column
+from sqlalchemy.schema import PrimaryKeyConstraint
 from app.config.db_connect import Base
+
 
 
 
@@ -14,3 +16,15 @@ class TeacherRegesitration(Base):
     salary_type_id = Column(Integer, ForeignKey("salary_type.salary_type_id"))
     shift_id = Column(Integer, ForeignKey("shift.shift_id"))
     salary = Column(Float)
+
+    __table_args__ = (
+        PrimaryKeyConstraint(
+            "teacher_id",
+            "department_id",
+            "course_id",
+            "shift_id",
+            "salary_type_id",
+            "semester_id",
+            name="pk_teacher_registration"
+        ),
+    )
