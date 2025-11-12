@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Sequence
 from sqlalchemy import ForeignKey
 from app.config.db_connect import Base
 
@@ -72,4 +72,26 @@ class SalaryType(Base):
     salary_type_id = Column(Integer, primary_key=True)
     salary_type_name = Column(String(15))
 
+
+
+class Session(Base):
+    __tablename__ = "session"
+
+    session_id = Column(Integer, Sequence('session_id_seq', start=25, increment=1), primary_key=True)
+    session = Column(Integer, nullable=False)
+
+
+class Month(Base):
+    __tablename__ = "month"
     
+    month_id = Column(Integer, primary_key=True)
+    month = Column(Integer, nullable=False)
+
+
+class Day(Base):
+    __tablename__ = "day"
+
+    day_id = Column(Integer, primary_key=True)
+    month_id = Column(Integer, nullable=False)
+
+

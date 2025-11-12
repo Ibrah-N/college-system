@@ -26,7 +26,6 @@ body {
 
 div#header {
     background-color: #4782ff;
-    margin-bottom: 50px;
 }
 
 h1, h2 {
@@ -114,7 +113,7 @@ section {
 }
 
 #first-row .form-row {
-  display: static;
+  display: inline-block;
   margin-right: 40px;
   margin-top: 10px;
 }
@@ -126,8 +125,8 @@ section {
 }
 
 #first-row input {
-  display: static;
-  width: 650px;
+  display: inline-block;
+  width: 230px;
   height: 25px;
 }
 
@@ -140,20 +139,147 @@ section {
 
 #second-row .form-row {
   display: inline-block;
-  margin-right: 110px;
+  margin-right: 23px;
 }
 
 #second-row label {
-    margin-right: 15px;
+    margin-right: 5px;
     font-size: 15px;
     font-weight: 700;
 }
 
 #second-row input {
   display: inline-block;
-  margin-left: 20px;
   width: 165px;
   height: 25px;
+}
+
+select {
+    width: 150px;            /* set width */
+    padding: 8px 8px;       /* inner spacing */
+    border: 1px solid #007bff;  /* border color */
+    border-radius: 6px;      /* rounded corners */
+    background-color: #fff;  /* background */
+    font-size: 15px;         /* text size */
+    color: #333;             /* text color */
+    appearance: none;        /* remove default arrow (Chrome, Safari) */
+    -moz-appearance: none;   /* remove default arrow (Firefox) */
+    -webkit-appearance: none;/* remove default arrow (WebKit) */
+    background-repeat: no-repeat;
+    background-position: right 10px center; /* position of custom arrow */
+    background-size: 12px 8px;             /* arrow size */
+    margin-left: 30px;
+}
+
+select:focus {
+  border-color: #007bff;  /* change border color on focus */
+  outline: none;
+  box-shadow: 0 0 3px #007bff;
+}
+
+
+
+
+/* ===== third row ===== */
+#third-row {
+    white-space: nowrap;
+    margin-top: 5px;
+}
+
+#third-row .form-row {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+#third-row label {
+    margin-right: 5px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#third-row input {
+  display: inline-block;
+  width: 168px;
+  height: 25px;
+}
+
+
+
+
+/* ===== fourth row ===== */
+#fourth-row {
+    white-space: nowrap;
+    margin-top: 5px;
+}
+
+#fourth-row .form-row {
+  display: static;
+  margin-right: 5px;
+}
+
+#fourth-row label {
+    margin-right: 5px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#fourth-row input {
+  display: static;
+  width: 800px;
+  height: 25px;
+}
+
+
+/* ===== fifth row ===== */
+#fifth-row {
+    white-space: nowrap;  
+    margin-top: 5px;
+}
+
+#fifth-row .form-row {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+#fifth-row label {
+    margin-right: 15px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#fifth-row input {
+  display: inline-block;
+  width: 260px;
+  height: 25px;
+}
+
+
+
+/* ===== sixth row ===== */
+#sixth-row {
+    white-space: nowrap;
+    margin-top: 5px;
+}
+
+#sixth-row .form-row {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+#sixth-row label {
+    margin-right: 30px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#sixth-row input {
+  display: inline-block;
+  width: 240px;
+  height: 25px;
+}
+
+#grade-id {
+    margin-left: 50px; 
 }
 
 
