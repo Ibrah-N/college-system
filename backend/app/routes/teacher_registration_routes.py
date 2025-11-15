@@ -46,7 +46,7 @@ def teacher_registration(request: Request):
 @teacher_registration_router.get("/list_registration")
 def list_registration(request: Request, db: Session = Depends(get_db)):
 
-        # -- extract record usign joins --
+    # -- extract record usign joins --
     result = (
         db.query(TeacherRegesitration, AddTeacher, Department,
                 Course, Shift, SalaryType, Semester

@@ -6,7 +6,8 @@ from app.config.db_connect import SessionLocal
 from app.models.helper_orm import Department
 
 from app.models.helper_orm import (Department, Course, SalaryType,
-                                    Shift, ClassCode, AdmissionType, Semester)
+                                    Shift, ClassCode, AdmissionType, Semester,
+                                    Session, Month, Day)
 
 
 helper_router = APIRouter(prefix="/helper", tags=["Helper"])
@@ -105,4 +106,38 @@ def get_salary_type(db: Session = Depends(get_db)):
         }
     )
 
+@helper_router.get("/get_sessions")
+def get_sessions(db: Session = Depends(get_db)):
+    sessions = db.query(Session).all()
+
+    return JSONResponse(
+        content={
+            "sessions" : [
+                {"id": s.session_id, "name": s.session}  for s in sessions
+            ]
+        }
+    )
     
+@helper_router.get("/get_months")
+def get_months(db: Session = Depends(get_db)):
+    months = db.query(Month).all()
+
+    return JSONResponse(
+        content={
+            "months" : [
+                {"id": m.month_id, "name": m.month} for m in months
+            ]
+        }
+    )
+
+@helper_router.get("/get_days")
+def get_days(db: Session = Depends(get_db)):
+    days = db.query(Day).all()
+
+    return JSONResponse(
+        content={
+            "days" : [
+                {"id": d.day_id, "name": d.day} for d in days
+            ]
+        }
+    )

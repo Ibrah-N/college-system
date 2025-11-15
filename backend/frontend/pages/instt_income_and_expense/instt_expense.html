@@ -5,32 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Expense Form</title>
 
-<link href="../../static/css/instt_acount/instt_expense.css" rel="stylesheet">
+  <link href="{{ url_for('static', path='/css/instt_income_and_expense/instt_expense.css')}}" rel="stylesheet">
 
 </head>
 <body>
   <div class="form-container">
 
     <div id="header"> 
-    <h1>Institute Expense Form</h1>
+    <h1>Institute Expenses Form</h1>
     </div>
 
-    <form id="insttExpenseForm", action="/institute_acount/expense", method="POST">
+    <form id="insttExpenseForm", action="/account/add_expense", method="POST">
       <section>
         <h3>Expense Information</h3>
 
-        <!-- first row -->
-        <div id="first-row">
-            <div class="form-row">
-            <label>Expense By:</label>
-            <input type="text" name="expense_by">
-            </div>
 
-            <div class="form-row">
-            <label>Amount:</label>
-            <input type="text" name="amount">
-            </div>
-        </div>
 
         <div id="second-row">
             <div class="form-row">
@@ -48,7 +37,6 @@
             </select>
             </div>
 
-
             <div class="form-row">
             <label>Day:</label>
             <select id="Day" name="day_id">
@@ -58,7 +46,27 @@
         </div>
 
 
+                <!-- first row -->
+        <div id="first-row">
+            <div class="form-row" id="left">
+            <label>Amount:</label>
+            <input type="text" name="amount">
+            </div>
+
+            <div class="form-row">
+            <label>Shift:</label>
+            <select id="shift" name="shift_id">
+                <option value="">-- Select Shift --</option>
+            </select>
+            </div>
+        </div>
+
         <div id="fourth-row">
+            <div class="form-row">
+            <label>Expense By:</label>
+            <input type="text" name="expense_by">
+            </div>
+
             <div class="form-row">
             <label>Item Details:</label>
             <input type="text" name="item_details"></input>
@@ -80,6 +88,6 @@
   </div>
 
 
-  <!-- <script src="{{ url_for('static', path='/js/student/admission_form.js') }}"></script> -->
+  <script src="{{ url_for('static', path='/js/instt_income_and_expense/instt_expense.js') }}"></script>
 </body>
 </html>

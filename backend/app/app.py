@@ -7,6 +7,7 @@ from app.routes.add_teacher_routes import add_teacher_router
 from app.routes.helper_routes import helper_router
 from app.routes.student_enrollment_routes import enrollment_router
 from app.routes.teacher_registration_routes import teacher_registration_router
+from app.routes.instt_income_and_expense_routes import income_expense_router
 
 
 from app.config.db_connect import Base, engine
@@ -25,6 +26,7 @@ app.include_router(add_teacher_router)
 app.include_router(helper_router)
 app.include_router(enrollment_router)
 app.include_router(teacher_registration_router)
+app.include_router(income_expense_router)
 
 
 

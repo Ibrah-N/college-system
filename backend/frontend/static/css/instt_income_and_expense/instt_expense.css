@@ -107,6 +107,10 @@ section {
 
 
 /* ===== first row ===== */
+#left {
+  margin-left: 23px;
+}
+
 #first-row {
   white-space: nowrap;
   margin-top: 5px;
