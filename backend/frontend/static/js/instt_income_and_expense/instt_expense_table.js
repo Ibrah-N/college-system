@@ -113,3 +113,10 @@ async function exportExpenses() {
   a.remove();
   window.URL.revokeObjectURL(url);
 }
+
+
+
+
+async function updateExpense(expense_id) {
+    window.location.href = `/account/update_expense_stage_1/${expense_id}`;
+}

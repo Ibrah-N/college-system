@@ -80,6 +80,9 @@
             <td>{{r.month}}</td>
             <td>{{r.day}}</td>
             <td>
+                <button onclick="updateExpense(
+                    '{{ r.id }}'
+                )">Update</button>
                 <button onclick="deleteExpenses(
                     '{{ r.id }}', '{{ r.session_id }}',
                     '{{ r.month_id }}', '{{ r.day_id }}',

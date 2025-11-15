@@ -159,9 +159,112 @@ def delete_expense(
 # ======================================
 #      U P D A T E - E X P E N S E S   #
 # ======================================
+@income_expense_router.get("/update_expense_stage_1/{expense_id}")
+async def update_expense_stage_1(request: Request, expense_id: int,
+                                 db: Session = Depends(get_db)):
+
+    # -- joins --
+    query = (
+        db.query(InstituteExpense, Session,
+                 Month, Day, Shift
+                )
+        .join(Session, InstituteExpense.session_id == Session.session_id)
+        .join(Month, InstituteExpense.month_id == Month.month_id)
+        .join(Day, InstituteExpense.day_id == Day.day_id)
+        .join(Shift, InstituteExpense.shift_id == Shift.shift_id)
+    )
+    query = query.filter(
+        InstituteExpense.expense_id==expense_id
+    )
+    result = query.first()
+
+
+    # -- existance check --
+    if not result:
+        return JSONResponse(
+            content = {
+                "message": "Expense not found!!"
+            }, status_code = 404
+        )
+    
+    # -- jsonify expense --
+    json_expense = {
+        "id": result.InstituteExpense.expense_id,
+        "item_detail": result.InstituteExpense.item_detail,
+        "expense_for": result.InstituteExpense.expense_for,
+        "expense_by": result.InstituteExpense.expense_by,
+        "amount": result.InstituteExpense.amount,
+        "session": result.Session.session,
+        "session_id": result.InstituteExpense.session_id,
+        "month": result.Month.month,
+        "month_id": result.InstituteExpense.month_id,
+        "day": result.Day.day, 
+        "day_id": result.InstituteExpense.day_id,
+        "shift": result.Shift.shift_name,
+        "shift_id": result.InstituteExpense.shift_id,   
+        "date": result.InstituteExpense.date.isoformat() if result.InstituteExpense.date else None
+    }
+
+    # -- fetch sessions, months, days, shifts for dropdowns --
+    sessions = db.query(Session).all()
+    months = db.query(Month).all()
+    days = db.query(Day).all()
+    shifts = db.query(Shift).all()
+
+    # -- response --
+    return templates.TemplateResponse(
+        "pages/instt_income_and_expense/update_instt_expense.html",
+        {
+            "request": request,
+            "old_expense": json_expense,
+            "sessions": sessions,
+            "months": months,
+            "days": days,
+            "shifts": shifts
+        }
+    )
+
+
 @income_expense_router.post("/update_expense")
-def update_expense_stage_1(db: Session = Depends(get_db)):
-    pass
+async def update_expense(request: Request, db: Session = Depends(get_db)):
+    form_data = await request.form()
+    expense_id = form_data.get("expense_id")
+
+    # -- filter expense --
+    expense = db.query(InstituteExpense).filter(
+        InstituteExpense.expense_id == expense_id
+    ).first()
+
+    # -- existance check --
+    if not expense:
+        return JSONResponse(
+            content = {
+                "message": "Expense not found!!"
+            }, status_code = 404
+        )
+
+    # -- update expense --
+    expense.item_detail = form_data.get("item_details")
+    expense.expense_for = form_data.get("expense_for")
+    expense.expense_by = form_data.get("expense_by")
+    expense.amount = float(form_data.get("amount")) if form_data.get("amount") else 0
+    expense.session_id = form_data.get("session_id")
+    expense.month_id = form_data.get("month_id")
+    expense.day_id = form_data.get("day_id")
+    expense.shift_id = form_data.get("shift_id")
+
+    db.commit()
+
+    # -- response --
+    return RedirectResponse(
+        url="/account/list_expenses",
+        status_code=303
+    )
+
+
+
+
+
 
 # ======================================
 #      S E A R C H - E X P E N S E S   #
