@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Expense Form</title>
 
-  <link href="{{ url_for('static', path='/css/instt_income_and_expense/instt_expense.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', path='/css/instt_expense/instt_expense.css')}}" rel="stylesheet">
 
 </head>
 <body>
@@ -82,12 +82,12 @@
 
       <div class="submit-container">
         <button type="submit">Submit Form</button>
-        <button type="button" onclick="window.location.href='/institute_acount'">Close</button>
+        <button type="button" onclick="window.location.href='/account'">Close</button>
       </div>
     </form>
   </div>
 
 
-  <script src="{{ url_for('static', path='/js/instt_income_and_expense/instt_expense.js') }}"></script>
+  <script src="{{ url_for('static', path='/js/instt_expense/instt_expense.js') }}"></script>
 </body>
 </html>

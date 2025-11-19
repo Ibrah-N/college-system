@@ -12,7 +12,7 @@ from app.models.institute_expense_orm import InstituteExpense
 from app.models.helper_orm import (Session, Month, Day, Shift)
 
 
-income_expense_router = APIRouter(prefix="/account", tags=['Account'])
+expense_router = APIRouter(prefix="/account", tags=['Account'])
 templates = Jinja2Templates("frontend")
 
 
@@ -29,10 +29,10 @@ def get_db():
 # ======================================
 #  L O A D - E X P E N S E - F O R M   #
 # ======================================
-@income_expense_router.get("/expense_form")
+@expense_router.get("/expense_form")
 def expense_form(request: Request):
     return templates.TemplateResponse(
-        "pages/instt_income_and_expense/instt_expense.html",
+        "pages/instt_expense/instt_expense.html",
         {"request": request}
     )
 
@@ -40,7 +40,7 @@ def expense_form(request: Request):
 # ======================================
 #        A D D - E X P E N S E         #
 # ======================================
-@income_expense_router.post("/add_expense")
+@expense_router.post("/add_expense")
 async def add_expense(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
 
@@ -72,7 +72,7 @@ async def add_expense(request: Request, db: Session = Depends(get_db)):
 # ======================================
 #      L I S T - E X P E N S E S       #
 # ======================================
-@income_expense_router.get("/list_expenses")
+@expense_router.get("/list_expenses")
 def list_expenses(request: Request, db: Session = Depends(get_db)):
     all_expenses = db.query(InstituteExpense).all()
 
@@ -110,7 +110,7 @@ def list_expenses(request: Request, db: Session = Depends(get_db)):
 
     # -- response --
     return templates.TemplateResponse(
-        "pages/instt_income_and_expense/instt_expense_table.html",
+        "pages/instt_expense/instt_expense_table.html",
         {
             "request": request,
             "expenses": json_expenses
@@ -121,7 +121,7 @@ def list_expenses(request: Request, db: Session = Depends(get_db)):
 # ======================================
 #      D E L E T E - E X P E N S E S   #
 # ======================================
-@income_expense_router.delete("/delete_expense")
+@expense_router.delete("/delete_expense")
 def delete_expense(
         id: int, session_id: int, 
         month_id: int, day_id:int, 
@@ -159,7 +159,7 @@ def delete_expense(
 # ======================================
 #      U P D A T E - E X P E N S E S   #
 # ======================================
-@income_expense_router.get("/update_expense_stage_1/{expense_id}")
+@expense_router.get("/update_expense_stage_1/{expense_id}")
 async def update_expense_stage_1(request: Request, expense_id: int,
                                  db: Session = Depends(get_db)):
 
@@ -213,7 +213,7 @@ async def update_expense_stage_1(request: Request, expense_id: int,
 
     # -- response --
     return templates.TemplateResponse(
-        "pages/instt_income_and_expense/update_instt_expense.html",
+        "pages/instt_expense/update_instt_expense.html",
         {
             "request": request,
             "old_expense": json_expense,
@@ -225,7 +225,7 @@ async def update_expense_stage_1(request: Request, expense_id: int,
     )
 
 
-@income_expense_router.post("/update_expense")
+@expense_router.post("/update_expense")
 async def update_expense(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
     expense_id = form_data.get("expense_id")
@@ -269,7 +269,7 @@ async def update_expense(request: Request, db: Session = Depends(get_db)):
 # ======================================
 #      S E A R C H - E X P E N S E S   #
 # ======================================
-@income_expense_router.post("/search_expense")
+@expense_router.post("/search_expense")
 async def search_expense(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
 
@@ -313,7 +313,7 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
 
         # -- response --
         return templates.TemplateResponse(
-            "pages/instt_income_and_expense/instt_expense_table.html",
+            "pages/instt_expense/instt_expense_table.html",
             {
                 "request": request,
                 "expenses": json_expenses
@@ -374,7 +374,7 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
 
     # -- response --
     return templates.TemplateResponse(
-        "pages/instt_income_and_expense/instt_expense_table.html",
+        "pages/instt_expense/instt_expense_table.html",
         {
             "request": request,
             "expenses": json_expenses
@@ -385,7 +385,7 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
 # ======================================
 #      E X P O R T - E X P E N S E S   #
 # ======================================
-@income_expense_router.post("/export_expenses")
+@expense_router.post("/export_expenses")
 async def export_expense(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
 
