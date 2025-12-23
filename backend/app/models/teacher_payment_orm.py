@@ -12,8 +12,10 @@ class TeacherPayment(Base):
     course_id = Column(Integer, ForeignKey("course.course_id"))
     semester_id = Column(Integer, ForeignKey("semester.semester_id"))
     salary_type_id = Column(Integer, ForeignKey("salary_type.salary_type_id"))
-    paid_salary = Column(Float)
+    session_id = Column(Integer, ForeignKey("session.session_id"))
+    month_id = Column(Integer, ForeignKey("month.month_id"))
+    day_id = Column(Integer, ForeignKey("day.day_id"))
+    paid_salary = Column(Float, default=0.0)
     deduction = Column(Float, default=0.0)
-    date = Column(Date)
-
-
+    date = Column(Date, server_default=func.current_date())
+							
