@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Fee Form</title>
+    <link href="{{ url_for('static', path='/css/student_fee/student_fee_form.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Students Fee Table </h2>
+    </div>
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>Payment ID</th>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th>Father Name</th>
+            <th>Department</th>
+            <th>Course</th>
+            <th>Shift</th>
+            <th>Code</th>
+            <th>Adm Type</th>
+            <th>Semester</th>
+            <th>Fee</th>
+            <th>Paid</th>
+            <th>Discount</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in studend_fee_records %}
+        <tr>
+            <td>{{s.student_id}}</td>
+            <td>{{s.student_name}}</td>
+            <td>{{s.father_name}}</td>
+            <td>{{s.department}}</td>
+            <td>{{s.course}}</td>
+            <td>{{s.shift}}</td>
+            <td>{{s.class_code}}</td>
+            <td>{{s.admission_type}}</td>
+            <td>{{s.semester}}</td>
+            <td>{{s.fee}}</td>
+            <td>{{s.paid_fee}}</td>
+            <td>{{s.discount}}</td>
+            <td>{{s.date}}</td>
+            <td>
+                <button onclick="update('{{ s.payment_id }}')">Update Fee</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+
+    <div>
+        <form action="/student_fee/add" method="POST">
+            <div class="form-popup" id="studentFeeForm">
+                <div class="form-container">
+                    <h2>Student Fee Form</h2>
+
+                    <input type="hidden" name="student_id" id="student_id" value="{{ form_info.student_id }}">
+                    <input type="hidden" name="department_id" id="department_id" value="{{ form_info.department_id }}">
+                    <input type="hidden" name="course_id" id="course_id" value="{{ form_info.course_id }}">
+                    <input type="hidden" name="class_code_id" id="class_code_id" value="{{ form_info.class_code_id }}">
+                    <input type="hidden" name="admission_type_id" id="admission_type_id" value="{{ form_info.admission_type_id }}">
+                    <input type="hidden" name="semester_id" id="semester_id" value="{{ form_info.semester_id }}">
+                    <input type="hidden" name="shift_id" id="shift_id" value="{{ form_info.shift_id }}">
+
+                    <input type="number" value="{{ form_info.fee }}" readonly>
+
+                    <label><b>Fee Entries</b></label>
+                    <div id="fee-entries-container">
+                        <div class="fee-entry">
+                            <select name="fee_type[]" class="payment_type" required></select>
+                            <input type="number" name="paid_fee[]" placeholder="Paid Fee" required>
+                            <input type="number" name="discount[]" placeholder="Discount">
+
+                            <button type="button" class="remove-entry" onclick="removeEntry(this)">x</button>
+                        </div>
+                    </div>
+                            <button type="button" class="add-entry" onclick="addEntry()">+</button>
+
+                    <div class="btn">
+                        <button type="submit">Submit</button>
+                        <button type="button" class="cancel" onclick="closeForm()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="{{ url_for('static', path='/js/student_fee/student_fee_form.js')}}"></script>
+</body>
+</html>
+
+

@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, Float, Date, ForeignKey
 from app.config.db_connect import Base
-
-
+from sqlalchemy import func
 
 class TeacherPayment(Base):
     __tablename__ = "teacher_payment"

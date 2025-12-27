@@ -7,7 +7,7 @@ from app.models.helper_orm import Department
 
 from app.models.helper_orm import (Department, Course, SalaryType,
                                     Shift, ClassCode, AdmissionType, Semester,
-                                    Session, Month, Day)
+                                    Session, Month, Day, PaymentType)
 
 
 helper_router = APIRouter(prefix="/helper", tags=["Helper"])
@@ -105,6 +105,20 @@ def get_salary_type(db: Session = Depends(get_db)):
             ]
         }
     )
+
+
+@helper_router.get("/get_payment_type")
+def get_payment_type(db: Session = Depends(get_db)):
+    payment_types = db.query(PaymentType).all()
+
+    return JSONResponse(
+        content={
+            "payment_type" : [
+                {"id": p_t.payment_type_id, "name": p_t.payment_type_name} for p_t in payment_types
+            ]
+        }
+    )
+
 
 @helper_router.get("/get_sessions")
 def get_sessions(db: Session = Depends(get_db)):

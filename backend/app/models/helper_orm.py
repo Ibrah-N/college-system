@@ -61,7 +61,7 @@ class PaymentType(Base):
     __tablename__ = "payment_type"
 
     payment_type_id = Column(Integer, primary_key=True)
-    payment_type_name = Column(String(15), primary_key=True)
+    payment_type_name = Column(String(15))
 
 
 

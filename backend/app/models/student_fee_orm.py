@@ -1,6 +1,7 @@
 from sqlalchemy import Integer, Float, ForeignKey, Column, Date
 from sqlalchemy.schema import PrimaryKeyConstraint
 from app.config.db_connect import Base
+from sqlalchemy import func
 
 
 
