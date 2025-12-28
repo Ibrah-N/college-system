@@ -16,7 +16,6 @@
     <table>
         <tr>
             <th>Payment ID</th>
-            <th>Student ID</th>
             <th>Student Name</th>
             <th>Father Name</th>
             <th>Department</th>
@@ -25,16 +24,16 @@
             <th>Code</th>
             <th>Adm Type</th>
             <th>Semester</th>
-            <th>Fee</th>
+            <th>Fee Type</th>
             <th>Paid</th>
             <th>Discount</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
 
-        {% for s in studend_fee_records %}
+        {% for s in fee_list_record %}
         <tr>
-            <td>{{s.student_id}}</td>
+            <td>{{s.payment_id}}</td>
             <td>{{s.student_name}}</td>
             <td>{{s.father_name}}</td>
             <td>{{s.department}}</td>
@@ -43,12 +42,13 @@
             <td>{{s.class_code}}</td>
             <td>{{s.admission_type}}</td>
             <td>{{s.semester}}</td>
-            <td>{{s.fee}}</td>
-            <td>{{s.paid_fee}}</td>
+            <td>{{s.fee_type}}</td>
+            <td>{{s.paid}}</td>
             <td>{{s.discount}}</td>
             <td>{{s.date}}</td>
             <td>
-                <button onclick="update('{{ s.payment_id }}')">Update Fee</button>
+                <button onclick="updateFee('{{ s.payment_id }}')">Update</button>
+                <button onclick="deleteFee('{{ s.payment_id }}')">Delete</button>
             </td>
         </tr>
         {% endfor %}
@@ -70,7 +70,7 @@
                     <input type="hidden" name="semester_id" id="semester_id" value="{{ form_info.semester_id }}">
                     <input type="hidden" name="shift_id" id="shift_id" value="{{ form_info.shift_id }}">
 
-                    <input type="number" value="{{ form_info.fee }}" readonly>
+                    <input type="number" name="course_fee" value="{{ form_info.fee }}" readonly>
 
                     <label><b>Fee Entries</b></label>
                     <div id="fee-entries-container">

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Teacher Form</title>
+  <link href="{{ url_for('static', path='/css/student_fee/update_student_fee.css') }}" rel="stylesheet">
+
+</head>
+<body>
+  <div class="form-container">
+
+    <div id="header"> 
+    <h1>Update Student Fee Form</h1>
+    </div>
+
+    <form id="teacherForm", action="/student_fee/update_student_fee" method="POST">
+      <section>
+        <h3>Personal Information</h3>
+
+        <div id="zero-row">
+            <div class="form-row">
+            <label>Payment ID:</label>
+            <input type="number" name="payment_id" value="{{ payment_old.payment_id }}" required>
+            </div>
+        </div>
+        
+        <!-- first row -->
+        <div id="first-row">
+            <div class="form-row">
+            <label>Fee:</label>
+            <input type="number" name="fee" value="{{ payment_old.paid }}" required>
+            </div>
+
+            <div class="form-row">
+            <label>Discount:</label>
+            <input type="number" name="discount" value="{{ payment_old.discount }}">
+            </div>
+        </div>
+      </section>
+
+
+        <input type="hidden" name="student_id" id="student_id" value="{{ payment_old.student_id }}">
+        <input type="hidden" name="department_id" id="department_id" value="{{ payment_old.department_id }}">
+        <input type="hidden" name="course_id" id="course_id" value="{{ payment_old.course_id }}">
+        <input type="hidden" name="class_code_id" id="class_code_id" value="{{ payment_old.class_code_id }}">
+        <input type="hidden" name="admission_type_id" id="admission_type_id" value="{{ payment_old.admission_type_id }}">
+        <input type="hidden" name="semester_id" id="semester_id" value="{{ payment_old.semester_id }}">
+        <input type="hidden" name="shift_id" id="shift_id" value="{{ payment_old.shift_id }}">
+        <input type="hidden" name="payment_type_id" id="payment_type_id" value="{{ payment_old.fee_type_id }}">
+
+
+      <div class="submit-container">
+        <button type="submit">Submit Form</button>
+        <button type="button" onclick="window.location.href='/student_fee/list_fee'">Close</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- <script src="js/teacher/xyz.js"></script> -->
+</body>
+</html>

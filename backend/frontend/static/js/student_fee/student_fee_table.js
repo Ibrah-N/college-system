@@ -22,3 +22,6 @@ async function payFee(
 
     window.location.href = `/student_fee/pay_fee?${params.toString()}`;
 }
+
+
+

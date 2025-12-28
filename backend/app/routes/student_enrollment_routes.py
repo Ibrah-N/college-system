@@ -224,7 +224,6 @@ async def search_enrollment(request: Request, db: Session = Depends(get_db)):
             {"request": request, "enrollment": enrollment_data}
         )
 
-    print(form_data.get("name_search"))
     if form_data.get("name_search"):
         query = query.filter(Student.name.ilike(f"%{form_data.get('name_search')}%"))
     if form_data.get("class_code_id"):

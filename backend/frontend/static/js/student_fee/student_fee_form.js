@@ -48,3 +48,36 @@ function removeEntry(button) {
         button.parentElement.remove();
     }
 }
+
+
+async function closeForm() {
+    window.location.href = `/student_fee/list_fee`;
+}
+
+async function updateFee(payment_id) {
+    window.location.href = `/student_fee/update_stage_1/${payment_id}`;
+}
+
+
+async function deleteFee(
+  payment_id,
+) {
+  const confirmed = confirm("Are you sure you want to delete this fee record?");
+  if (!confirmed) return;
+
+  const params = new URLSearchParams({
+    payment_id
+  });
+
+  const response = await fetch(`/student_fee/delete_fee?${params.toString()}`, {
+    method: "DELETE",
+  });
+
+  if (response.ok) {
+    alert("Fee Record deleted successfully");
+    window.location.reload();
+  } else {
+    const err = await response.json();
+    alert(`Error: ${err.message || "Failed to delete Fee record"}`);
+  }
+}

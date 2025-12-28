@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* PAGE SETUP */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: "Times New Roman";
+            margin: 0;
+            padding: 0;
+        }
+
+        /* CENTERING CONTAINER */
+        .page {
+            width: 210mm;
+            height: 297mm;
+            display: flex;
+            /* align-items: center; */
+            margin: auto;
+            position: relative;
+            justify-content: center;
+        }
+
+        /* RECEIPT SIZE (A6) */
+        .receipt {
+            width: 100mm;
+            height: 140mm;
+            padding: 7mm;
+            margin-top: 10px;
+            position: relative;
+            box-sizing: border-box;
+            border: 1px solid #000;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .header p {
+            margin: 3px 0 0 0;
+            font-size: 12px;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .info {
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        .info p {
+            margin: 4px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .total {
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .total p {
+            margin: 4px 0;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 10mm;
+            left: 0;
+            width: 100%;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .row-s {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .left {
+            text-align: left;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="page">
+    <div class="receipt">
+
+        <div class="header">
+            <h2>Instite of Medical And Information Technology</h2>
+            <p>Kohi Chowk Bara, Distt Khyber</p>
+        </div>
+
+        <div class="title">
+            Fee Payment Recipt
+        </div>
+
+        <div class="row-s">
+            <span class="left">Reg: 234nsdfa23</span>
+            <span class="right">Date: 22 - Dec - 2025</span>
+        </div>
+
+        <div class="info">
+            <p><strong>Student ID:</strong> {{ student_id }}</p>
+            <p><strong>Student Name:</strong> {{ student_name }}</p>
+            <p><strong>Course:</strong> {{ course }}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fee Type</th>
+                    <th>Paid</th>
+                    <th>Discount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in fee_rows %}
+                <tr>
+                    <td>{{ row.fee_type }}</td>
+                    <td>{{ row.paid }}</td>
+                    <td>{{ row.discount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total">
+            <p><strong>Total Paid:</strong> {{ total_paid }}</p>
+            <p><strong>Total Discount:</strong> {{ total_discount }}</p>
+            <p><strong>Remaining Amount:</strong> {{ remaining_amount }}</p>
+        </div>
+
+        <div class="footer">
+            This is a computer-generated receipt and does not require a signature.
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

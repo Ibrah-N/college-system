@@ -13,14 +13,13 @@
     </div>
 
     <div class="search_and_buttons">
-        <form action="/student/search_student" method="get">
+        <form action="/student_fee/search_student_fee" method="POST">
             <input type="number" name="id_search" placeholder="Search By ID">
             <input type="text" name="name_search" placeholder="Search By Name">
             
             <div id="srch-button">
                 <button type="submit">Search</button>
-                <button type="button" onclick="window.location.href='/student_fee/all'">Reset</button>
-                <a href="/student_fee/student_fee_form">Add</a>
+                <button type="button" onclick="window.location.href='/student_fee/list_fee'">Reset</button>
                 <a href="/student">Close</a>
             </div>
         </form>

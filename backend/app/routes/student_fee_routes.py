@@ -1,19 +1,20 @@
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import (HTMLResponse, JSONResponse,
+from fastapi.responses import (HTMLResponse, JSONResponse, Response,
                                 RedirectResponse, StreamingResponse)
 
 
 from sqlalchemy.orm import Session 
 from app.config.db_connect import SessionLocal
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from app.models.admission_orm import Student
 from app.models.student_enrollment_orm import StudentEnrollment
 from app.models.student_fee_orm import StudentFee
 from app.models.helper_orm import (Shift, ClassCode, AdmissionType,
                                     Semester, Department, Course,
-                                    Session, Month, Day)
+                                    PaymentType)
+from weasyprint import HTML
 
 
 student_fee_router = APIRouter(prefix="/student_fee", tags=["Fee"])
@@ -40,19 +41,32 @@ def fee_form(student_id: int, class_code_id: int,
 
 
     # === Extract Data From Form ===
-    form_data = (db.query(
-        Student, StudentEnrollment, ClassCode,
-        Department, Course, AdmissionType, Semester, Shift
-        )
-        .join(StudentEnrollment, Student.student_id == StudentEnrollment.student_id)
-        .join(ClassCode, StudentEnrollment.class_code_id == ClassCode.class_code_id)
-        .join(Department, StudentEnrollment.department_id == Department.department_id)
-        .join(Course, StudentEnrollment.course_id == Course.course_id)
-        .join(AdmissionType, StudentEnrollment.admission_type_id == AdmissionType.admission_type_id)
-        .join(Semester, StudentEnrollment.semester_id == Semester.semester_id)
-        .join(Shift, StudentEnrollment.shift_id == Shift.shift_id)
-        .first()
-        )
+    form_data = db.query(
+    Student, StudentEnrollment, ClassCode,
+    Department, Course, AdmissionType, Semester, Shift
+    ).join(
+        StudentEnrollment, Student.student_id == StudentEnrollment.student_id
+    ).join(
+        ClassCode, StudentEnrollment.class_code_id == ClassCode.class_code_id
+    ).join(
+        Department, StudentEnrollment.department_id == Department.department_id
+    ).join(
+        Course, StudentEnrollment.course_id == Course.course_id
+    ).join(
+        AdmissionType, StudentEnrollment.admission_type_id == AdmissionType.admission_type_id
+    ).join(
+        Semester, StudentEnrollment.semester_id == Semester.semester_id
+    ).join(
+        Shift, StudentEnrollment.shift_id == Shift.shift_id
+    ).filter(
+        StudentEnrollment.student_id == student_id,
+        StudentEnrollment.class_code_id == class_code_id,
+        StudentEnrollment.department_id == department_id,
+        StudentEnrollment.course_id == course_id,
+        StudentEnrollment.admission_type_id == admission_type_id,
+        StudentEnrollment.semester_id == semester_id,
+        StudentEnrollment.shift_id == shift_id
+    ).first()
     form_info = {
         "student_id": form_data.StudentEnrollment.student_id,
         "student_name": form_data.Student.name,
@@ -71,23 +85,23 @@ def fee_form(student_id: int, class_code_id: int,
         "semester_id": form_data.Semester.semester_id,
         "fee": form_data.StudentEnrollment.fee
     }
-
-    query = (
-    db.query(
-        Student, StudentFee, StudentEnrollment, 
-        Department, Course, Shift, ClassCode,
-        AdmissionType, Semester
+    query_data = (
+        db.query(
+            Student, StudentFee, 
+            Department, Course, Shift, ClassCode,
+            AdmissionType, Semester, PaymentType
+        )
+        .select_from(StudentFee)
+        .join(Student, Student.student_id == StudentFee.student_id)
+        .join(Department, Department.department_id == StudentFee.department_id)
+        .join(Course, Course.course_id == StudentFee.course_id)
+        .join(Shift, Shift.shift_id == StudentFee.shift_id)
+        .join(ClassCode, ClassCode.class_code_id == StudentFee.class_code_id)
+        .join(AdmissionType, AdmissionType.admission_type_id == StudentFee.admission_type_id)
+        .join(Semester, Semester.semester_id == StudentFee.semester_id)
+        .join(PaymentType, PaymentType.payment_type_id == StudentFee.fee_type_id)
     )
-    .join(StudentFee, StudentFee.student_id == StudentEnrollment.student_id)
-    .join(Student, StudentFee.student_id == Student.student_id)
-    .join(Department, StudentFee.department_id == Department.department_id)
-    .join(Course, StudentFee.course_id == Course.course_id)
-    .join(Shift, StudentFee.shift_id == Shift.shift_id)
-    .join(ClassCode, StudentFee.class_code_id == ClassCode.class_code_id)
-    .join(AdmissionType, StudentFee.admission_type_id == AdmissionType.admission_type_id)
-    .join(Semester, StudentFee.semester_id == Semester.semester_id)
-    )
-    fee_list = query.filter(
+    fee_list = query_data.filter(
         StudentFee.student_id == student_id,
         StudentFee.class_code_id == class_code_id,
         StudentFee.department_id == department_id,
@@ -101,9 +115,9 @@ def fee_form(student_id: int, class_code_id: int,
     # -- if paid fee record found --
     fee_list_record = []
     if fee_list:
-        for student_fee, student, enrollment, department, course, shift, classcode, admissiontype, semester in fee_list:
+        for student, student_fee, department, course, shift, classcode, admissiontype, semester, payment_type in fee_list:
             fee_list_record.append({
-                "student_id": enrollment.student_id,
+                "payment_id": student_fee.payment_id,
                 "student_name": student.name,
                 "father_name": student.father_name,
                 "department": department.department_name,
@@ -118,10 +132,12 @@ def fee_form(student_id: int, class_code_id: int,
                 "admission_type_id": admissiontype.admission_type_id,
                 "semester": semester.semester,
                 "semester_id": semester.semester_id,
+                "fee_type": payment_type.payment_type_name,
                 "paid": student_fee.paid,
                 "discount": student_fee.discount,
                 "date": student_fee.date
             })
+
 
     # -- if no record found --
     return templates.TemplateResponse(
@@ -137,46 +153,67 @@ def fee_form(student_id: int, class_code_id: int,
 
 
 # ============================================================
-#       R E A D  -  S T U D E N T S - E N R O L M E N T.     #
+#       R E A D  -  S T U D E N T S - F E E                  #
 # ============================================================
 @student_fee_router.get("/list_fee")
 def list_fee(request: Request, db: Session = Depends(get_db)):
 
-    # -- extract record usign joins --
+    # -- extract record using joins --
     result = (
     db.query(
-        StudentFee.payment_id,
-        Student.student_id,
+        StudentEnrollment.student_id,
+
         Student.name.label("student_name"),
         Student.father_name,
+
         Department.department_id,
         Department.department_name,
+
         Course.course_id,
         Course.name.label("course_name"),
+
         Shift.shift_id,
         Shift.shift_name,
+
         ClassCode.class_code_id,
         ClassCode.class_code_name,
+
         AdmissionType.admission_type_id,
         AdmissionType.admission_type,
+
         Semester.semester_id,
         Semester.semester,
+
         StudentEnrollment.fee,
+
         func.coalesce(func.sum(StudentFee.paid), 0).label("total_paid"),
-        func.coalesce(func.sum(StudentFee.discount), 0).label("total_discount")
+        func.coalesce(func.sum(StudentFee.discount), 0).label("total_discount"),
     )
-    .select_from(StudentEnrollment)
-    .outerjoin(StudentFee, StudentFee.student_id == StudentEnrollment.student_id)
-    .outerjoin(Student, StudentEnrollment.student_id == Student.student_id)  # ✅ JOIN STUDENT
-    .outerjoin(Department, StudentEnrollment.department_id == Department.department_id)
-    .outerjoin(Course, StudentEnrollment.course_id == Course.course_id)
-    .outerjoin(Shift, StudentEnrollment.shift_id == Shift.shift_id)
-    .outerjoin(ClassCode, StudentEnrollment.class_code_id == ClassCode.class_code_id)
-    .outerjoin(AdmissionType, StudentEnrollment.admission_type_id == AdmissionType.admission_type_id)
-    .outerjoin(Semester, StudentEnrollment.semester_id == Semester.semester_id)
+    .select_from(StudentEnrollment)   # BASE TABLE
+
+    .join(Student, Student.student_id == StudentEnrollment.student_id)
+    .join(Department, Department.department_id == StudentEnrollment.department_id)
+    .join(Course, Course.course_id == StudentEnrollment.course_id)
+    .join(Shift, Shift.shift_id == StudentEnrollment.shift_id)
+    .join(ClassCode, ClassCode.class_code_id == StudentEnrollment.class_code_id)
+    .join(AdmissionType, AdmissionType.admission_type_id == StudentEnrollment.admission_type_id)
+    .join(Semester, Semester.semester_id == StudentEnrollment.semester_id)
+
+    #  CORRECT LEFT JOIN (IMPORTANT)
+    .outerjoin(
+        StudentFee,
+        and_(
+            StudentFee.student_id == StudentEnrollment.student_id,
+            StudentFee.department_id == StudentEnrollment.department_id,
+            StudentFee.course_id == StudentEnrollment.course_id,
+            StudentFee.class_code_id == StudentEnrollment.class_code_id,
+            StudentFee.admission_type_id == StudentEnrollment.admission_type_id,
+            StudentFee.semester_id == StudentEnrollment.semester_id,
+            StudentFee.shift_id == StudentEnrollment.shift_id,
+        )
+    )
     .group_by(
-        StudentFee.payment_id,
-        Student.student_id,
+        StudentEnrollment.student_id,
         Student.name,
         Student.father_name,
         Department.department_id,
@@ -191,21 +228,19 @@ def list_fee(request: Request, db: Session = Depends(get_db)):
         AdmissionType.admission_type,
         Semester.semester_id,
         Semester.semester,
-        StudentEnrollment.fee
+        StudentEnrollment.fee,
     )
     .all()
     )
 
-
     # -- jsonify record for fastapi responses --
     student_fee_records = []
-    for payment_id, student_id, student_name, father_name, \
+    for student_id, student_name, father_name, \
         department_id, department_name, course_id, course_name, \
         shift_id, shift_name, class_code_id, class_code_name, admission_type_id, admission_type, semester_id, semester_name, \
         fee, total_paid, total_discount in result:
 
         student_fee_records.append({
-            "payment_id": payment_id,
             "student_id": student_id,
             "student_name": student_name,
             "father_name": father_name,
@@ -257,36 +292,451 @@ async def add_student_fee(
     admission_type_id = int(form_data.get("admission_type_id"))
     semester_id = int(form_data.get("semester_id"))
     shift_id = int(form_data.get("shift_id"))
+    course_fee = float(form_data.get("course_fee"))
 
     fee_types = form_data.getlist("fee_type[]")
     paid_fees = form_data.getlist("paid_fee[]")
     discounts = form_data.getlist("discount[]")
 
-    print("Fee Types:", fee_types)
-    print("Paid Fees:", paid_fees)
-    print("Discounts:", discounts)
+    running_fee = 0.0 # summing the fee for actaul fee 
+    running_discount = 0 # summing the discount for actual discount
+    for fee_type, paid_fee, discount in zip(fee_types, paid_fees, discounts):
+        
+        if int(fee_type) == 1: # Tuition Fee
+            running_fee  += float(paid_fee)
+            if discount != "":
+                running_discount = running_discount + float(discount)
+        
+        # check negative fee
+        if float(paid_fee) < 0:
+            return JSONResponse(
+                content = {
+                    "message": f"Fee can't be negative; Entered Value {paid_fee}"
+                }
+            )
+
+        # check negative discount
+        if not discount == "":
+            if float(discount) < 0:
+                return JSONResponse(
+                    content = {
+                        "message": f"Discount can't be negative; Entered Value {discount}"
+                    }
+                )
+
+    # check wheather fee entered exceeds the actuall fee 
+    # for that particluer student enrollment of course
+    # -- simple check --
+    if (running_discount + running_fee) > course_fee:
+        return JSONResponse(
+            content = {
+                "message": f"Total Fee and Discount Exceeds the Actual Fee of {course_fee}"
+            }
+        )
+    # -- complex check --
+    # - check whether this guy eneted anything before -
+    total_paid_discount = (
+        db.query(
+            func.coalesce(func.sum(StudentFee.paid), 0).label("total_paid"),
+            func.coalesce(func.sum(StudentFee.discount), 0).label("total_discount")
+        )
+        .filter(
+            StudentFee.student_id == student_id,
+            StudentFee.department_id == department_id,
+            StudentFee.course_id == course_id,
+            StudentFee.class_code_id == class_code_id,
+            StudentFee.admission_type_id == admission_type_id,
+            StudentFee.semester_id == semester_id,
+            StudentFee.shift_id == shift_id, 
+            StudentFee.fee_type_id == 1 # Tuition Fee Only
+        )
+        .all()
+    )
+
+    if (total_paid_discount[0].total_paid + running_discount + 
+        running_fee + total_paid_discount[0].total_discount) > course_fee:
+        return JSONResponse(
+            content = {
+                "message": f"Total Fee and Discount Exceeds the Actual Fee of {course_fee}. The Previously Paid Amount of Fee: {total_paid_discount[0].total_paid}; New Entered Amount: {running_fee + running_discount} which is greater then the actual fee: {total_paid_discount[0].total_paid + running_discount + running_fee + total_paid_discount[0].total_discount} > {course_fee}"
+            }
+        )
 
 
-    # for fee_type, paid_fee, discount in zip(fee_types, paid_fees, discounts):
-    #     student_fee = StudentFee(
-    #         student_id=student_id,
-    #         department_id=department_id,
-    #         course_id=course_id,
-    #         class_code_id=class_code_id,
-    #         admission_type_id=admission_type_id,
-    #         semester_id=semester_id,
-    #         shift_id=shift_id,
-    #         fee_type=fee_type,
-    #         paid=int(paid_fee),
-    #         discount=int(discount)
+    for fee_type_id, paid_fee, discount in zip(fee_types, paid_fees, discounts):
+        student_fee = StudentFee(
+            student_id=student_id,
+            department_id=department_id,
+            course_id=course_id,
+            class_code_id=class_code_id,
+            admission_type_id=admission_type_id,
+            semester_id=semester_id,
+            shift_id=shift_id,
+            fee_type_id=fee_type_id,
+            paid=float(paid_fee),
+            discount=float(discount) if discount != "" else 0.0
+        )
+        db.add(student_fee)
+    db.commit()
+
+    link = f"/student_fee/pay_fee?payment_id=&student_id={student_id}&department_id={department_id}&course_id={course_id}&class_code_id={class_code_id}&semester_id={semester_id}&admission_type_id={admission_type_id}&shift_id={shift_id}"
+
+    return RedirectResponse(
+        url = link,
+        status_code=303
+    )
+    # return JSONResponse(
+    #     content = {
+    #         "message": "Student fee added successfully."
+    #     }
+    # )
+
+
+
+# ===============================================
+#      U P D A T E -  S T U D E N T - F E E     #
+# ===============================================
+@student_fee_router.get("/update_stage_1/{payment_id}", response_class=HTMLResponse)
+async def update_stage_1_fee(request: Request, payment_id: int, db: Session = Depends(get_db)):
+    payment_old = db.query(StudentFee).filter(StudentFee.payment_id == payment_id).first()
+
+    if not payment_old:
+        return JSONResponse(content={"message": f"Student Payment with ID {payment_id} not found !!!"}, status_code=404)
+
+    # -- load the data to update form --
+    return templates.TemplateResponse(
+        "pages/student_fee/update_student_fee.html",
+        {
+            "request": request, 
+            "payment_old": payment_old
+        }
+    )
+
+
+@student_fee_router.post("/update_student_fee")
+async def update_student_fee(request: Request, db: Session = Depends(get_db)):
+    
+    # -- recieve form data --
+    form_data = await request.form()
+    payment_id = int(form_data.get("payment_id"))
+    paid_fee = float(form_data.get("fee")) if form_data.get("fee") != '' else 0.0
+    discount = float(form_data.get("discount")) if form_data.get("discount") != '' else 0.0
+    print("from_data", form_data)
+
+    # # # -- find existing student --
+    payment = db.query(StudentFee).filter(StudentFee.payment_id == payment_id).first()
+    if not payment:
+        return JSONResponse(content={"message": "Payment not found"}, status_code=404)
+
+
+    # check nothing when entered
+    if form_data.get("fee") == '':
+        return JSONResponse(
+            content = {
+                "message": f"Fee can't be zero; Entered Value {paid_fee}"
+            }
+        )
+
+    # check negative fee
+    if paid_fee < 0:
+        return JSONResponse(
+            content = {
+                "message": f"Fee can't be negative; Entered Value {paid_fee}"
+            }
+        )
+
+    # # check negative discount
+    if float(discount) < 0:
+        return JSONResponse(
+            content = {
+                "message": f"Discount can't be negative; Entered Value {discount}"
+            }
+        )
+    
+    # check wheather fee entered exceeds the actuall fee 
+    # for that particluer student enrollment of course
+    # -- simple check --
+    # if (paid_fee + discount) > course_fee:
+    #     return JSONResponse(
+    #         content = {
+    #             "message": f"Total Fee and Discount Exceeds the Actual Fee of {course_fee}"
+    #         }
     #     )
-    #     db.add(student_fee)
-    # db.commit()
+    # # -- complex check --
+    # # - check whether this guy eneted anything before -
+    # total_paid_discount = (
+    #     db.query(
+    #         func.coalesce(func.sum(StudentFee.paid), 0).label("total_paid"),
+    #         func.coalesce(func.sum(StudentFee.discount), 0).label("total_discount")
+    #     )
+    #     .filter(
+    #         StudentFee.student_id == student_id,
+    #         StudentFee.department_id == department_id,
+    #         StudentFee.course_id == course_id,
+    #         StudentFee.class_code_id == class_code_id,
+    #         StudentFee.admission_type_id == admission_type_id,
+    #         StudentFee.semester_id == semester_id,
+    #         StudentFee.shift_id == shift_id, 
+    #         StudentFee.fee_type_id == 1 # Tuition Fee Only
+    #     )
+    #     .all()
+    # )
+    # print("running fee", running_fee)
+    # print("total", total_paid_discount[0].total_paid + running_discount + 
+    #     running_fee + total_paid_discount[0].total_discount)
+
+    # if (total_paid_discount[0].total_paid + running_discount + 
+    #     running_fee + total_paid_discount[0].total_discount) > course_fee:
+    #     return JSONResponse(
+    #         content = {
+    #             "message": f"Total Fee and Discount Exceeds the Actual Fee of {course_fee}. The Previously Paid Amount of Fee: {total_paid_discount[0].total_paid}; New Entered Amount: {running_fee + running_discount} which is greater then the actual fee: {total_paid_discount[0].total_paid + running_discount + running_fee + total_paid_discount[0].total_discount} > {course_fee}"
+    #         }
+    #     )
+
+    # -- update student --
+    payment.paid = float(form_data.get("fee"))
+    payment.discount = float(form_data.get("discount"))
+
+    db.commit()
+
+    link = f'/student_fee/pay_fee?payment_id=&student_id={form_data.get("student_id")}&department_id={form_data.get("department_id")}&course_id={form_data.get("course_id")}&class_code_id={form_data.get("class_code_id")}&semester_id={form_data.get("semester_id")}&admission_type_id={form_data.get("admission_type_id")}&shift_id={form_data.get("shift_id")}'
+    return RedirectResponse(
+        url = link,
+        status_code=303
+    )
 
 
 
-    return JSONResponse(
-        content = {
-            "message": "Student fee added successfully."
+
+# ============================================================
+#          D E L E T E  -  S T U D E N T - F E E             #
+# ============================================================
+@student_fee_router.delete("/delete_fee/")
+async def delete_student_fee(payment_id: int, db: Session = Depends(get_db)):
+    payment = db.query(StudentFee).filter(StudentFee.payment_id == payment_id).first()
+
+    print()
+    if not payment:
+        return JSONResponse(content={"message": "Payment not found"}, status_code=404)
+
+    db.delete(payment)
+    db.commit()
+    return RedirectResponse(url="/student_fee/list_fee", status_code=303)
+
+
+
+# ============================================================
+#     S E A R C H -  S T U D E N T - F E E - R E C O R D     #
+# ============================================================
+@student_fee_router.post("/search_student_fee")
+async def search_student_fee(request: Request, db: Session = Depends(get_db)):
+    form_data = await request.form()
+    student_fee_data = []
+    query_ = (
+    db.query(
+        StudentEnrollment.student_id,
+
+        Student.name.label("student_name"),
+        Student.father_name,
+
+        Department.department_id,
+        Department.department_name,
+
+        Course.course_id,
+        Course.name.label("course_name"),
+
+        Shift.shift_id,
+        Shift.shift_name,
+
+        ClassCode.class_code_id,
+        ClassCode.class_code_name,
+
+        AdmissionType.admission_type_id,
+        AdmissionType.admission_type,
+
+        Semester.semester_id,
+        Semester.semester,
+
+        StudentEnrollment.fee,
+
+        func.coalesce(func.sum(StudentFee.paid), 0).label("total_paid"),
+        func.coalesce(func.sum(StudentFee.discount), 0).label("total_discount"),
+    )
+    .select_from(StudentEnrollment)   # BASE TABLE
+    .join(Student, Student.student_id == StudentEnrollment.student_id)
+    .join(Department, Department.department_id == StudentEnrollment.department_id)
+    .join(Course, Course.course_id == StudentEnrollment.course_id)
+    .join(Shift, Shift.shift_id == StudentEnrollment.shift_id)
+    .join(ClassCode, ClassCode.class_code_id == StudentEnrollment.class_code_id)
+    .join(AdmissionType, AdmissionType.admission_type_id == StudentEnrollment.admission_type_id)
+    .join(Semester, Semester.semester_id == StudentEnrollment.semester_id)
+
+    #  CORRECT LEFT JOIN (IMPORTANT)
+    .outerjoin(
+        StudentFee,
+        and_(
+            StudentFee.student_id == StudentEnrollment.student_id,
+            StudentFee.department_id == StudentEnrollment.department_id,
+            StudentFee.course_id == StudentEnrollment.course_id,
+            StudentFee.class_code_id == StudentEnrollment.class_code_id,
+            StudentFee.admission_type_id == StudentEnrollment.admission_type_id,
+            StudentFee.semester_id == StudentEnrollment.semester_id,
+            StudentFee.shift_id == StudentEnrollment.shift_id,
+        )
+    )
+    .group_by(
+        StudentEnrollment.student_id,
+        Student.name,
+        Student.father_name,
+        Department.department_id,
+        Department.department_name,
+        Course.course_id,
+        Course.name,
+        Shift.shift_id,
+        Shift.shift_name,
+        ClassCode.class_code_id,
+        ClassCode.class_code_name,
+        AdmissionType.admission_type_id,
+        AdmissionType.admission_type,
+        Semester.semester_id,
+        Semester.semester,
+        StudentEnrollment.fee,
+    )
+    )
+    # -- search filters --
+    # if id-search enabled it will only search
+    # on the basis of id else it will look for 
+    # all other filter combinaly
+    if form_data.get("id_search"):
+        result = query_.filter(
+            StudentEnrollment.student_id == int(form_data.get("id_search")),
+        ).all()
+
+        # -- jsonify record for fastapi responses --
+        student_fee_records = []
+        for student_id, student_name, father_name, \
+            department_id, department_name, course_id, course_name, \
+            shift_id, shift_name, class_code_id, class_code_name, admission_type_id, admission_type, semester_id, semester_name, \
+            fee, total_paid, total_discount in result:
+
+            student_fee_records.append({
+                "student_id": student_id,
+                "student_name": student_name,
+                "father_name": father_name,
+                "department_id": department_id,
+                "department": department_name,
+                "course_id": course_id,
+                "course": course_name,
+                "shift_id": shift_id,
+                "shift": shift_name,
+                "class_code_id": class_code_id,
+                "class_code": class_code_name,
+                "admission_type_id": admission_type_id,
+                "admission_type": admission_type,
+                "semester_id": semester_id,
+                "fee": fee,
+                "semester": semester_name,
+                "paid_fee": total_paid,
+                "discount": total_discount
+            })
+
+
+        # -- return response -- 
+        return templates.TemplateResponse(
+            "pages/student_fee/student_fee_table.html", 
+            {
+                "request": request,
+                "studend_fee_records": student_fee_records
+            }
+        )
+
+
+    # -- ofther fileters --
+    if form_data.get("name_search"):
+        query = query_.filter(Student.name.ilike(f"%{form_data.get('name_search')}%"))
+    # if form_data.get("class_code_id"):
+    #     query = query.filter(StudentEnrollment.class_code_id==int(form_data.get("class_code_id")))
+    # if form_data.get("department_id"):
+    #     query = query.filter(StudentEnrollment.department_id==int(form_data.get("department_id")))
+    # if form_data.get(("course_id")):
+    #     query = query.filter(StudentEnrollment.course_id==int(form_data.get("course_id")))
+    # if form_data.get("admission_type_id"):
+    #     query = query.filter(StudentEnrollment.admission_type_id==int(form_data.get("admission_type_id")))
+    # if form_data.get("semester_id"):
+    #     query = query.filter(StudentEnrollment.semester_id==int(form_data.get("semester_id")))
+    # if form_data.get("shift_id"):
+    #     query = query.filter(StudentEnrollment.shift_id==int(form_data.get("shift_id")))
+    result = query.all()
+
+    
+    # -- jsonify record for fastapi responses --
+    student_fee_records = []
+    for student_id, student_name, father_name, \
+        department_id, department_name, course_id, course_name, \
+        shift_id, shift_name, class_code_id, class_code_name, admission_type_id, admission_type, semester_id, semester_name, \
+        fee, total_paid, total_discount in result:
+
+        student_fee_records.append({
+            "student_id": student_id,
+            "student_name": student_name,
+            "father_name": father_name,
+            "department_id": department_id,
+            "department": department_name,
+            "course_id": course_id,
+            "course": course_name,
+            "shift_id": shift_id,
+            "shift": shift_name,
+            "class_code_id": class_code_id,
+            "class_code": class_code_name,
+            "admission_type_id": admission_type_id,
+            "admission_type": admission_type,
+            "semester_id": semester_id,
+            "fee": fee,
+            "semester": semester_name,
+            "paid_fee": total_paid,
+            "discount": total_discount
+        })
+
+
+    # -- return response -- 
+    return templates.TemplateResponse(
+        "pages/student_fee/student_fee_table.html", 
+        {
+            "request": request,
+            "studend_fee_records": student_fee_records
+        }
+    )
+
+
+
+@student_fee_router.get("/recipt_pdf")
+def generate_fee_certificate(
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+
+
+    # Example data (replace with DB query)
+    context = {
+        "student_id": student_id,
+        "student_name": "Ali Khan",
+        "course": "BS Computer Science",
+        "fee_rows": [
+            {"fee_type": "Tuition Fee", "paid": 3000, "discount": 200},
+            {"fee_type": "Lab Fee", "paid": 1000, "discount": 0},
+            {"fee_type": "Library Fee", "paid": 500, "discount": 50},
+        ],
+        "total_paid": 4500,
+        "total_discount": 250,
+        "remaining_amount": 5250,
+    }
+
+    html = templates.get_template("pages/student_fee/fee_recipt.html").render(context)
+    pdf = HTML(string=html).write_pdf()
+
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "inline; filename=fee_certificate.pdf"
         }
     )
