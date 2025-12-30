@@ -300,10 +300,10 @@ async def add_student_fee(
     student_name = form_data.get("student_name")
     father_name = form_data.get("father_name")
 
-
     fee_types = form_data.getlist("fee_type[]")
     paid_fees = form_data.getlist("paid_fee[]")
     discounts = form_data.getlist("discount[]")
+    fee_type_names = [db.query(PaymentType.payment_type_name).filter(PaymentType.payment_type_id == ft_id).scalar() for ft_id in fee_types]
 
 
     running_fee = 0.0 # summing the tution fee 
@@ -371,21 +371,22 @@ async def add_student_fee(
         )
 
     
-    for fee_type_id, paid_fee, discount in zip(fee_types, paid_fees, discounts):
-        student_fee = StudentFee(
-            student_id=student_id,
-            department_id=department_id,
-            course_id=course_id,
-            class_code_id=class_code_id,
-            admission_type_id=admission_type_id,
-            semester_id=semester_id,
-            shift_id=shift_id,
-            fee_type_id=fee_type_id,
-            paid=float(paid_fee),
-            discount=float(discount) if discount != "" else 0.0
-        )
-        db.add(student_fee)
-    db.commit()
+    for fee_type_n, fee_type_id, paid_fee, discount in zip(fee_type_names, fee_types, paid_fees, discounts):
+        print(fee_type_n, fee_type_id, paid_fee, discount)
+    #     student_fee = StudentFee(
+    #         student_id=student_id,
+    #         department_id=department_id,
+    #         course_id=course_id,
+    #         class_code_id=class_code_id,
+    #         admission_type_id=admission_type_id,
+    #         semester_id=semester_id,
+    #         shift_id=shift_id,
+    #         fee_type_id=fee_type_id,
+    #         paid=float(paid_fee),
+    #         discount=float(discount) if discount != "" else 0.0
+    #     )
+    #     db.add(student_fee)
+    # db.commit()
 
     total_paid_fee = (total_paid_discount[0].total_paid + running_discount + 
                         running_fee + total_paid_discount[0].total_discount)
@@ -413,10 +414,10 @@ async def add_student_fee(
         "student_name": student_name,
         "father_name": father_name,
         "course": course_name,
-        "current_date": datetime.now().strftime("%d %b %Y"),
+        "current_date": datetime.now().strftime("%d %b %Y %I:%M %p"),
         "fee_rows": [
             {"fee_type": ft, "paid": pf, "discount": d or 0}
-            for ft, pf, d in zip(fee_types, paid_fees, discounts)
+            for ft, pf, d in zip(fee_type_names, paid_fees, discounts)
         ],
         "prev_paid_fee": prev_paid_fee,
         "prev_discount_on_fee": prev_discount_on_fee,
@@ -597,7 +598,7 @@ async def search_student_fee(request: Request, db: Session = Depends(get_db)):
             "/student_fee/list_fee", 
             status_code=303
         )
-        
+
 
     student_fee_data = []
     query_ = (

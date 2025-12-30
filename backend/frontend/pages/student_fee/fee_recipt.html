@@ -29,9 +29,10 @@
         .receipt {
             width: 100mm;
             height: 140mm;
-            padding: 7mm;
-            margin-top: 10px;
+            padding: 3mm 7mm;
+            margin-top: 5px;
             position: relative;
+            overflow: hidden;  
             box-sizing: border-box;
             border: 1px solid #000;
         }
@@ -39,7 +40,7 @@
         .header {
             text-align: center;
             border-bottom: 2px solid #000;
-            padding-bottom: 8px;
+            padding-bottom: 4px;
         }
 
         .header h2 {
@@ -55,12 +56,12 @@
         .title {
             font-size: 16px;
             font-weight: bold;
-            margin-top: 5px;
+            margin-top: 2px;
             text-align: center;
         }
 
         .info {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 12px;
         }
 
@@ -95,18 +96,28 @@
 
         .footer {
             position: absolute;
-            bottom: 10mm;
-            left: 0;
-            width: 100%;
+            bottom: 5mm;
             font-size: 10px;
-            text-align: center;
+        }
+
+        .footer p {
+            margin: 2px 0;
+            line-height: 1.2;
+            margin-top: 10px;
+        }
+
+        .footer div {
+            margin-top: 2px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .row-s {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            margin-top: 10px;
+            font-size: 10px;
+            margin-top: 7px;
         }
 
         .left {
@@ -120,12 +131,40 @@
             margin-right: 55px;
         }
 
+
+        .watermark {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 28px;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.08);
+
+            transform: rotate(-30deg);
+            pointer-events: none;
+        }
+
+        .watermark::before {
+            content: "MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS MITMS";
+            white-space: pre-wrap;
+            text-align: center;
+            line-height: 80px;
+        }
+
+
+
     </style>
 </head>
 
 <body>
 <div class="page">
     <div class="receipt">
+        <div class="watermark">MITM</div>
 
         <div class="header">
             <h2>Microsoft Institute Of IT And Medical Sciences</h2>
@@ -171,19 +210,16 @@
             <p><strong>Previouse Discount:</strong> {{ prev_discount_on_fee }}</p>
             <p><strong>Curront Amount:</strong> {{ current_amount }}</p>
             <p><strong>Current Discount:</strong> {{ current_discount }}</p>
-
-            <br>
-            <p><strong>Total Course Fee: {{ course_fee }}</strong></p>
-            <p><strong>Total Course Fee Paid: {{ total_course_fee_paid }}</strong></p>
-            <p><strong>Remaining Amount: {{ remain_balance }}</strong></p>
         </div>
 
         <div class="footer">
-            <div>
+            <div class="line"><strong>Total Course Fee: {{ course_fee }}</strong></div>
+            <div class="line"><strong>Total Course Fee Paid: {{ total_course_fee_paid }}</strong></div>
+            <div class="line"><strong>Remaining Amount: {{ remain_balance }}</strong></div>
+            <p>
                 <span id="button-note-stamp">Note: Paid fee is not refundable.</span>
-                <span>-----------Stamp---------</span>
-            </div>
-            This is a computer-generated receipt and does not require a signature.
+                <span>---------------Stamp---------------</span>
+            </p>
         </div>
 
     </div>
