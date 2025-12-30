@@ -15,6 +15,9 @@ from app.models.helper_orm import (Shift, ClassCode, AdmissionType,
                                     Semester, Department, Course,
                                     PaymentType)
 from weasyprint import HTML
+from datetime import datetime
+import httpx
+
 
 
 student_fee_router = APIRouter(prefix="/student_fee", tags=["Fee"])
@@ -293,13 +296,18 @@ async def add_student_fee(
     semester_id = int(form_data.get("semester_id"))
     shift_id = int(form_data.get("shift_id"))
     course_fee = float(form_data.get("course_fee"))
+    course_name = form_data.get("course")
+    student_name = form_data.get("student_name")
+    father_name = form_data.get("father_name")
+
 
     fee_types = form_data.getlist("fee_type[]")
     paid_fees = form_data.getlist("paid_fee[]")
     discounts = form_data.getlist("discount[]")
 
-    running_fee = 0.0 # summing the fee for actaul fee 
-    running_discount = 0 # summing the discount for actual discount
+
+    running_fee = 0.0 # summing the tution fee 
+    running_discount = 0 # summing the tution discount
     for fee_type, paid_fee, discount in zip(fee_types, paid_fees, discounts):
         
         if int(fee_type) == 1: # Tuition Fee
@@ -353,15 +361,16 @@ async def add_student_fee(
         .all()
     )
 
-    if (total_paid_discount[0].total_paid + running_discount + 
-        running_fee + total_paid_discount[0].total_discount) > course_fee:
+    total_paid_fee = (total_paid_discount[0].total_paid + running_discount + 
+                        running_fee + total_paid_discount[0].total_discount)
+    if (total_paid_fee) > course_fee:
         return JSONResponse(
             content = {
                 "message": f"Total Fee and Discount Exceeds the Actual Fee of {course_fee}. The Previously Paid Amount of Fee: {total_paid_discount[0].total_paid}; New Entered Amount: {running_fee + running_discount} which is greater then the actual fee: {total_paid_discount[0].total_paid + running_discount + running_fee + total_paid_discount[0].total_discount} > {course_fee}"
             }
         )
 
-
+    
     for fee_type_id, paid_fee, discount in zip(fee_types, paid_fees, discounts):
         student_fee = StudentFee(
             student_id=student_id,
@@ -377,6 +386,58 @@ async def add_student_fee(
         )
         db.add(student_fee)
     db.commit()
+
+    total_paid_fee = (total_paid_discount[0].total_paid + running_discount + 
+                        running_fee + total_paid_discount[0].total_discount)
+    # -- fee variables for recipt --
+    prev_paid_fee = 0 # only tution fee
+    Prev_discount_on_fee = 0  # only tution fee
+    current_amount = 0 # tution fee + extra fees
+    current_discount = 0 # tution fee + extra fees 
+    # (Prev.paid + Prev.Discount + Curr_tution_paid + Curr_tution_discount)
+    total_course_fee_paid = 0 # only tution fees 
+    remain_balance = 0 # simple (course_fee - total_course_fee_paid)
+
+    # -- filling information
+    prev_paid_fee = total_paid_discount[0].total_paid if total_paid_discount[0].total_paid >=0 else 0
+    prev_discount_on_fee = total_paid_discount[0].total_discount if total_paid_discount[0].total_discount >=0 else 0
+    current_amount = sum(float(pf) for pf in paid_fees)
+    current_discount = sum(float(d) if d != "" else 0 for d in discounts)
+    total_course_fee_paid = prev_paid_fee + Prev_discount_on_fee + running_fee + running_discount
+    remain_balance = course_fee - total_course_fee_paid
+
+
+    # -- json for recipt --
+    context = {
+        "student_id": student_id,
+        "student_name": student_name,
+        "father_name": father_name,
+        "course": course_name,
+        "current_date": datetime.now().strftime("%d %b %Y"),
+        "fee_rows": [
+            {"fee_type": ft, "paid": pf, "discount": d or 0}
+            for ft, pf, d in zip(fee_types, paid_fees, discounts)
+        ],
+        "prev_paid_fee": prev_paid_fee,
+        "prev_discount_on_fee": prev_discount_on_fee,
+        "current_amount": current_amount,
+        "current_discount": current_discount,
+        "course_fee": course_fee,
+        "total_course_fee_paid": total_course_fee_paid,
+        "remain_balance": remain_balance
+    }
+
+
+    html = templates.get_template("pages/student_fee/fee_recipt.html").render(context)
+    pdf = HTML(string=html).write_pdf()
+
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"inline; filename={student_name}_recipt.pdf"
+        }
+    )
 
     link = f"/student_fee/pay_fee?payment_id=&student_id={student_id}&department_id={department_id}&course_id={course_id}&class_code_id={class_code_id}&semester_id={semester_id}&admission_type_id={admission_type_id}&shift_id={shift_id}"
 
@@ -495,8 +556,8 @@ async def update_student_fee(request: Request, db: Session = Depends(get_db)):
     # -- update student --
     payment.paid = float(form_data.get("fee"))
     payment.discount = float(form_data.get("discount"))
-
     db.commit()
+
 
     link = f'/student_fee/pay_fee?payment_id=&student_id={form_data.get("student_id")}&department_id={form_data.get("department_id")}&course_id={form_data.get("course_id")}&class_code_id={form_data.get("class_code_id")}&semester_id={form_data.get("semester_id")}&admission_type_id={form_data.get("admission_type_id")}&shift_id={form_data.get("shift_id")}'
     return RedirectResponse(
@@ -530,6 +591,14 @@ async def delete_student_fee(payment_id: int, db: Session = Depends(get_db)):
 @student_fee_router.post("/search_student_fee")
 async def search_student_fee(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
+
+    if not form_data.get("id_search") and not form_data.get("name_search"):
+        return RedirectResponse(
+            "/student_fee/list_fee", 
+            status_code=303
+        )
+        
+
     student_fee_data = []
     query_ = (
     db.query(
@@ -703,40 +772,5 @@ async def search_student_fee(request: Request, db: Session = Depends(get_db)):
         {
             "request": request,
             "studend_fee_records": student_fee_records
-        }
-    )
-
-
-
-@student_fee_router.get("/recipt_pdf")
-def generate_fee_certificate(
-    student_id: int,
-    db: Session = Depends(get_db)
-):
-
-
-    # Example data (replace with DB query)
-    context = {
-        "student_id": student_id,
-        "student_name": "Ali Khan",
-        "course": "BS Computer Science",
-        "fee_rows": [
-            {"fee_type": "Tuition Fee", "paid": 3000, "discount": 200},
-            {"fee_type": "Lab Fee", "paid": 1000, "discount": 0},
-            {"fee_type": "Library Fee", "paid": 500, "discount": 50},
-        ],
-        "total_paid": 4500,
-        "total_discount": 250,
-        "remaining_amount": 5250,
-    }
-
-    html = templates.get_template("pages/student_fee/fee_recipt.html").render(context)
-    pdf = HTML(string=html).write_pdf()
-
-    return Response(
-        content=pdf,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": "inline; filename=fee_certificate.pdf"
         }
     )

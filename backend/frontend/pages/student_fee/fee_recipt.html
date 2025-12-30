@@ -55,7 +55,7 @@
         .title {
             font-size: 16px;
             font-weight: bold;
-            margin-top: 12px;
+            margin-top: 5px;
             text-align: center;
         }
 
@@ -65,7 +65,7 @@
         }
 
         .info p {
-            margin: 4px 0;
+            margin: 1px 0;
         }
 
         table {
@@ -116,6 +116,9 @@
         .right {
             text-align: right;
         }
+        #button-note-stamp {
+            margin-right: 55px;
+        }
 
     </style>
 </head>
@@ -125,7 +128,7 @@
     <div class="receipt">
 
         <div class="header">
-            <h2>Instite of Medical And Information Technology</h2>
+            <h2>Microsoft Institute Of IT And Medical Sciences</h2>
             <p>Kohi Chowk Bara, Distt Khyber</p>
         </div>
 
@@ -135,12 +138,13 @@
 
         <div class="row-s">
             <span class="left">Reg: 234nsdfa23</span>
-            <span class="right">Date: 22 - Dec - 2025</span>
+            <span class="right">Date: {{ current_date }}</span>
         </div>
 
         <div class="info">
             <p><strong>Student ID:</strong> {{ student_id }}</p>
             <p><strong>Student Name:</strong> {{ student_name }}</p>
+            <p><strong>Father Name:</strong> {{ father_name }}</p>
             <p><strong>Course:</strong> {{ course }}</p>
         </div>
 
@@ -154,26 +158,42 @@
             </thead>
             <tbody>
                 {% for row in fee_rows %}
-                <tr>
                     <td>{{ row.fee_type }}</td>
                     <td>{{ row.paid }}</td>
                     <td>{{ row.discount }}</td>
+
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-
         <div class="total">
-            <p><strong>Total Paid:</strong> {{ total_paid }}</p>
-            <p><strong>Total Discount:</strong> {{ total_discount }}</p>
-            <p><strong>Remaining Amount:</strong> {{ remaining_amount }}</p>
+            <p><strong>Previous Paid Fee:</strong> {{ prev_paid_fee }}</p>
+            <p><strong>Previouse Discount:</strong> {{ prev_discount_on_fee }}</p>
+            <p><strong>Curront Amount:</strong> {{ current_amount }}</p>
+            <p><strong>Current Discount:</strong> {{ current_discount }}</p>
+
+            <br>
+            <p><strong>Total Course Fee: {{ course_fee }}</strong></p>
+            <p><strong>Total Course Fee Paid: {{ total_course_fee_paid }}</strong></p>
+            <p><strong>Remaining Amount: {{ remain_balance }}</strong></p>
         </div>
 
         <div class="footer">
+            <div>
+                <span id="button-note-stamp">Note: Paid fee is not refundable.</span>
+                <span>-----------Stamp---------</span>
+            </div>
             This is a computer-generated receipt and does not require a signature.
         </div>
 
     </div>
 </div>
+
+<script>
+  window.onload = function() {
+      window.print();
+  };
+</script>
+
 </body>
 </html>
