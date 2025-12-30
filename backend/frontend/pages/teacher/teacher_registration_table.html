@@ -27,13 +27,6 @@
                 <option value="">-Course-</option>
             </select>
 
-            <select name="salary_type_id" id="salary_type_id">
-                <option value="">-Salary Type-</option>
-            </select>
-
-            <select name="semester_id" id="semester_id">
-                <option value="">-Semester-</option>
-            </select>
 
             <select name="shift_id" id="shift_id">
                 <option value="">-Shift-</option>
@@ -60,8 +53,6 @@
             <th>Father Name</th>
             <th>Department</th>
             <th>Course</th>
-            <th>Salary Type</th>
-            <th>Semester</th>
             <th>Shift</th>
             <th>Salary</th>
             <th>Actions</th>
@@ -73,15 +64,12 @@
             <td>{{r.father_name}}</td>
             <td>{{r.department}}</td>
             <td>{{r.course}}</td>
-            <td>{{r.salary_type}}</td>
-            <td>{{r.semester}}</td>
             <td>{{r.shift}}</td>
             <td>{{r.salary}}</td>
             <td>
                 <button onclick="deleteRegistration(
                     '{{ r.teacher_id }}', '{{ r.department_id }}',
-                    '{{ r.course_id }}', '{{ r.salary_type_id }}',
-                    '{{ r.semester_id }}', '{{ r.shift_id }}'
+                    '{{ r.course_id }}', '{{ r.shift_id }}'
                 )">Delete</button>
             </td>
         </tr>

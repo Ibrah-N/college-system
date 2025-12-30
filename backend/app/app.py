@@ -10,6 +10,7 @@ from app.routes.teacher_registration_routes import teacher_registration_router
 from app.routes.instt_expense_routes import expense_router
 from app.routes.instt_income_routes import income_router
 from app.routes.student_fee_routes import student_fee_router
+from app.routes.teacher_salary_routes import teacher_salary_router
 
 
 from app.config.db_connect import Base, engine
@@ -31,6 +32,8 @@ app.include_router(teacher_registration_router)
 app.include_router(expense_router)
 app.include_router(income_router)
 app.include_router(student_fee_router)
+app.include_router(teacher_salary_router)
+
 
 
 

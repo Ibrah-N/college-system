@@ -52,33 +52,6 @@ async function loadSelection() {
     shiftSelect.appendChild(option);
   });
 
-
-  // == salary type ==
-  const response2 = await fetch(`/helper/get_salary_type`);
-  const classCode_data = await response2.json();
-
-  const salarytypeSelect = document.getElementById("salary_type_id");
-  salarytypeSelect.innerHTML = '<option value="">-- Select Type --</option>';
-  classCode_data.salary_type.forEach(s_t => {
-    const option = document.createElement("option");
-    option.value = s_t.id;
-    option.textContent = s_t.name;
-    salarytypeSelect.appendChild(option);
-  });
-
-
-  // == semester ==
-  const response4 = await fetch(`/helper/get_semester`);
-  const semester_data = await response4.json();
-
-  const semesterSelect = document.getElementById("semester_id");
-  semesterSelect.innerHTML = '<option value="">-- Select Semester --</option>';
-  semester_data.semesters.forEach(semes => {
-    const option = document.createElement("option");
-    option.value = semes.id;
-    option.textContent = semes.name;
-    semesterSelect.appendChild(option);
-  });
 }
 
 

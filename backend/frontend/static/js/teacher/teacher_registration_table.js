@@ -51,34 +51,6 @@ async function loadSelection() {
     option.textContent = sh.name;
     shiftSelect.appendChild(option);
   });
-
-  
-  // == salary type ==
-  const response3 = await fetch(`/helper/get_salary_type`);
-  const admissionType_data = await response3.json();
-
-  const salary_typeSelect = document.getElementById("salary_type_id");
-  salary_typeSelect.innerHTML = '<option value="">-Salary Type-</option>';
-  admissionType_data.salary_type.forEach(s_t => {
-    const option = document.createElement("option");
-    option.value = s_t.id;
-    option.textContent = s_t.name;
-    salary_typeSelect.appendChild(option);
-  });
-
-
-  // == semester ==
-  const response4 = await fetch(`/helper/get_semester`);
-  const semester_data = await response4.json();
-
-  const semesterSelect = document.getElementById("semester_id");
-  semesterSelect.innerHTML = '<option value="">-Semester-</option>';
-  semester_data.semesters.forEach(semes => {
-    const option = document.createElement("option");
-    option.value = semes.id;
-    option.textContent = semes.name;
-    semesterSelect.appendChild(option);
-  });
 }
 
 
@@ -92,8 +64,6 @@ async function deleteRegistration(
   teacher_id,
   department_id,
   course_id,
-  salary_type_id,
-  semester_id,
   shift_id
 ) {
   const confirmed = confirm("Are you sure you want to delete this registration?");
@@ -103,8 +73,6 @@ async function deleteRegistration(
     teacher_id,
     department_id,
     course_id,
-    salary_type_id,
-    semester_id,
     shift_id
   });
 

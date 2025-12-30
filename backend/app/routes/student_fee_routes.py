@@ -16,8 +16,6 @@ from app.models.helper_orm import (Shift, ClassCode, AdmissionType,
                                     PaymentType)
 from weasyprint import HTML
 from datetime import datetime
-import httpx
-
 
 
 student_fee_router = APIRouter(prefix="/student_fee", tags=["Fee"])
