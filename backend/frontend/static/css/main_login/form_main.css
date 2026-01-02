@@ -1,0 +1,103 @@
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #f8f8f8 0%, #eaeaea 100%);
+    margin: 0;
+    padding: 0;
+    color: #000;
+}
+
+.container {
+    width: 1100px;
+    margin: 40px auto;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background-color: #4782ff;
+    padding: 25px;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.header h1 {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+/* ===== MODULE GRID ===== */
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.module-card {
+    background: #fff;
+    border: 2px solid #4782ff;
+    border-radius: 12px;
+    padding: 20px 25px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    transition: all 0.3s ease;
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+}
+
+.module-title {
+    font-size: 20px;
+    font-weight: 800;
+    border-bottom: 2px solid #4782ff;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+/* ===== FUNCTION BUTTONS ===== */
+.function-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.function-list a {
+    text-decoration: none;
+}
+
+.function-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.25);
+}
+
+.function-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 123, 255, 0.35);
+}
+
+/* ===== FULL WIDTH MODULE ===== */
+.full-width {
+    grid-column: span 2;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #555;
+    font-size: 14px;
+}

@@ -29,9 +29,9 @@ def get_db():
 # ========================================
 #  S T U D E N T S - M A I N - F O R M   #
 # ========================================
-@admission_router.get("/", response_class=HTMLResponse)
-def student(request: Request):
-    return templates.TemplateResponse("pages/main/student.html", {"request":request})
+# @admission_router.get("/", response_class=HTMLResponse)
+# def student(request: Request):
+#     return templates.TemplateResponse("pages/main/student.html", {"request":request})
 
 
 

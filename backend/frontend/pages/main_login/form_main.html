@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/main_login/form_main.css') }}">
+  <title>College Management System</title>
+</head>
+
+  <div class="container">
+
+    <div class="header">
+      <h1>College Management System</h1>
+    </div>
+
+    <div class="module-grid">
+
+      <!-- MODULE 1 -->
+      <div class="module-card">
+        <div class="module-title">Module 1: Student</div>
+        <div class="function-list">
+          <a href="/student/admission"><button class="function-btn">Add Student</button></a>
+          <a href="/student/all"><button class="function-btn">Student Table</button></a>
+        </div>
+      </div>
+
+      <!-- MODULE 2 -->
+      <div class="module-card">
+        <div class="module-title">Module 2: Student Enrollment</div>
+        <div class="function-list">
+          <a href="/student/enrollment"><button class="function-btn">Enroll Student</button></a>
+          <a href="/student/list_enrolled"><button class="function-btn">Enrolled Student Table</button></a>
+        </div>
+      </div>
+
+      <!-- MODULE 3 -->
+      <div class="module-card">
+        <div class="module-title">Module 3: Teacher</div>
+        <div class="function-list">
+          <a href="/teacher/add_teacher"><button class="function-btn">Add Teacher</button></a>
+          <a href="/teacher/all"><button class="function-btn">Teacher Table</button></a>
+        </div>
+      </div>
+
+      <!-- MODULE 4 -->
+      <div class="module-card">
+        <div class="module-title">Module 4: Register Teacher</div>
+        <div class="function-list">
+          <a href="/teacher/registration"><button class="function-btn">Register Teacher</button></a>
+          <a href="/teacher/list_registration"><button class="function-btn">Registered Teacher Table</button></a>
+        </div>
+      </div>
+
+      <!-- MODULE 5 -->
+      <div class="module-card">
+        <div class="module-title">Module 5: Fee & Salary</div>
+        <div class="function-list">
+          <a href="/student_fee/list_fee"><button class="function-btn">Fee Table</button></a>
+          <a href="/salary/list_salary"><button class="function-btn">Salary Table</button></a>
+        </div>
+      </div>
+
+      <!-- MODULE 6 -->
+      <div class="module-card">
+        <div class="module-title">Module 6: College Finance</div>
+        <div class="function-list">
+          <a href="/account/income_form"><button class="function-btn">Add Income</button></a>
+          <a href="/account/list_incomes"><button class="function-btn">Income Table</button></a>
+          <a href="/account/expense_form"><button class="function-btn">Add Expense</button></a>
+          <a href="/account/list_expenses"><button class="function-btn">Expense Table</button></a>
+          <a href="/account/account"><button class="function-btn">Account</button></a>
+        </div>
+      </div>
+
+      <!-- MODULE 7 -->
+      <div class="module-card full-width">
+        <div class="module-title">Module 7: Reports</div>
+        <div class="function-list">
+          <a href="/reports/1"><button class="function-btn">Report 1</button></a>
+          <a href="/reports/2"><button class="function-btn">Report 2</button></a>
+          <a href="/reports/3"><button class="function-btn">Report 3</button></a>
+          <a href="/reports/4"><button class="function-btn">Report 4</button></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      © College Management System
+    </div>
+
+  </div>
+
+</body>
+</html>

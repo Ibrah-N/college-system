@@ -11,6 +11,7 @@ from app.routes.instt_expense_routes import expense_router
 from app.routes.instt_income_routes import income_router
 from app.routes.student_fee_routes import student_fee_router
 from app.routes.teacher_salary_routes import teacher_salary_router
+from app.routes.login_routes import login_router
 
 
 from app.config.db_connect import Base, engine
@@ -24,6 +25,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 
 # Include the student router
+app.include_router(login_router)
 app.include_router(admission_router)
 app.include_router(add_teacher_router)
 app.include_router(helper_router)

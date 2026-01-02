@@ -24,9 +24,9 @@ def get_db():
 # ========================================
 #  T E A C H E R - M A I N - F O R M   #
 # ========================================
-@add_teacher_router.get("/", response_class=HTMLResponse)
-def teacher(request: Request):
-    return templates.TemplateResponse("pages/main/teacher.html", {"request": request})
+# @add_teacher_router.get("/", response_class=HTMLResponse)
+# def teacher(request: Request):
+#     return templates.TemplateResponse("pages/main/teacher.html", {"request": request})
 
 
 
