@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Salary Table</title>
+    <link href="{{ url_for('static', path='/css/teacher_salary/teacher_salary_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Teacher Salary Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/salary/search_teacher_salary" method="POST">
+            <input type="number" name="id_search" placeholder="Search By ID">
+            <input type="text" name="name_search" placeholder="Search By Name">
+            
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/salary/list_salary'">Reset</button>
+                <a href="/teacher">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>Teacher ID</th>
+            <th>Teacher Name</th>
+            <th>Father Name</th>
+            <th>Department</th>
+            <th>Course</th>
+            <th>Shift</th>
+            <th>Salary</th>
+            <th>Paid</th>
+            <th>Deduction</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in teacher_salary_record %}
+        <tr>
+            <td>{{s.teacher_id}}</td>
+            <td>{{s.teacher_name}}</td>
+            <td>{{s.father_name}}</td>
+            <td>{{s.department}}</td>
+            <td>{{s.course}}</td>
+            <td>{{s.shift}}</td>
+            <td>{{s.salary}}</td>
+            <td>{{s.paid_salary}}</td>
+            <td>{{s.deduction}}</td>
+            <td>
+                <button onclick="paySalary('{{ s.teacher_id }}', '{{ s.department_id }}', 
+                                            '{{ s.course_id }}', '{{ s.shift_id }}')">Add Salary</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script src="{{ url_for('static', path='/js/teacher_salary/teacher_salary_table.js')}}"></script>
+</body>
+</html>
+
+

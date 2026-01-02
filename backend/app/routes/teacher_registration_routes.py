@@ -59,7 +59,7 @@ def list_registration(request: Request, db: Session = Depends(get_db)):
 
     # -- jsonify record for fastapi responses --
     registration_data = []
-    for registration, add_teacher, department, course, shift, salary_type, semester in result:
+    for registration, add_teacher, department, course, shift in result:
         registration_data.append({
             "teacher_id": registration.teacher_id,
             "teacher_name": add_teacher.name,

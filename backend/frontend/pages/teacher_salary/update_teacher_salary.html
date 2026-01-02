@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Teacher Form</title>
+  <link href="{{ url_for('static', path='/css/teacher_salary/update_teacher_salary.css') }}" rel="stylesheet">
+
+</head>
+<body>
+  <div class="form-container">
+
+    <div id="header"> 
+    <h1>Update Student Fee Form</h1>
+    </div>
+
+    <form id="teacherForm", action="/salary/update_teacher_salary" method="POST">
+      <section>
+        <h3>Personal Information</h3>
+
+        <div id="zero-row">
+            <div class="form-row">
+            <label>Payment ID:</label>
+            <input type="number" name="payment_id" value="{{ payment_old.payment_id }}" required>
+            </div>
+        </div>
+        
+        <!-- first row -->
+        <div id="first-row">
+            <div class="form-row">
+            <label>Paid Salary:</label>
+            <input type="number" name="salary" value="{{ payment_old.paid_salary }}" required>
+            </div>
+
+            <div class="form-row">
+            <label>Deduction:</label>
+            <input type="number" name="deduction" value="{{ payment_old.deduction }}">
+            </div>
+        </div>
+      </section>
+
+
+            <input type="hidden" name="teacher_id" id="teacher_id" value="{{ payment_old.teacher_id }}">
+            <input type="hidden" name="department_id" id="department_id" value="{{ payment_old.department_id }}">
+            <input type="hidden" name="course_id" id="course_id" value="{{ payment_old.course_id }}">
+            <input type="hidden" name="shift_id" id="shift_id" value="{{ payment_old.shift_id }}">
+
+
+      <div class="submit-container">
+        <button type="submit">Submit Form</button>
+        <button type="button" onclick="window.location.href='/salary/list_salary'">Close</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- <script src="js/teacher/xyz.js"></script> -->
+</body>
+</html>

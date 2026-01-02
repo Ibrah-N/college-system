@@ -370,27 +370,26 @@ async def add_student_fee(
 
     
     for fee_type_n, fee_type_id, paid_fee, discount in zip(fee_type_names, fee_types, paid_fees, discounts):
-        print(fee_type_n, fee_type_id, paid_fee, discount)
-    #     student_fee = StudentFee(
-    #         student_id=student_id,
-    #         department_id=department_id,
-    #         course_id=course_id,
-    #         class_code_id=class_code_id,
-    #         admission_type_id=admission_type_id,
-    #         semester_id=semester_id,
-    #         shift_id=shift_id,
-    #         fee_type_id=fee_type_id,
-    #         paid=float(paid_fee),
-    #         discount=float(discount) if discount != "" else 0.0
-    #     )
-    #     db.add(student_fee)
-    # db.commit()
+        student_fee = StudentFee(
+            student_id=student_id,
+            department_id=department_id,
+            course_id=course_id,
+            class_code_id=class_code_id,
+            admission_type_id=admission_type_id,
+            semester_id=semester_id,
+            shift_id=shift_id,
+            fee_type_id=fee_type_id,
+            paid=float(paid_fee),
+            discount=float(discount) if discount != "" else 0.0
+        )
+        db.add(student_fee)
+    db.commit()
 
     total_paid_fee = (total_paid_discount[0].total_paid + running_discount + 
                         running_fee + total_paid_discount[0].total_discount)
     # -- fee variables for recipt --
     prev_paid_fee = 0 # only tution fee
-    Prev_discount_on_fee = 0  # only tution fee
+    prev_discount_on_fee = 0  # only tution fee
     current_amount = 0 # tution fee + extra fees
     current_discount = 0 # tution fee + extra fees 
     # (Prev.paid + Prev.Discount + Curr_tution_paid + Curr_tution_discount)
@@ -402,7 +401,7 @@ async def add_student_fee(
     prev_discount_on_fee = total_paid_discount[0].total_discount if total_paid_discount[0].total_discount >=0 else 0
     current_amount = sum(float(pf) for pf in paid_fees)
     current_discount = sum(float(d) if d != "" else 0 for d in discounts)
-    total_course_fee_paid = prev_paid_fee + Prev_discount_on_fee + running_fee + running_discount
+    total_course_fee_paid = prev_paid_fee + prev_discount_on_fee + running_fee + running_discount
     remain_balance = course_fee - total_course_fee_paid
 
 
@@ -553,8 +552,8 @@ async def update_student_fee(request: Request, db: Session = Depends(get_db)):
     #     )
 
     # -- update student --
-    payment.paid = float(form_data.get("fee"))
-    payment.discount = float(form_data.get("discount"))
+    payment.paid = paid_fee
+    payment.discount = discount
     db.commit()
 
 

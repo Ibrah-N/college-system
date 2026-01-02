@@ -172,7 +172,7 @@
         </div>
 
         <div class="title">
-            Fee Payment Recipt
+            Salary Payment Recipt
         </div>
 
         <div class="row-s">
@@ -181,43 +181,44 @@
         </div>
 
         <div class="info">
-            <p><strong>Student ID:</strong> {{ student_id }}</p>
-            <p><strong>Student Name:</strong> {{ student_name }}</p>
+            <p><strong>Teacher ID:</strong> {{ teacher_id }}</p>
+            <p><strong>Teacher Name:</strong> {{ teacher_name }}</p>
             <p><strong>Father Name:</strong> {{ father_name }}</p>
-            <p><strong>Course:</strong> {{ course }}</p>
+            <p><strong>Department:</strong> {{ department_name }}</p>
         </div>
 
         <table>
             <thead>
                 <tr>
-                    <th>Fee Type</th>
+                    <th>Salary Type</th>
                     <th>Paid</th>
-                    <th>Discount</th>
+                    <th>Deduction</th>
                 </tr>
             </thead>
             <tbody>
-                {% for row in fee_rows %}
-                    <td>{{ row.fee_type }}</td>
+                {% for row in salary_rows %}
+                    <td>{{ row.salary_type }}</td>
                     <td>{{ row.paid }}</td>
-                    <td>{{ row.discount }}</td>
+                    <td>{{ row.deduction }}</td>
 
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         <div class="total">
-            <p><strong>Previous Paid Fee:</strong> {{ prev_paid_fee }}</p>
-            <p><strong>Previouse Discount:</strong> {{ prev_discount_on_fee }}</p>
+            <p><strong>Previous Paid Salary:</strong> {{ prev_paid_salary }}</p>
+            <p><strong>Previouse Deduction:</strong> {{ prev_deduction_on_salary }}</p>
             <p><strong>Current Amount:</strong> {{ current_amount }}</p>
-            <p><strong>Current Discount:</strong> {{ current_discount }}</p>
+            <p><strong>Current Deduction:</strong> {{ current_deduction }}</p>
         </div>
 
         <div class="footer">
-            <div class="line"><strong>Total Course Fee: {{ course_fee }}</strong></div>
-            <div class="line"><strong>Total Course Fee Paid: {{ total_course_fee_paid }}</strong></div>
+            <div class="line"><strong>Total Salary: {{ teacher_salary }}</strong></div>
+            <div class="line"><strong>Total Salary Paid: {{ total_salary_paid }}</strong></div>
             <div class="line"><strong>Remaining Amount: {{ remain_balance }}</strong></div>
             <p>
-                <span id="button-note-stamp">Note: Paid fee is not refundable.</span>
+                <!-- <span id="button-note-stamp">Note: Paid fee is not refundable.</span> -->
+                <span id="button-note-stamp"></span>
                 <span>---------------Stamp---------------</span>
             </p>
         </div>

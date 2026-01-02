@@ -9,6 +9,7 @@ class TeacherPayment(Base):
     teacher_id = Column(Integer, ForeignKey("teacher.teacher_id"))
     department_id = Column(Integer, ForeignKey("department.department_id"))
     course_id = Column(Integer, ForeignKey("course.course_id"))
+    shift_id = Column(Integer, ForeignKey("shift.shift_id"))
     salary_type_id = Column(Integer, ForeignKey("salary_type.salary_type_id"))
     paid_salary = Column(Float, default=0.0)
     deduction = Column(Float, default=0.0)

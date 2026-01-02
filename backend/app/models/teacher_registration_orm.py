@@ -21,8 +21,6 @@ class TeacherRegesitration(Base):
             "department_id",
             "course_id",
             "shift_id",
-            "salary_type_id",
-            "semester_id",
             name="pk_teacher_registration"
         ),
     )
