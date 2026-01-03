@@ -1,5 +1,9 @@
 from fastapi import FastAPI
+from fastapi import Request
 from fastapi.staticfiles import StaticFiles
+
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
 
 # -- routers --
 from app.routes.admission_routes import admission_router
@@ -23,6 +27,7 @@ app = FastAPI()
 
 # Mount static directory for CSS, JS, images
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
+templates = Jinja2Templates(directory="frontend")
 
 # Include the student router
 app.include_router(login_router)
@@ -38,7 +43,9 @@ app.include_router(teacher_salary_router)
 
 
 
-
-@app.get("/")
-def home():
-    return {"message": "Welcome to the Student Management API"}
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse(
+        "pages/main_login/login.html",
+        {"request": request}
+    )
