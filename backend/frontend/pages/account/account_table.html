@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account Table</title>
+    <link href="{{ url_for('static', path='/css/account/account_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Account Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/student/search_student" method="get">
+            <input type="number" name="id_search" placeholder="Search By ID">
+            <input type="text" name="name_search" placeholder="Search By Name">
+            
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/student/all'">Reset</button>
+                <a href="/student/admission">Add</a>
+                <a href="/main/list_form">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Session</th>
+            <th>Month</th>
+            <th>Day</th>
+            <th>Total Fee</th>
+            <th>Total Salary</th>
+            <th>Instt Income</th>
+            <th>Instt Expense</th>
+            <th>Total Income</th>
+            <th>Total Expenses</th>
+            <th>Account</th>
+        </tr>
+
+        {% for s in account_table_data %}
+        <tr>
+            <td>{{s.date}}</td>
+            <td>{{s.session}}</td>
+            <td>{{s.month}}</td>
+            <td>{{s.day}}</td>
+            <td>{{s.total_fee}}</td>
+            <td>{{s.total_salary}}</td>
+            <td>{{s.instt_income}}</td>
+            <td>{{s.instt_expense}}</td>
+            <td>{{s.total_income}}</td>
+            <td>{{s.total_expenses}}</td>
+            <td>{{s.account}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    </div>
+</div>
+</body>
+</html>
+
+
