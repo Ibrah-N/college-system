@@ -7,7 +7,7 @@ from app.models.helper_orm import Department
 
 from app.models.helper_orm import (Department, Course, SalaryType,
                                     Shift, ClassCode, AdmissionType, Semester,
-                                    Session, Month, Day, PaymentType)
+                                    Session, Month, Day, PaymentType, ContractType)
 
 
 helper_router = APIRouter(prefix="/helper", tags=["Helper"])
@@ -152,6 +152,20 @@ def get_days(db: Session = Depends(get_db)):
         content={
             "days" : [
                 {"id": d.day_id, "name": d.day} for d in days
+            ]
+        }
+    )
+
+
+
+@helper_router.get("/get_contract_type")
+def get_contract_type(db: Session = Depends(get_db)):
+    contract_types = db.query(ContractType).all()
+
+    return JSONResponse(
+        content={
+            "contract_type": [
+                {"id": c.contract_type_id, "name": c.contract_type_name} for c in contract_types
             ]
         }
     )

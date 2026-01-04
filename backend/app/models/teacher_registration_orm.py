@@ -11,7 +11,7 @@ class TeacherRegesitration(Base):
 
     teacher_id = Column(Integer, ForeignKey("teacher.teacher_id"))
     department_id = Column(Integer, ForeignKey("department.department_id"))
-    course_id = Column(Integer, ForeignKey("course.course_id"))
+    contract_type_id = Column(Integer, ForeignKey("contract_type.contract_type_id"))
     shift_id = Column(Integer, ForeignKey("shift.shift_id"))
     salary = Column(Float)
 
@@ -19,7 +19,7 @@ class TeacherRegesitration(Base):
         PrimaryKeyConstraint(
             "teacher_id",
             "department_id",
-            "course_id",
+            "contract_type_id",
             "shift_id",
             name="pk_teacher_registration"
         ),

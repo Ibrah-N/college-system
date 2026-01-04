@@ -19,12 +19,12 @@
             <input type="text" id="left-input" name="name_search" placeholder="Srch By Name">
             
             <!-- DROP DOWNS -->
-            <select name="department_id" id="department">
+            <select name="department_id" id="department_id">
                 <option value="">-Department-</option>
             </select>
 
-            <select name="course_id" id="course">
-                <option value="">-Course-</option>
+            <select name="contract_type_id" id="contract_type_id">
+                <option value="">-Contract-</option>
             </select>
 
 
@@ -52,7 +52,7 @@
             <th>Name</th>
             <th>Father Name</th>
             <th>Department</th>
-            <th>Course</th>
+            <th>Contract</th>
             <th>Shift</th>
             <th>Salary</th>
             <th>Actions</th>
@@ -63,13 +63,13 @@
             <td>{{r.teacher_name}}</td>
             <td>{{r.father_name}}</td>
             <td>{{r.department}}</td>
-            <td>{{r.course}}</td>
+            <td>{{r.contract_type}}</td>
             <td>{{r.shift}}</td>
             <td>{{r.salary}}</td>
             <td>
                 <button onclick="deleteRegistration(
                     '{{ r.teacher_id }}', '{{ r.department_id }}',
-                    '{{ r.course_id }}', '{{ r.shift_id }}'
+                    '{{ r.contract_type_id }}', '{{ r.shift_id }}'
                 )">Delete</button>
             </td>
         </tr>

@@ -16,6 +16,7 @@ from app.models.helper_orm import (Shift, ClassCode, AdmissionType,
                                     PaymentType)
 from weasyprint import HTML
 from datetime import datetime
+import base64
 
 
 student_fee_router = APIRouter(prefix="/student_fee", tags=["Fee"])
@@ -429,25 +430,40 @@ async def add_student_fee(
     html = templates.get_template("pages/student_fee/fee_recipt.html").render(context)
     pdf = HTML(string=html).write_pdf()
 
-    return Response(
-        content=pdf,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f"inline; filename={student_name}_recipt.pdf"
-        }
-    )
+    # return Response(
+    #     content=pdf,
+    #     media_type="application/pdf",
+    #     headers={
+    #         "Content-Disposition": f"inline; filename={student_name}_recipt.pdf"
+    #     }
+    # )
 
     link = f"/student_fee/pay_fee?payment_id=&student_id={student_id}&department_id={department_id}&course_id={course_id}&class_code_id={class_code_id}&semester_id={semester_id}&admission_type_id={admission_type_id}&shift_id={shift_id}"
 
-    return RedirectResponse(
-        url = link,
-        status_code=303
-    )
-    # return JSONResponse(
-    #     content = {
-    #         "message": "Student fee added successfully."
-    #     }
+    # return RedirectResponse(
+    #     url = link,
+    #     status_code=303
     # )
+
+    pdf_base64 = base64.b64encode(pdf).decode()
+    html = f"""
+        <!DOCTYPE html>
+        <html>
+        <body style="margin:0">
+        <iframe src="data:application/pdf;base64,{pdf_base64}"
+                style="width:100vw;height:100vh;border:none">
+        </iframe>
+
+        <script>
+            setTimeout(() => {{
+                window.location.href = "{link}";
+            }}, 2000);
+        </script>
+        </body>
+        </html>
+        """
+
+    return HTMLResponse(html)
 
 
 

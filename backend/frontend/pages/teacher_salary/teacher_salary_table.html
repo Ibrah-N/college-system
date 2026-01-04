@@ -33,7 +33,7 @@
             <th>Teacher Name</th>
             <th>Father Name</th>
             <th>Department</th>
-            <th>Course</th>
+            <th>Contract</th>
             <th>Shift</th>
             <th>Salary</th>
             <th>Paid</th>
@@ -47,14 +47,14 @@
             <td>{{s.teacher_name}}</td>
             <td>{{s.father_name}}</td>
             <td>{{s.department}}</td>
-            <td>{{s.course}}</td>
+            <td>{{s.contract_type}}</td>
             <td>{{s.shift}}</td>
             <td>{{s.salary}}</td>
             <td>{{s.paid_salary}}</td>
             <td>{{s.deduction}}</td>
             <td>
                 <button onclick="paySalary('{{ s.teacher_id }}', '{{ s.department_id }}', 
-                                            '{{ s.course_id }}', '{{ s.shift_id }}')">Add Salary</button>
+                                            '{{ s.contract_type_id }}', '{{ s.shift_id }}')">Add Salary</button>
             </td>
         </tr>
         {% endfor %}

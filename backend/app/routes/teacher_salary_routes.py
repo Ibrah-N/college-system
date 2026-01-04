@@ -13,11 +13,12 @@ from sqlalchemy import func, and_
 from app.models.teacher_payment_orm import TeacherPayment
 from app.models.add_teacher_orm import AddTeacher
 from app.models.teacher_registration_orm import TeacherRegesitration
-from app.models.helper_orm import (Department, Course, Shift,
+from app.models.helper_orm import (Department, ContractType, Shift,
                                     Semester, SalaryType)
 
 from weasyprint import HTML
 from datetime import datetime
+import base64
 
 teacher_salary_router = APIRouter(prefix="/salary", tags=["SALARY"])
 templates = Jinja2Templates("frontend")
@@ -39,7 +40,7 @@ def get_db():
 # =====================================================#
 @teacher_salary_router.get("/pay_salary")
 def fee_form(teacher_id: int, department_id: int, 
-            course_id: int, shift_id: int,
+            contract_type_id: int, shift_id: int,
             request: Request, db: Session = Depends(get_db)
     ):
 
@@ -47,19 +48,19 @@ def fee_form(teacher_id: int, department_id: int,
     # === Extract Data For Form ===
     form_data = db.query(
     AddTeacher, TeacherRegesitration,
-    Department, Course, Shift
+    Department, ContractType, Shift
     ).join(
         TeacherRegesitration, AddTeacher.teacher_id == TeacherRegesitration.teacher_id
     ).join(
         Department, TeacherRegesitration.department_id == Department.department_id
     ).join(
-        Course, TeacherRegesitration.course_id == Course.course_id
+        ContractType, TeacherRegesitration.contract_type_id == ContractType.contract_type_id
     ).join(
         Shift, TeacherRegesitration.shift_id == Shift.shift_id
     ).filter(
         TeacherRegesitration.teacher_id == teacher_id,
         TeacherRegesitration.department_id == department_id,
-        TeacherRegesitration.course_id == course_id,
+        TeacherRegesitration.contract_type_id == contract_type_id,
         TeacherRegesitration.shift_id == shift_id
     ).first()
     form_info = {
@@ -68,8 +69,8 @@ def fee_form(teacher_id: int, department_id: int,
         "father_name": form_data.AddTeacher.father_name,
         "department_name": form_data.Department.department_name,
         "department_id": form_data.Department.department_id,
-        "course": form_data.Course.name,
-        "course_id": form_data.Course.course_id,
+        "contract_type": form_data.ContractType.contract_type_name,
+        "contract_type_id": form_data.ContractType.contract_type_id,
         "shift": form_data.Shift.shift_name,
         "shift_id": form_data.Shift.shift_id,
         "salary": form_data.TeacherRegesitration.salary
@@ -79,20 +80,20 @@ def fee_form(teacher_id: int, department_id: int,
     query_data = (
         db.query(
             AddTeacher, TeacherPayment, TeacherRegesitration,
-            Department, Course, Shift, SalaryType
+            Department, ContractType, Shift, SalaryType
         )
         .select_from(TeacherPayment)
         .join(AddTeacher, AddTeacher.teacher_id == TeacherPayment.teacher_id)
         .join(TeacherRegesitration, TeacherRegesitration.teacher_id == TeacherPayment.teacher_id)
         .join(Department, Department.department_id == TeacherPayment.department_id)
-        .join(Course, Course.course_id == TeacherPayment.course_id)
+        .join(ContractType, ContractType.contract_type_id == TeacherPayment.contract_type_id)
         .join(Shift, Shift.shift_id == TeacherPayment.shift_id)
         .join(SalaryType, SalaryType.salary_type_id == TeacherPayment.salary_type_id)
     )
     salary_list = query_data.filter(
         TeacherPayment.teacher_id == teacher_id,
         TeacherPayment.department_id == department_id,
-        TeacherPayment.course_id == course_id,
+        TeacherPayment.contract_type_id == contract_type_id,
         TeacherPayment.shift_id == shift_id
     ).all()
 
@@ -100,15 +101,15 @@ def fee_form(teacher_id: int, department_id: int,
     # -- if paid salary record found --
     salary_list_record = []
     if salary_list:
-        for add_teacher, teacher_payment, teacher_registration, department, course, shift, salary_type in salary_list:
+        for add_teacher, teacher_payment, teacher_registration, department, contract_type, shift, salary_type in salary_list:
             salary_list_record.append({
                 "payment_id": teacher_payment.payment_id,
                 "teacher_name": add_teacher.name,
                 "father_name": add_teacher.father_name,
                 "department": department.department_name,
                 "department_id": department.department_id,
-                "course": course.name,
-                "course_id": course.course_id,
+                "contract_type": contract_type.contract_type_name,
+                "contract_type_id": contract_type.contract_type_id,
                 "shift": shift.shift_name,
                 "shift_id": shift.shift_id,
                 "salary_type": salary_type.salary_type_name,
@@ -149,8 +150,8 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
         Department.department_id,
         Department.department_name,
 
-        Course.course_id,
-        Course.name.label("course_name"),
+        ContractType.contract_type_id,
+        ContractType.contract_type_name,
 
         Shift.shift_id,
         Shift.shift_name,
@@ -164,7 +165,7 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
 
     .join(AddTeacher, AddTeacher.teacher_id == TeacherRegesitration.teacher_id)
     .join(Department, Department.department_id == TeacherRegesitration.department_id)
-    .join(Course, Course.course_id == TeacherRegesitration.course_id)
+    .join(ContractType, ContractType.contract_type_id == TeacherRegesitration.contract_type_id)
     .join(Shift, Shift.shift_id == TeacherRegesitration.shift_id)
 
     #  CORRECT LEFT JOIN (IMPORTANT)
@@ -173,7 +174,7 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
         and_(
             TeacherPayment.teacher_id == TeacherRegesitration.teacher_id,
             TeacherPayment.department_id == TeacherRegesitration.department_id,
-            TeacherPayment.course_id == TeacherRegesitration.course_id,
+            TeacherPayment.contract_type_id == TeacherRegesitration.contract_type_id,
             TeacherPayment.shift_id == TeacherRegesitration.shift_id,
         )
     )
@@ -183,8 +184,8 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
         AddTeacher.father_name,
         Department.department_id,
         Department.department_name,
-        Course.course_id,
-        Course.name,
+        ContractType.contract_type_id,
+        ContractType.contract_type_name,
         Shift.shift_id,
         Shift.shift_name,
         TeacherRegesitration.salary,
@@ -196,7 +197,7 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
         # -- jsonify record for fastapi responses --
     teacher_salary_record = []
     for teacher_id, teacher_name, father_name, \
-        department_id, department_name, course_id, course_name, \
+        department_id, department_name, contract_type_id, contract_type_name, \
         shift_id, shift_name, \
         salary, paid_salary, deduction in result:
 
@@ -206,8 +207,8 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
             "father_name": father_name,
             "department_id": department_id,
             "department": department_name,
-            "course_id": course_id,
-            "course": course_name,
+            "contract_type_id": contract_type_id,
+            "contract_type": contract_type_name,
             "shift_id": shift_id,
             "shift": shift_name,
             "salary": salary,
@@ -227,7 +228,7 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
 
 
 # ============================================================
-#                A D D  -  S T U D E N T - F E E             #
+#          A D D  -  T E A C H E R - S A L A R Y             #
 # ============================================================
 @teacher_salary_router.post("/add_salary")
 async def add_teacher_salary(
@@ -239,7 +240,7 @@ async def add_teacher_salary(
 
     teacher_id = int(form_data.get("teacher_id"))
     department_id = int(form_data.get("department_id"))
-    course_id = int(form_data.get("course_id"))
+    contract_type_id = int(form_data.get("contract_type_id"))
     shift_id = int(form_data.get("shift_id"))
     department_name = form_data.get("department_name")
     teacher_name = form_data.get("teacher_name")
@@ -250,7 +251,7 @@ async def add_teacher_salary(
     paid_salaries = form_data.getlist("paid_salaries[]")
     deductions = form_data.getlist("deductions[]")
     salary_type_names = [db.query(SalaryType.salary_type_name).filter(SalaryType.salary_type_id == st_id).scalar() for st_id in salary_types]
-
+    contract_type_name = db.query(ContractType.contract_type_name).filter(ContractType.contract_type_id == contract_type_id).scalar()
 
     running_salary = 0.0 # summing the running salary
     running_deduction = 0 # summing the running deduction
@@ -300,7 +301,7 @@ async def add_teacher_salary(
         .filter(
             TeacherPayment.teacher_id == teacher_id,
             TeacherPayment.department_id == department_id,
-            TeacherPayment.course_id == course_id,
+            TeacherPayment.contract_type_id == contract_type_id,
             TeacherPayment.shift_id == shift_id, 
             TeacherPayment.salary_type_id == 1 # Salary Only
         )
@@ -322,7 +323,7 @@ async def add_teacher_salary(
         teacher_salary_instant = TeacherPayment(
             teacher_id=teacher_id,
             department_id=department_id,
-            course_id=course_id,
+            contract_type_id=contract_type_id,
             shift_id=shift_id,
             salary_type_id=salary_type_id,
             paid_salary=float(paid_salary),
@@ -357,6 +358,7 @@ async def add_teacher_salary(
         "teacher_name": teacher_name,
         "father_name": father_name,
         "department_name": department_name,
+        "contract_type": contract_type_name,
         "current_date": datetime.now().strftime("%d %b %Y %I:%M %p"),
         "salary_rows": [
             {"salary_type": ft, "paid": pf, "deduction": d or 0}
@@ -375,26 +377,40 @@ async def add_teacher_salary(
     html = templates.get_template("pages/teacher_salary/teacher_recipt.html").render(context)
     pdf = HTML(string=html).write_pdf()
 
-    return Response(
-        content=pdf,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f"inline; filename={teacher_name}_recipt.pdf"
-        }
-    )
-
-    link = f"/teacher_salary/pay_salary?teacher_id={teacher_id}&department_id={department_id}&course_id={course_id}&shift_id={shift_id}"
-
-    return RedirectResponse(
-        url = link,
-        status_code=303
-    )
-    # return JSONResponse(
-    #     content = {
-    #         "message": "Student fee added successfully."
+    # return Response(
+    #     content=pdf,
+    #     media_type="application/pdf",
+    #     headers={
+    #         "Content-Disposition": f"inline; filename={teacher_name}_recipt.pdf"
     #     }
     # )
 
+    link = f"/salary/pay_salary?teacher_id={teacher_id}&department_id={department_id}&contract_type_id={contract_type_id}&shift_id={shift_id}"
+
+    # return RedirectResponse(
+    #     url = link,
+    #     status_code=303
+    # )
+
+    pdf_base64 = base64.b64encode(pdf).decode()
+    html = f"""
+        <!DOCTYPE html>
+        <html>
+        <body style="margin:0">
+        <iframe src="data:application/pdf;base64,{pdf_base64}"
+                style="width:100vw;height:100vh;border:none">
+        </iframe>
+
+        <script>
+            setTimeout(() => {{
+                window.location.href = "{link}";
+            }}, 2000);
+        </script>
+        </body>
+        </html>
+        """
+
+    return HTMLResponse(html)
 
 
 
@@ -504,7 +520,7 @@ async def update_teacher_salary(request: Request, db: Session = Depends(get_db))
     db.commit()
 
 
-    link = f'/salary/pay_salary?teacher_id={form_data.get("teacher_id")}&department_id={form_data.get("department_id")}&course_id={form_data.get("course_id")}&shift_id={form_data.get("shift_id")}'
+    link = f'/salary/pay_salary?teacher_id={form_data.get("teacher_id")}&department_id={form_data.get("department_id")}&contract_type_id={form_data.get("contract_type_id")}&shift_id={form_data.get("shift_id")}'
     return RedirectResponse(
         url = link,
         status_code=303

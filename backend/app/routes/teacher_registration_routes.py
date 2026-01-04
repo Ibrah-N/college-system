@@ -11,7 +11,7 @@ from app.config.db_connect import SessionLocal
 
 from app.models.teacher_registration_orm import TeacherRegesitration
 from app.models.add_teacher_orm import AddTeacher
-from app.models.helper_orm import Department, Course, Shift
+from app.models.helper_orm import Department, ContractType, Shift
 
 
 teacher_registration_router = APIRouter(prefix="/teacher", tags=['Teacher'])
@@ -48,26 +48,26 @@ def list_registration(request: Request, db: Session = Depends(get_db)):
     # -- extract record usign joins --
     result = (
         db.query(TeacherRegesitration, AddTeacher, Department,
-                Course, Shift
+                ContractType, Shift
                 )
         .join(AddTeacher, TeacherRegesitration.teacher_id == AddTeacher.teacher_id)
         .join(Department, TeacherRegesitration.department_id == Department.department_id)
-        .join(Course, TeacherRegesitration.course_id == Course.course_id)
+        .join(ContractType, TeacherRegesitration.contract_type_id == ContractType.contract_type_id)
         .join(Shift, TeacherRegesitration.shift_id == Shift.shift_id)
         .all()
     )
 
     # -- jsonify record for fastapi responses --
     registration_data = []
-    for registration, add_teacher, department, course, shift in result:
+    for registration, add_teacher, department, contract_type, shift in result:
         registration_data.append({
             "teacher_id": registration.teacher_id,
             "teacher_name": add_teacher.name,
             "father_name": add_teacher.father_name,
             "department": department.department_name,
             "department_id": department.department_id,
-            "course": course.name,
-            "course_id": course.course_id,
+            "contract_type": contract_type.contract_type_name,
+            "contract_type_id": contract_type.contract_type_id,
             "shift": shift.shift_name,
             "shift_id": shift.shift_id,
             "salary": registration.salary
@@ -105,7 +105,7 @@ async def register_teacher(request: Request, db: Session = Depends(get_db)):
     teacher_registration = db.query(TeacherRegesitration).filter(
         TeacherRegesitration.teacher_id==int(form_data.get("teacher_id")),
         TeacherRegesitration.department_id==int(form_data.get("department_id")),
-        TeacherRegesitration.course_id==int(form_data.get("course_id")),
+        TeacherRegesitration.contract_type_id==int(form_data.get("contract_type_id")),
         TeacherRegesitration.shift_id==int(form_data.get("shift_id"))
     ).first()
     if teacher_registration:
@@ -118,7 +118,7 @@ async def register_teacher(request: Request, db: Session = Depends(get_db)):
     # -- new registration --
     new_registration = TeacherRegesitration(
         teacher_id=form_data.get("teacher_id"), department_id=form_data.get("department_id"),
-        course_id=form_data.get("course_id"), shift_id=form_data.get("shift_id"),
+        contract_type_id=form_data.get("contract_type_id"), shift_id=form_data.get("shift_id"),
         salary=form_data.get("salary")
     )
     db.add(new_registration)
@@ -137,7 +137,7 @@ async def register_teacher(request: Request, db: Session = Depends(get_db)):
 @teacher_registration_router.delete("/delete_registration")
 def delete_registration(
     teacher_id: int, department_id: int, 
-    course_id: int, shift_id: int, 
+    contract_type_id: int, shift_id: int, 
     db: Session = Depends(get_db)
     ):
 
@@ -145,7 +145,7 @@ def delete_registration(
     registration = db.query(TeacherRegesitration).filter_by(
         teacher_id=teacher_id,
         department_id=department_id,
-        course_id=course_id,
+        contract_type_id=contract_type_id,
         shift_id=shift_id
     ).first()
 
@@ -180,11 +180,11 @@ async def registration_search(
     # -- extract join data --
     query = (
         db.query(TeacherRegesitration, AddTeacher, Department,
-                Course, Shift
+                ContractType, Shift
                 )
         .join(AddTeacher, TeacherRegesitration.teacher_id == AddTeacher.teacher_id)
         .join(Department, TeacherRegesitration.department_id == Department.department_id)
-        .join(Course, TeacherRegesitration.course_id == Course.course_id)
+        .join(ContractType, TeacherRegesitration.contract_type_id == ContractType.contract_type_id)
         .join(Shift, TeacherRegesitration.shift_id == Shift.shift_id)
     )
 
@@ -196,15 +196,15 @@ async def registration_search(
         result = query.all()
         # -- jsonify --
         registration_data = []
-        for registration, add_teacher, department, course, shift in result:
+        for registration, add_teacher, department, contract_type, shift in result:
             registration_data.append({
                 "teacher_id": registration.teacher_id,
                 "teacher_name": add_teacher.name,
                 "father_name": add_teacher.father_name,
                 "department": department.department_name,
                 "department_id": department.department_id,
-                "course": course.name,
-                "course_id": course.course_id,
+                "contract_type": contract_type.contract_type_name,
+                "contract_type_id": contract_type.contract_type_id,
                 "shift": shift.shift_name,
                 "shift_id": shift.shift_id,
                 "salary": registration.salary
@@ -228,10 +228,10 @@ async def registration_search(
         query = query.filter(
             TeacherRegesitration.department_id==int(form_data.get("department_id"))
         )
-    # -- course search --
-    if form_data.get("course_id"):
+    # -- contract type search --
+    if form_data.get("contract_type_id"):
         query = query.filter(
-            TeacherRegesitration.course_id==int(form_data.get("course_id"))
+            TeacherRegesitration.contract_type_id==int(form_data.get("contract_type_id"))
         )
     # -- shift search --
     if form_data.get("shift_id"):
@@ -242,15 +242,15 @@ async def registration_search(
 
     # -- jsonify --
     registration_data = []
-    for registration, add_teacher, department, course, shift in result:
+    for registration, add_teacher, department, contract_type, shift in result:
         registration_data.append({
             "teacher_id": registration.teacher_id,
             "teacher_name": add_teacher.name,
             "father_name": add_teacher.father_name,
             "department": department.department_name,
             "department_id": department.department_id,
-            "course": course.name,
-            "course_id": course.course_id,
+            "contract_type": contract_type.contract_type_name,
+            "contract_type_id": contract_type.contract_type_id,
             "shift": shift.shift_name,
             "shift_id": shift.shift_id,
             "salary": registration.salary
@@ -282,11 +282,11 @@ async def export_registration(
     # -- extract join data --
     query = (
         db.query(TeacherRegesitration, AddTeacher, Department,
-                Course, Shift
+                ContractType, Shift
                 )
         .join(AddTeacher, TeacherRegesitration.teacher_id == AddTeacher.teacher_id)
         .join(Department, TeacherRegesitration.department_id == Department.department_id)
-        .join(Course, TeacherRegesitration.course_id == Course.course_id)
+        .join(ContractType, TeacherRegesitration.contract_type_id == ContractType.contract_type_id)
         .join(Shift, TeacherRegesitration.shift_id == Shift.shift_id)
     )
 
@@ -298,13 +298,13 @@ async def export_registration(
         result = query.all()
         # -- jsonify --
         registration_data = []
-        for registration, add_teacher, department, course, shift in result:
+        for registration, add_teacher, department, contract_type, shift in result:
             registration_data.append({
                 "teacher_id": registration.teacher_id,
                 "teacher_name": add_teacher.name,
                 "father_name": add_teacher.father_name,
                 "department": department.department_name,
-                "course": course.name,
+                "contract_type": contract_type.contract_type_name,
                 "shift": shift.shift_name,
                 "salary": registration.salary
             })
@@ -337,10 +337,10 @@ async def export_registration(
         query = query.filter(
             TeacherRegesitration.department_id==int(form_data.get("department_id"))
         )
-    # -- course search --
-    if form_data.get("course_id"):
+    # -- contract type search --
+    if form_data.get("contract_type_id"):
         query = query.filter(
-            TeacherRegesitration.course_id==int(form_data.get("course_id"))
+            TeacherRegesitration.contract_type_id==int(form_data.get("contract_type_id"))
         )
     # -- shift search --
     if form_data.get("shift_id"):
@@ -351,13 +351,13 @@ async def export_registration(
 
     # -- jsonify --
     registration_data = []
-    for registration, add_teacher, department, course, shift in result:
+    for registration, add_teacher, department, contract_type, shift in result:
         registration_data.append({
             "teacher_id": registration.teacher_id,
             "teacher_name": add_teacher.name,
             "father_name": add_teacher.father_name,
             "department": department.department_name,
-            "course": course.name,
+            "contract_type": contract_type.contract_type_name,
             "shift": shift.shift_name,
             "salary": registration.salary
         })

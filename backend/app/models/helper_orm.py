@@ -74,6 +74,15 @@ class SalaryType(Base):
 
 
 
+# -- contract type table --
+class ContractType(Base):
+    __tablename__ = "contract_type"
+
+    contract_type_id = Column(Integer, primary_key=True)
+    contract_type_name = Column(String(20))
+    
+
+
 class Session(Base):
     __tablename__ = "session"
 
