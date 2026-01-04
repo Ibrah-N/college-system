@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.config.db_connect import SessionLocal
 
 from app.models.institute_income_orm import InstituteIncome
-from app.models.helper_orm import (Session, Month, Day, Shift)
+from app.models.helper_orm import Shift
 
 
 income_router = APIRouter(prefix="/account", tags=['Account'])
@@ -54,9 +54,7 @@ async def add_income(request: Request, db: Session = Depends(get_db)):
     new_income = InstituteIncome(
         income_type=form_data.get("income_type"), income_details=form_data.get("income_details"),
         income_from=form_data.get("income_from"), amount=amount,
-        session_id=form_data.get("session_id"), month_id=form_data.get("month_id"),
-        day_id=form_data.get("day_id"), shift_id=form_data.get("shift_id"))
-    
+        shift_id=form_data.get("shift_id"))
     # -- add income --
     db.add(new_income)
     db.commit()
@@ -78,31 +76,20 @@ def list_incomes(request: Request, db: Session = Depends(get_db)):
 
     # -- extract all neccessory info --
     result = (
-        db.query(InstituteIncome, Session,
-                 Month, Day, Shift
-                )
-        .join(Session, InstituteIncome.session_id == Session.session_id)
-        .join(Month, InstituteIncome.month_id == Month.month_id)
-        .join(Day, InstituteIncome.day_id == Day.day_id)
+        db.query(InstituteIncome, Shift)
         .join(Shift, InstituteIncome.shift_id == Shift.shift_id)
         .all()
     )
 
     # -- jsonify record for fastapi responses --
     json_incomes = []
-    for instt_inc, s, m, d, sh in result:
+    for instt_inc, sh in result:
         json_incomes.append({
             "id": instt_inc.income_id,
             "income_details": instt_inc.income_details,
             "income_type": instt_inc.income_type,
             "income_from": instt_inc.income_from,
             "amount": instt_inc.amount,
-            "session": s.session,
-            "session_id": s.session_id,
-            "month": m.month,
-            "month_id": m.month_id,
-            "day": d.day,
-            "day_id": d.day_id,
             "shift": sh.shift_name,
             "shift_id": sh.shift_id,
             "date": instt_inc.date.isoformat() if instt_inc.date else None
@@ -123,17 +110,13 @@ def list_incomes(request: Request, db: Session = Depends(get_db)):
 # ======================================
 @income_router.delete("/delete_income")
 def delete_income(
-        id: int, session_id: int, 
-        month_id: int, day_id:int, 
+        id: int, 
         db: Session = Depends(get_db)
     ):
     
     # -- filter income --
     income = db.query(InstituteIncome).filter_by(
-        income_id=id, 
-        session_id=session_id, 
-        month_id=month_id, 
-        day_id=day_id
+        income_id=id
     ).first()
 
     # -- existance check --
@@ -165,12 +148,8 @@ async def update_expense_stage_1(request: Request, income_id: int,
 
     # -- joins --
     query = (
-        db.query(InstituteIncome, Session,
-                 Month, Day, Shift
+        db.query(InstituteIncome, Shift
                 )
-        .join(Session, InstituteIncome.session_id == Session.session_id)
-        .join(Month, InstituteIncome.month_id == Month.month_id)
-        .join(Day, InstituteIncome.day_id == Day.day_id)
         .join(Shift, InstituteIncome.shift_id == Shift.shift_id)
     )
     query = query.filter(
@@ -194,21 +173,12 @@ async def update_expense_stage_1(request: Request, income_id: int,
         "income_details": result.InstituteIncome.income_details,
         "income_from": result.InstituteIncome.income_from,
         "amount": result.InstituteIncome.amount,
-        "session": result.Session.session,
-        "session_id": result.InstituteIncome.session_id,
-        "month": result.Month.month,
-        "month_id": result.InstituteIncome.month_id,
-        "day": result.Day.day, 
-        "day_id": result.InstituteIncome.day_id,
         "shift": result.Shift.shift_name,
         "shift_id": result.InstituteIncome.shift_id,   
         "date": result.InstituteIncome.date.isoformat() if result.InstituteIncome.date else None
     }
 
-    # -- fetch sessions, months, days, shifts for dropdowns --
-    sessions = db.query(Session).all()
-    months = db.query(Month).all()
-    days = db.query(Day).all()
+    # -- fetch shifts for dropdowns --
     shifts = db.query(Shift).all()
 
     # -- response --
@@ -217,9 +187,6 @@ async def update_expense_stage_1(request: Request, income_id: int,
         {
             "request": request,
             "old_income": json_income,
-            "sessions": sessions,
-            "months": months,
-            "days": days,
             "shifts": shifts
         }
     )
@@ -248,9 +215,6 @@ async def update_income(request: Request, db: Session = Depends(get_db)):
     income.income_details = form_data.get("income_details")
     income.income_from = form_data.get("income_from")
     income.amount = float(form_data.get("amount")) if form_data.get("amount") else 0
-    income.session_id = form_data.get("session_id")
-    income.month_id = form_data.get("month_id")
-    income.day_id = form_data.get("day_id")
     income.shift_id = form_data.get("shift_id")
 
     db.commit()
@@ -271,12 +235,8 @@ async def search_incomes(request: Request, db: Session = Depends(get_db)):
 
     # -- extract join data --
     query = (
-        db.query(InstituteIncome, Session,
-                 Month, Day, Shift
+        db.query(InstituteIncome, Shift
                 )
-        .join(Session, InstituteIncome.session_id == Session.session_id)
-        .join(Month, InstituteIncome.month_id == Month.month_id)
-        .join(Day, InstituteIncome.day_id == Day.day_id)
         .join(Shift, InstituteIncome.shift_id == Shift.shift_id)
     )
 
@@ -289,19 +249,13 @@ async def search_incomes(request: Request, db: Session = Depends(get_db)):
 
         # -- jsonify --
         json_expenses = []
-        for instt_inc, s, m, d, sh in result:
+        for instt_inc, sh in result:
             json_expenses.append({
                 "id": instt_inc.income_id,
                 "income_type": instt_inc.income_type,
                 "income_details": instt_inc.income_details,
                 "income_from": instt_inc.income_from,
                 "amount": instt_inc.amount,
-                "session": s.session,
-                "session_id": s.session_id,
-                "month": m.month,
-                "month_id": m.month_id,
-                "day": d.day,
-                "day_id": d.day_id,
                 "shift": sh.shift_name,
                 "shift_id": sh.shift_id,
                 "date": instt_inc.date.isoformat() if instt_inc.date else None
@@ -326,22 +280,7 @@ async def search_incomes(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteIncome.income_from.ilike(f"%{form_data.get("income_from")}%")
         )
-    # -- session search --
-    if form_data.get("session_id"):
-        query = query.filter(
-            InstituteIncome.session_id==int(form_data.get("session_id"))
-        )
-    # -- month search --
-    if form_data.get("month_id"):
-        query = query.filter(
-            InstituteIncome.month_id==int(form_data.get('month_id'))
-        )
-    # -- day search --
-    if form_data.get("day_id"):
-        query = query.filter(
-            InstituteIncome.day_id==int(form_data.get("day_id"))
-        )
-    # # -- shift search --
+    # -- shift search --
     if form_data.get("shift_id"):
         query = query.filter(
             InstituteIncome.shift_id==int(form_data.get("shift_id"))
@@ -350,19 +289,13 @@ async def search_incomes(request: Request, db: Session = Depends(get_db)):
 
     # -- jsonify --
     json_expenses = []
-    for instt_inc, s, m, d, sh in result:
+    for instt_inc, sh in result:
         json_expenses.append({
             "id": instt_inc.income_id,
             "income_type": instt_inc.income_type,
             "income_details": instt_inc.income_details,
             "income_from": instt_inc.income_from,
             "amount": instt_inc.amount,
-            "session": s.session,
-            "session_id": s.session_id,
-            "month": m.month,
-            "month_id": m.month_id,
-            "day": d.day,
-            "day_id": d.day_id,
             "shift": sh.shift_name,
             "shift_id": sh.shift_id,
             "date": instt_inc.date.isoformat() if instt_inc.date else None
@@ -387,12 +320,8 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
 
     # -- extract join data --
     query = (
-        db.query(InstituteIncome, Session,
-                    Month, Day, Shift
+        db.query(InstituteIncome, Shift
                 )
-        .join(Session, InstituteIncome.session_id == Session.session_id)
-        .join(Month, InstituteIncome.month_id == Month.month_id)
-        .join(Day, InstituteIncome.day_id == Day.day_id)
         .join(Shift, InstituteIncome.shift_id == Shift.shift_id)
     )
 
@@ -405,7 +334,7 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
 
         # -- jsonify --
         json_expenses = []
-        for instt_inc, s, m, d, sh in result:
+        for instt_inc, sh in result:
             json_expenses.append({
                 "id": instt_inc.income_id,
                 "income_type": instt_inc.income_type,
@@ -414,9 +343,6 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
                 "shift": sh.shift_name,
                 "amount": instt_inc.amount,
                 "date": instt_inc.date.isoformat() if instt_inc.date else None,
-                "session": s.session,
-                "month": m.month,
-                "day": d.day
             })
 
         # -- write csv --
@@ -447,21 +373,7 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteIncome.income_from.ilike(f"%{form_data.get("income_from")}%")
         )
-    # -- session search --
-    if form_data.get("session_id"):
-        query = query.filter(
-            InstituteIncome.session_id==int(form_data.get("session_id"))
-        )
-    # -- month search --
-    if form_data.get("month_id"):
-        query = query.filter(
-            InstituteIncome.month_id==int(form_data.get('month_id'))
-        )
-    # -- day search --
-    if form_data.get("day_id"):
-        query = query.filter(
-            InstituteIncome.day_id==int(form_data.get("day_id"))
-        )
+
     # # -- shift search --
     if form_data.get("shift_id"):
         query = query.filter(
@@ -471,7 +383,7 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
 
     # -- jsonify --
     json_expenses = []
-    for instt_inc, s, m, d, sh in result:
+    for instt_inc, sh in result:
         json_expenses.append({
             "id": instt_inc.income_id,
             "income_type": instt_inc.income_type,
@@ -480,9 +392,6 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
             "shift": sh.shift_name,
             "amount": instt_inc.amount,
             "date": instt_inc.date.isoformat() if instt_inc.date else None,
-            "session": s.session,
-            "month": m.month,
-            "day": d.day
         })
 
     # -- response --

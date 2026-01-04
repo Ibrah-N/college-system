@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.config.db_connect import SessionLocal
 
 from app.models.institute_expense_orm import InstituteExpense
-from app.models.helper_orm import (Session, Month, Day, Shift)
+from app.models.helper_orm import Shift
 
 
 expense_router = APIRouter(prefix="/account", tags=['Account'])
@@ -52,10 +52,11 @@ async def add_expense(request: Request, db: Session = Depends(get_db)):
     else:
         amount = float(form_data.get("amount"))
     new_expense = InstituteExpense(
-        item_detail=form_data.get("item_details"), expense_for=form_data.get("expense_for"),
+        item_detail=form_data.get("item_details"), 
+        expense_for=form_data.get("expense_for"),
         expense_by=form_data.get("expense_by"), amount=amount,
-        session_id=form_data.get("session_id"), month_id=form_data.get("month_id"),
-        day_id=form_data.get("day_id"), shift_id=form_data.get("shift_id"))
+        shift_id=form_data.get("shift_id")
+        )
     
     # -- add expense --
     db.add(new_expense)
@@ -78,31 +79,21 @@ def list_expenses(request: Request, db: Session = Depends(get_db)):
 
     # -- extract all neccessory info --
     result = (
-        db.query(InstituteExpense, Session,
-                 Month, Day, Shift
+        db.query(InstituteExpense, Shift
                 )
-        .join(Session, InstituteExpense.session_id == Session.session_id)
-        .join(Month, InstituteExpense.month_id == Month.month_id)
-        .join(Day, InstituteExpense.day_id == Day.day_id)
         .join(Shift, InstituteExpense.shift_id == Shift.shift_id)
         .all()
     )
 
     # -- jsonify record for fastapi responses --
     json_expenses = []
-    for instt_exp, s, m, d, sh in result:
+    for instt_exp, sh in result:
         json_expenses.append({
             "id": instt_exp.expense_id,
             "item_detail": instt_exp.item_detail,
             "expense_for": instt_exp.expense_for,
             "expense_by": instt_exp.expense_by,
             "amount": instt_exp.amount,
-            "session": s.session,
-            "session_id": s.session_id,
-            "month": m.month,
-            "month_id": m.month_id,
-            "day": d.day,
-            "day_id": d.day_id,
             "shift": sh.shift_name,
             "shift_id": sh.shift_id,
             "date": instt_exp.date.isoformat() if instt_exp.date else None
@@ -123,17 +114,13 @@ def list_expenses(request: Request, db: Session = Depends(get_db)):
 # ======================================
 @expense_router.delete("/delete_expense")
 def delete_expense(
-        id: int, session_id: int, 
-        month_id: int, day_id:int, 
+        id: int,
         db: Session = Depends(get_db)
     ):
     
     # -- filter expense --
     expense = db.query(InstituteExpense).filter_by(
         expense_id=id, 
-        session_id=session_id, 
-        month_id=month_id, 
-        day_id=day_id
     ).first()
 
     # -- existance check --
@@ -165,12 +152,8 @@ async def update_expense_stage_1(request: Request, expense_id: int,
 
     # -- joins --
     query = (
-        db.query(InstituteExpense, Session,
-                 Month, Day, Shift
+        db.query(InstituteExpense, Shift
                 )
-        .join(Session, InstituteExpense.session_id == Session.session_id)
-        .join(Month, InstituteExpense.month_id == Month.month_id)
-        .join(Day, InstituteExpense.day_id == Day.day_id)
         .join(Shift, InstituteExpense.shift_id == Shift.shift_id)
     )
     query = query.filter(
@@ -194,21 +177,12 @@ async def update_expense_stage_1(request: Request, expense_id: int,
         "expense_for": result.InstituteExpense.expense_for,
         "expense_by": result.InstituteExpense.expense_by,
         "amount": result.InstituteExpense.amount,
-        "session": result.Session.session,
-        "session_id": result.InstituteExpense.session_id,
-        "month": result.Month.month,
-        "month_id": result.InstituteExpense.month_id,
-        "day": result.Day.day, 
-        "day_id": result.InstituteExpense.day_id,
         "shift": result.Shift.shift_name,
         "shift_id": result.InstituteExpense.shift_id,   
         "date": result.InstituteExpense.date.isoformat() if result.InstituteExpense.date else None
     }
 
-    # -- fetch sessions, months, days, shifts for dropdowns --
-    sessions = db.query(Session).all()
-    months = db.query(Month).all()
-    days = db.query(Day).all()
+    # -- fetch shifts for dropdowns --
     shifts = db.query(Shift).all()
 
     # -- response --
@@ -217,9 +191,6 @@ async def update_expense_stage_1(request: Request, expense_id: int,
         {
             "request": request,
             "old_expense": json_expense,
-            "sessions": sessions,
-            "months": months,
-            "days": days,
             "shifts": shifts
         }
     )
@@ -248,9 +219,6 @@ async def update_expense(request: Request, db: Session = Depends(get_db)):
     expense.expense_for = form_data.get("expense_for")
     expense.expense_by = form_data.get("expense_by")
     expense.amount = float(form_data.get("amount")) if form_data.get("amount") else 0
-    expense.session_id = form_data.get("session_id")
-    expense.month_id = form_data.get("month_id")
-    expense.day_id = form_data.get("day_id")
     expense.shift_id = form_data.get("shift_id")
 
     db.commit()
@@ -275,12 +243,8 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
 
     # -- extract join data --
     query = (
-        db.query(InstituteExpense, Session,
-                 Month, Day, Shift
+        db.query(InstituteExpense, Shift
                 )
-        .join(Session, InstituteExpense.session_id == Session.session_id)
-        .join(Month, InstituteExpense.month_id == Month.month_id)
-        .join(Day, InstituteExpense.day_id == Day.day_id)
         .join(Shift, InstituteExpense.shift_id == Shift.shift_id)
     )
 
@@ -293,19 +257,13 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
 
         # -- jsonify --
         json_expenses = []
-        for instt_exp, s, m, d, sh in result:
+        for instt_exp, sh in result:
             json_expenses.append({
                 "id": instt_exp.expense_id,
                 "item_detail": instt_exp.item_detail,
                 "expense_for": instt_exp.expense_for,
                 "expense_by": instt_exp.expense_by,
                 "amount": instt_exp.amount,
-                "session": s.session,
-                "session_id": s.session_id,
-                "month": m.month,
-                "month_id": m.month_id,
-                "day": d.day,
-                "day_id": d.day_id,
                 "shift": sh.shift_name,
                 "shift_id": sh.shift_id,
                 "date": instt_exp.date.isoformat() if instt_exp.date else None
@@ -330,22 +288,7 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteExpense.item_detail.ilike(f"%{form_data.get("item_detail")}%")
         )
-    # -- session search --
-    if form_data.get("session_id"):
-        query = query.filter(
-            InstituteExpense.session_id==int(form_data.get("session_id"))
-        )
-    # -- month search --
-    if form_data.get("month_id"):
-        query = query.filter(
-            InstituteExpense.month_id==int(form_data.get('month_id'))
-        )
-    # -- day search --
-    if form_data.get("day_id"):
-        query = query.filter(
-            InstituteExpense.day_id==int(form_data.get("day_id"))
-        )
-    # # -- shift search --
+    # -- shift search --
     if form_data.get("shift_id"):
         query = query.filter(
             InstituteExpense.shift_id==int(form_data.get("shift_id"))
@@ -354,19 +297,13 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
 
     # -- jsonify --
     json_expenses = []
-    for instt_exp, s, m, d, sh in result:
+    for instt_exp, sh in result:
         json_expenses.append({
             "id": instt_exp.expense_id,
             "item_detail": instt_exp.item_detail,
             "expense_for": instt_exp.expense_for,
             "expense_by": instt_exp.expense_by,
             "amount": instt_exp.amount,
-            "session": s.session,
-            "session_id": s.session_id,
-            "month": m.month,
-            "month_id": m.month_id,
-            "day": d.day,
-            "day_id": d.day_id,
             "shift": sh.shift_name,
             "shift_id": sh.shift_id,
             "date": instt_exp.date.isoformat() if instt_exp.date else None
@@ -391,12 +328,8 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
 
     # -- extract join data --
     query = (
-        db.query(InstituteExpense, Session,
-                    Month, Day, Shift
+        db.query(InstituteExpense, Shift
                 )
-        .join(Session, InstituteExpense.session_id == Session.session_id)
-        .join(Month, InstituteExpense.month_id == Month.month_id)
-        .join(Day, InstituteExpense.day_id == Day.day_id)
         .join(Shift, InstituteExpense.shift_id == Shift.shift_id)
     )
 
@@ -409,7 +342,7 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
 
         # -- jsonify --
         json_expenses = []
-        for instt_exp, s, m, d, sh in result:
+        for instt_exp, sh in result:
             json_expenses.append({
                 "id": instt_exp.expense_id,
                 "item_detail": instt_exp.item_detail,
@@ -418,9 +351,6 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
                 "shift": sh.shift_name,
                 "amount": instt_exp.amount,
                 "date": instt_exp.date.isoformat() if instt_exp.date else None,
-                "session": s.session,
-                "month": m.month,
-                "day": d.day
             })
 
         # -- write csv --
@@ -451,22 +381,7 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteExpense.item_detail.ilike(f"%{form_data.get("item_detail")}%")
         )
-    # -- session search --
-    if form_data.get("session_id"):
-        query = query.filter(
-            InstituteExpense.session_id==int(form_data.get("session_id"))
-        )
-    # -- month search --
-    if form_data.get("month_id"):
-        query = query.filter(
-            InstituteExpense.month_id==int(form_data.get('month_id'))
-        )
-    # -- day search --
-    if form_data.get("day_id"):
-        query = query.filter(
-            InstituteExpense.day_id==int(form_data.get("day_id"))
-        )
-    # # -- shift search --
+    # -- shift search --
     if form_data.get("shift_id"):
         query = query.filter(
             InstituteExpense.shift_id==int(form_data.get("shift_id"))
@@ -475,7 +390,7 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
 
     # -- jsonify --
     json_expenses = []
-    for instt_exp, s, m, d, sh in result:
+    for instt_exp, sh in result:
         json_expenses.append({
             "id": instt_exp.expense_id,
             "item_detail": instt_exp.item_detail,
@@ -484,9 +399,6 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
             "shift": sh.shift_name,
             "amount": instt_exp.amount,
             "date": instt_exp.date.isoformat() if instt_exp.date else None,
-            "session": s.session,
-            "month": m.month,
-            "day": d.day
         })
 
     # -- response --

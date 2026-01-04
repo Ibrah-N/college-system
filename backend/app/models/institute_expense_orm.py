@@ -14,7 +14,4 @@ class InstituteExpense(Base):
     expense_by = Column(String(30))
     amount = Column(Float)
     shift_id = Column(Integer, ForeignKey("shift.shift_id"))
-    session_id = Column(Integer, ForeignKey("session.session_id"))
-    month_id = Column(Integer, ForeignKey("month.month_id"))
-    day_id = Column(Integer, ForeignKey("day.day_id"))
     date = Column(Date, server_default=func.current_date())  # <-- auto by DB

@@ -10,8 +10,5 @@ class InstituteIncome(Base):
     income_details = Column(String(150))
     income_from = Column(String(30))
     amount = Column(Float)
-    session_id = Column(Integer, ForeignKey("session.session_id"))
-    month_id = Column(Integer, ForeignKey("month.month_id"))
-    day_id = Column(Integer, ForeignKey("day.day_id"))
     shift_id = Column(Integer, ForeignKey("shift.shift_id"))
     date = Column(Date, server_default=func.current_date())  # <-- auto by DB

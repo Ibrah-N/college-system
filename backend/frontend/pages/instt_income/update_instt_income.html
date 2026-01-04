@@ -20,41 +20,6 @@
         <h3>Update Income Information</h3>
 
 
-
-        <div id="second-row">
-            <div class="form-row">
-            <label>Session:</label>
-            <select id="Session" name="session_id">
-                <option value="">-- Select Session --</option>
-                {% for session in sessions %}
-                <option value="{{ session.session_id }}" {% if session.session_id == old_income.session_id %}selected{% endif %}>{{ session.session }}</option>
-                {% endfor %}
-            </select>
-            </div>
-
-
-            <div class="form-row">
-            <label>Month:</label>
-            <select id="Month" name="month_id">
-                <option value="">-- Select Month --</option>
-                {% for month in months %}
-                <option value="{{ month.month_id }}" {% if month.month_id == old_income.month_id %}selected{% endif %}>{{ month.month }}</option>
-                {% endfor %}
-            </select>
-            </div>
-
-            <div class="form-row">
-            <label>Day:</label>
-            <select id="Day" name="day_id">
-                <option value="">-- Select Day --</option>
-                {% for day in days %}
-                <option value="{{ day.day_id }}" {% if day.day_id == old_income.day_id %}selected{% endif %}>{{ day.day }}</option>
-                {% endfor %}
-            </select>
-            </div>
-        </div>
-
-
                 <!-- first row -->
         <div id="first-row">
             <div class="form-row" id="left">

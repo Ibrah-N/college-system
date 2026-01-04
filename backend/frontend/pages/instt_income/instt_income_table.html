@@ -25,18 +25,6 @@
                 <option value="">-Shift-</option>
             </select>
 
-            <select name="session_id" id="session">
-                <option value="">-Session-</option>
-            </select>
-
-            <select name="month_id" id="month">
-                <option value="">-Month-</option>
-            </select>
-
-            <select name="day_id" id="day">
-                <option value="">-Day-</option>
-            </select>
-
 
 
             <!-- BUTTONS -->
@@ -61,9 +49,6 @@
             <th>Shift</th>
             <th>Amount</th>
             <th>Date</th>
-            <th>Session</th>
-            <th>Month</th>
-            <th>Day</th>
             <th>Actions</th>
         </tr>
         {% for r in incomes %}
@@ -75,16 +60,12 @@
             <td>{{r.shift}}</td>
             <td>{{r.amount}}</td>
             <td>{{r.date}}</td>
-            <td>{{r.session}}</td>
-            <td>{{r.month}}</td>
-            <td>{{r.day}}</td>
             <td>
                 <button onclick="updateIncome(
                     '{{ r.id }}'
                 )">Update</button>
                 <button onclick="deleteIncome(
-                    '{{ r.id }}', '{{ r.session_id }}',
-                    '{{ r.month_id }}', '{{ r.day_id }}',
+                    '{{ r.id }}'
                 )">Delete</button>
             </td>
         </tr>
