@@ -15,7 +15,7 @@
     <h1>Update Institute Income Form</h1>
     </div>
 
-    <form id="insttIncomeFrom", action="/account/update_income", method="POST">
+    <form id="insttIncomeFrom" action="/account/update_income" method="POST">
       <section>
         <h3>Update Income Information</h3>
 
@@ -24,7 +24,7 @@
         <div id="first-row">
             <div class="form-row" id="left">
             <label>Amount:</label>
-            <input type="text" value="{{ old_income.amount }}"name="amount">
+            <input type="text" value="{{ old_income.amount }}" name="amount">
             </div>
 
             <div class="form-row">
@@ -51,12 +51,12 @@
 
             <div class="form-row">
             <label>Income Details:</label>
-            <input type="text" value="{{ old_income.income_details }}" name="income_details"></input>
+            <input type="text" value="{{ old_income.income_details }}" name="income_details">
             </div>
 
             <div class="form-row">
             <label>Income From:</label>
-            <input type="text" value="{{ old_income.income_from}}" name="income_from"></input>
+            <input type="text" value="{{ old_income.income_from}}" name="income_from">
             </div>
         </div>
       </section>

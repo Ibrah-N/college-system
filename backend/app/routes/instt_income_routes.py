@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import (HTMLResponse, JSONResponse,
                                 RedirectResponse, StreamingResponse)
+
+from app.utils.form_submission import title_case
 import pandas as pd
 import io
 
@@ -44,17 +46,20 @@ def income_form(request: Request):
 async def add_income(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
 
-    print(form_data)
     # -- amount var check --
     amount = 0
     if form_data.get("amount")=='' or form_data.get("amount") is None:
         amount = 0
     else:
         amount = float(form_data.get("amount"))
+
     new_income = InstituteIncome(
-        income_type=form_data.get("income_type"), income_details=form_data.get("income_details"),
-        income_from=form_data.get("income_from"), amount=amount,
+        income_type=title_case(form_data.get("income_type")), 
+        income_details=title_case(form_data.get("income_details")),
+        income_from=title_case(form_data.get("income_from")), 
+        amount=amount,
         shift_id=form_data.get("shift_id"))
+
     # -- add income --
     db.add(new_income)
     db.commit()
@@ -78,6 +83,7 @@ def list_incomes(request: Request, db: Session = Depends(get_db)):
     result = (
         db.query(InstituteIncome, Shift)
         .join(Shift, InstituteIncome.shift_id == Shift.shift_id)
+        .order_by(InstituteIncome.income_id.desc())
         .all()
     )
 
@@ -195,6 +201,7 @@ async def update_expense_stage_1(request: Request, income_id: int,
 @income_router.post("/update_income")
 async def update_income(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
+
     income_id = form_data.get("income_id")
 
     # -- filter income --
@@ -211,9 +218,9 @@ async def update_income(request: Request, db: Session = Depends(get_db)):
         )
 
     # -- update expense --
-    income.income_type = form_data.get("income_type")
-    income.income_details = form_data.get("income_details")
-    income.income_from = form_data.get("income_from")
+    income.income_type = title_case(form_data.get("income_type"))
+    income.income_details = title_case(form_data.get("income_details"))
+    income.income_from = title_case(form_data.get("income_from"))
     income.amount = float(form_data.get("amount")) if form_data.get("amount") else 0
     income.shift_id = form_data.get("shift_id")
 
@@ -245,6 +252,7 @@ async def search_incomes(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteIncome.income_id==int(form_data.get("id_search"))
         )
+        query = query.order_by(InstituteIncome.income_id.desc())
         result = query.all()
 
         # -- jsonify --
@@ -285,6 +293,7 @@ async def search_incomes(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteIncome.shift_id==int(form_data.get("shift_id"))
         )
+    query = query.order_by(InstituteIncome.income_id.desc())
     result = query.all()
 
     # -- jsonify --
@@ -330,6 +339,7 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteIncome.income_id==int(form_data.get("id_search"))
         )
+        query = query.order_by(InstituteIncome.income_id.desc())
         result = query.all()
 
         # -- jsonify --
@@ -379,6 +389,7 @@ async def export_incomes(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteIncome.shift_id==int(form_data.get("shift_id"))
         )
+    query = query.order_by(InstituteIncome.income_id.desc())
     result = query.all()
 
     # -- jsonify --

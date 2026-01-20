@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import (HTMLResponse, JSONResponse,
                                 RedirectResponse, StreamingResponse)
+from app.utils.form_submission import title_case
 import pandas as pd
 import io
 
@@ -44,7 +45,6 @@ def expense_form(request: Request):
 async def add_expense(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
 
-    print(form_data)
     # -- amount var check --
     amount = 0
     if form_data.get("amount")=='' or form_data.get("amount") is None:
@@ -52,9 +52,10 @@ async def add_expense(request: Request, db: Session = Depends(get_db)):
     else:
         amount = float(form_data.get("amount"))
     new_expense = InstituteExpense(
-        item_detail=form_data.get("item_details"), 
-        expense_for=form_data.get("expense_for"),
-        expense_by=form_data.get("expense_by"), amount=amount,
+        item_detail=title_case(form_data.get("item_details")), 
+        expense_for=title_case(form_data.get("expense_for")),
+        expense_by=title_case(form_data.get("expense_by")), 
+        amount=amount,
         shift_id=form_data.get("shift_id")
         )
     
@@ -75,13 +76,13 @@ async def add_expense(request: Request, db: Session = Depends(get_db)):
 # ======================================
 @expense_router.get("/list_expenses")
 def list_expenses(request: Request, db: Session = Depends(get_db)):
-    all_expenses = db.query(InstituteExpense).all()
 
     # -- extract all neccessory info --
     result = (
         db.query(InstituteExpense, Shift
                 )
         .join(Shift, InstituteExpense.shift_id == Shift.shift_id)
+        .order_by(InstituteExpense.expense_id.desc())
         .all()
     )
 
@@ -215,9 +216,9 @@ async def update_expense(request: Request, db: Session = Depends(get_db)):
         )
 
     # -- update expense --
-    expense.item_detail = form_data.get("item_details")
-    expense.expense_for = form_data.get("expense_for")
-    expense.expense_by = form_data.get("expense_by")
+    expense.item_detail = title_case(form_data.get("item_details"))
+    expense.expense_for = title_case(form_data.get("expense_for"))
+    expense.expense_by = title_case(form_data.get("expense_by"))
     expense.amount = float(form_data.get("amount")) if form_data.get("amount") else 0
     expense.shift_id = form_data.get("shift_id")
 
@@ -241,6 +242,7 @@ async def update_expense(request: Request, db: Session = Depends(get_db)):
 async def search_expense(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
 
+
     # -- extract join data --
     query = (
         db.query(InstituteExpense, Shift
@@ -253,6 +255,7 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteExpense.expense_id==int(form_data.get("id_search"))
         )
+        query = query.order_by(InstituteExpense.expense_id.desc())
         result = query.all()
 
         # -- jsonify --
@@ -293,6 +296,7 @@ async def search_expense(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteExpense.shift_id==int(form_data.get("shift_id"))
         )
+    query = query.order_by(InstituteExpense.expense_id.desc())
     result = query.all()
 
     # -- jsonify --
@@ -338,6 +342,7 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteExpense.expense_id==int(form_data.get("id_search"))
         )
+        query = query.order_by(InstituteExpense.expense_id.desc())
         result = query.all()
 
         # -- jsonify --
@@ -386,6 +391,7 @@ async def export_expense(request: Request, db: Session = Depends(get_db)):
         query = query.filter(
             InstituteExpense.shift_id==int(form_data.get("shift_id"))
         )
+    query = query.order_by(InstituteExpense.expense_id.desc())
     result = query.all()
 
     # -- jsonify --
