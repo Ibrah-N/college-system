@@ -11,6 +11,12 @@ from app.config.db_connect import SessionLocal
 from app.models.admission_orm import Student
 
 
+from app.utils.form_submission import (title_case, 
+                                        validate_cnic, 
+                                        validate_phone_number
+                                    )
+
+
 admission_router = APIRouter(prefix="/student", tags=["Student"])
 templates = Jinja2Templates(directory="frontend")
 
@@ -49,7 +55,7 @@ def get_students(request: Request):
 # ========================================
 @admission_router.get("/all")
 def get_all_students(request: Request, db: Session = Depends(get_db)):
-    students = db.query(Student).all()
+    students = db.query(Student).order_by(Student.student_id.asc()).all()
     
     return templates.TemplateResponse("pages/student/admission_table.html", 
                                         {"request": request, "students": students})
@@ -65,7 +71,7 @@ async def add_student(request: Request, db: Session = Depends(get_db)):
     
 
     # -- check whether have unset values --
-    emergency_no = form_data.get("emergency_no") or ""
+    emergency_no = validate_phone_number(form_data.get("emergency_no")) or ""
     degree = form_data.get("degree") or ""
     name_of_institute = form_data.get("name_of_institute") or ""
     academic_year = form_data.get("academic-year") or ""
@@ -73,12 +79,23 @@ async def add_student(request: Request, db: Session = Depends(get_db)):
 
     # -- add new student --
     new_student = Student(
-        name=form_data.get("student_name"), father_name=form_data.get("father_name"),
-        gender=form_data.get("gender"), date_of_birth=form_data.get("date_of_birth"),
-        nationality=form_data.get("nationality"), cnic=form_data.get("cnic"),
-        mobile=form_data.get("mobile"), emergency=emergency_no, 
-        temporary_address=form_data.get("temp_address"), permanent_address=form_data.get("perm_address"),
-        degree=degree, year=academic_year, name_of_institute=name_of_institute, grade=grade)
+        name=title_case(form_data.get("student_name")), 
+        father_name=title_case(form_data.get("father_name")),
+        gender=form_data.get("gender"), 
+        date_of_birth=form_data.get("date_of_birth"),
+        nationality=title_case(form_data.get("nationality")), 
+        cnic=validate_cnic(form_data.get("cnic")) or "",
+        mobile=validate_phone_number(form_data.get("mobile")) or "", 
+        emergency=validate_phone_number(emergency_no), 
+        temporary_address=title_case(form_data.get("temp_address")) or "", 
+        permanent_address=title_case(form_data.get("perm_address")) or "",
+        degree=degree, 
+        year=academic_year,
+        name_of_institute=title_case(name_of_institute) or "", 
+        grade=grade
+        )
+
+
     db.add(new_student)
     db.commit()
     db.refresh(new_student)
@@ -123,19 +140,19 @@ async def update_student(request: Request, db: Session = Depends(get_db)):
     grade = form_data.get("grade") or ""
 
     # -- update student --
-    student.name = form_data.get("student_name")
-    student.father_name = form_data.get("father_name")
+    student.name = title_case(form_data.get("student_name"))
+    student.father_name = title_case(form_data.get("father_name"))
     student.gender = form_data.get("gender")
     student.date_of_birth = form_data.get("date_of_birth")
-    student.nationality = form_data.get("nationality")
-    student.cnic = form_data.get("cnic")
-    student.mobile = form_data.get("mobile")
-    student.temporary_address = form_data.get("temp_address")
-    student.permanent_address = form_data.get("perm_address")
-    student.emergency = emergency_no
+    student.nationality = title_case(form_data.get("nationality"))
+    student.cnic = validate_cnic(form_data.get("cnic"))
+    student.mobile = validate_phone_number(form_data.get("mobile"))
+    student.temporary_address = title_case(form_data.get("temp_address"))
+    student.permanent_address = title_case(form_data.get("perm_address"))
+    student.emergency = validate_phone_number(emergency_no)
     student.degree = degree
     student.year = academic_year
-    student.name_of_institute = name_of_institute
+    student.name_of_institute = title_case(name_of_institute)
     student.grade = grade
 
     db.commit()
@@ -171,11 +188,11 @@ async def search_student(request: Request, id_search,
                 name_search, db: Session = Depends(get_db)
             ):
 
-    students = None
+    students = db.query(Student).order_by(Student.student_id.asc()).all()
     if id_search:
-        students = db.query(Student).filter(Student.student_id == id_search).first()
+        students = db.query(Student).filter(Student.student_id == id_search).order_by(Student.student_id.asc()).first()
     elif name_search:
-        students = db.query(Student).filter(Student.name.ilike(f"%{name_search}%")).all()
+        students = db.query(Student).filter(Student.name.ilike(f"%{name_search}%")).order_by(Student.student_id.asc()).all()
 
     if isinstance(students, Student):
         students = [students]

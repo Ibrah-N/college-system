@@ -14,14 +14,14 @@
     <h1>Update Teacher Form</h1>
     </div>
 
-    <form id="teacherForm", action="/teacher/update_add_teacher" method="POST">
+    <form id="teacherForm" action="/teacher/update_add_teacher" method="POST">
       <section>
         <h3>Personal Information</h3>
 
         <div id="zero-row">
             <div class="form-row">
             <label>Teacher ID:</label>
-            <input type="number" name="teacher_id" value="{{ old_teacher.teacher_id }}" required>
+            <input type="number" name="teacher_id" value="{{ old_teacher.teacher_id }}" readonly>
             </div>
         </div>
         
@@ -29,12 +29,12 @@
         <div id="first-row">
             <div class="form-row">
             <label>Teacher Name:</label>
-            <input type="text" name="teacher_name" value="{{ old_teacher.name }}" required>
+            <input type="text" name="teacher_name" value="{{ old_teacher.name }}" >
             </div>
 
             <div class="form-row">
             <label>Father Name:</label>
-            <input type="text" name="father_name" value="{{ old_teacher.father_name }}" required>
+            <input type="text" name="father_name" value="{{ old_teacher.father_name }}" >
             </div>
         </div>
 
@@ -42,7 +42,7 @@
         <div id="second-row">
             <div class="form-row">
             <label>Qualification:</label>
-            <input type="text" name="qualification" value="{{ old_teacher.qualification}}" placeholder="MS or BS ..." required>
+            <input type="text" name="qualification" value="{{ old_teacher.qualification}}" placeholder="MS or BS ..." >
             </div>
 
 
@@ -78,6 +78,6 @@
     </form>
   </div>
 
-  <!-- <script src="js/teacher/xyz.js"></script> -->
+  <script src="{{ url_for('static', path='/js/teacher/update_add_teacher.js')}}"></script>
 </body>
 </html>

@@ -7,9 +7,16 @@ from app.config.db_connect import SessionLocal
 from app.models.add_teacher_orm import AddTeacher
 
 
+from app.utils.form_submission import (title_case, 
+                                        validate_cnic, 
+                                        validate_phone_number
+                                    )
+
 # -- add paths --
 add_teacher_router = APIRouter(prefix="/teacher", tags=["Teacher"])
 templates = Jinja2Templates(directory="frontend")
+
+
 
 # -- connect db --
 def get_db():
@@ -22,7 +29,7 @@ def get_db():
 
 
 # ========================================
-#  T E A C H E R - M A I N - F O R M   #
+#  T E A C H E R - M A I N - F O R M     #
 # ========================================
 # @add_teacher_router.get("/", response_class=HTMLResponse)
 # def teacher(request: Request):
@@ -43,7 +50,7 @@ def get_teacher(request: Request):
 # ========================================
 @add_teacher_router.get("/all", response_class=HTMLResponse)
 def get_all_teacher(request: Request, db: Session = Depends(get_db)):
-    all_teachers = db.query(AddTeacher).all()
+    all_teachers = db.query(AddTeacher).order_by(AddTeacher.teacher_id.asc()).all()
 
     return templates.TemplateResponse("pages/teacher/add_teacher_table.html", 
                                         {"request": request, "teachers": all_teachers})
@@ -56,9 +63,13 @@ def get_all_teacher(request: Request, db: Session = Depends(get_db)):
 async def add_teacher(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
 
-    new_teacher = AddTeacher(name=form_data.get("teacher_name"), father_name=form_data.get("father_name"),
-        qualification=form_data.get("qualification"), gender=form_data.get("gender"), 
-        contact=form_data.get("contact"), address=form_data.get("address")
+    new_teacher = AddTeacher(
+        name=title_case(form_data.get("teacher_name")), 
+        father_name=title_case(form_data.get("father_name")),
+        qualification=form_data.get("qualification"), 
+        gender=form_data.get("gender"), 
+        contact=validate_phone_number(form_data.get("contact")), 
+        address=title_case(form_data.get("address"))
     )
     db.add(new_teacher)
     db.commit()
@@ -93,12 +104,12 @@ async def update_add_teacher(request: Request, db: Session = Depends(get_db)):
     if not teacher:
         return JSONResponse(content={"message": "Teacher Not Found"}, status_code=404)
 
-    teacher.name = form_data.get("teacher_name")
-    teacher.father_name = form_data.get("father_name")
+    teacher.name = title_case(form_data.get("teacher_name"))
+    teacher.father_name = title_case(form_data.get("father_name"))
     teacher.qualification = form_data.get("qualification")
     teacher.gender = form_data.get("gender")
-    teacher.contact = form_data.get("contact")
-    teacher.address = form_data.get("address")
+    teacher.contact = validate_phone_number(form_data.get("contact"))
+    teacher.address = title_case(form_data.get("address"))
     db.commit()
 
     return RedirectResponse(url="/teacher/all", status_code=303)
@@ -130,12 +141,13 @@ def delete_teacher(teacher_id: int, db: Session = Depends(get_db)):
 def search_add_teacher(request: Request, id_search,
                         name_search, db: Session = Depends(get_db)):
 
-    teachers = None
+    teachers = db.query(AddTeacher).order_by(AddTeacher.teacher_id.asc())
+
     if id_search:
         teachers = db.query(AddTeacher).filter(AddTeacher.teacher_id==id_search).first()
         
     elif name_search:
-        teachers = db.query(AddTeacher).filter(AddTeacher.name.ilike(f"%{name_search}%")).all()
+        teachers = db.query(AddTeacher).filter(AddTeacher.name.ilike(f"%{name_search}%")).order_by(AddTeacher.teacher_id.asc()).all()
 
 
     if isinstance(teachers, AddTeacher):

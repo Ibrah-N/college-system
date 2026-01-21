@@ -15,6 +15,7 @@ async function deleteTeacher(teacher_id) {
     }
 }
 
+
 async function updateTeacher(teacher_id) {
     window.location.href = `/teacher/update_stage_1/${teacher_id}`;
 }

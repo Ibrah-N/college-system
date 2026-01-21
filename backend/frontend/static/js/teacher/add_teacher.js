@@ -1,41 +1,56 @@
-document.getElementById("insttIncomeFrom").addEventListener("submit", function (e) {
-    e.preventDefault();
 
+
+document.getElementById("teacherForm").addEventListener("submit", function (e) {
+    e.preventDefault();
     clearValidation();
 
     let isValid = true;
 
+    // ===== Teacher Name =====
     isValid &= validateField(
-        document.querySelector("input[name='amount']"),
-        val => val !== "" && !isNaN(val) && Number(val) > 0,
-        "Enter a valid amount"
-    );
-
-    isValid &= validateField(
-        document.querySelector("select[name='shift_id']"),
+        document.querySelector("input[name='teacher_name']"),
         val => val !== "",
-        "Please select a shift"
+        "Teacher name is required"
     );
 
+    // ===== Father Name =====
     isValid &= validateField(
-        document.querySelector("input[name='income_type']"),
+        document.querySelector("input[name='father_name']"),
         val => val !== "",
-        "Income type is required"
+        "Father name is required"
     );
 
+    // ===== Qualification =====
     isValid &= validateField(
-        document.querySelector("input[name='income_details']"),
+        document.querySelector("input[name='qualification']"),
         val => val !== "",
-        "Income details are required"
+        "Qualification is required"
     );
 
+    // ===== Contact (Mobile) =====
     isValid &= validateField(
-        document.querySelector("input[name='income_from']"),
-        val => val !== "",
-        "Income from is required"
+        document.querySelector("input[name='contact']"),
+        val => {
+            const p1 = /^03\d{2}-\d{7}$/;
+            const p2 = /^03\d{9}$/;
+            return p1.test(val) || p2.test(val);
+        },
+        "Contact must be 03xx-xxxxxxx or 03xxxxxxxxx"
     );
 
-    // readonly id → no validation needed
+    // ===== Gender =====
+    isValid &= validateField(
+        document.querySelector("select[name='gender']"),
+        val => val !== "",
+        "Please select gender"
+    );
+
+    // ===== Address =====
+    isValid &= validateField(
+        document.querySelector("input[name='address']"),
+        val => val !== "",
+        "Address is required"
+    );
 
     if (isValid) {
         setTimeout(() => this.submit(), 150);
@@ -44,6 +59,7 @@ document.getElementById("insttIncomeFrom").addEventListener("submit", function (
 });
 
 /* ===== Helper functions ===== */
+
 function validateField(element, conditionFn, message) {
     const value = element.value.trim();
 
@@ -71,3 +87,4 @@ function clearValidation() {
     document.querySelectorAll(".error-message")
         .forEach(el => el.remove());
 }
+
