@@ -97,3 +97,101 @@ window.onload = function() {
   loadDepartment();
   loadSelection();
 };
+
+
+
+document.getElementById("studentEnrollmentForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    clearValidation();
+
+    const studentIdInput = document.querySelector("input[name='student_id']");
+    const studentId = studentIdInput.value.trim();
+
+    // ===== 1️⃣ Check student existence =====
+    if (studentId === "") {
+        showFieldError(studentIdInput, "Student ID is required");
+        return;
+    }
+
+    try {
+        const response = await fetch("/student/check_student", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ student_id: studentId })
+        });
+
+        const result = await response.json();
+
+        if (!result.exists) {
+            showFieldError(studentIdInput, "Student not found. Please add student first.");
+            return;
+        }
+
+    } catch (err) {
+        alert("Server error. Try again.");
+        return;
+    }
+
+    // ===== 2️⃣ Validate rest of fields =====
+    let isValid = true;
+
+    isValid &= validateSelect("department_id", "Please select department");
+    isValid &= validateSelect("course_id", "Please select course");
+    isValid &= validateSelect("shift_id", "Please select shift");
+    isValid &= validateSelect("class_code_id", "Please select class code");
+    isValid &= validateSelect("admission_type_id", "Please select admission type");
+    isValid &= validateSelect("semester_id", "Please select semester");
+
+    isValid &= validateInput(
+        document.querySelector("input[name='fee']"),
+        val => /^\d+$/.test(val),
+        "Fee must be numeric"
+    );
+
+    // ===== 3️⃣ Submit =====
+    if (isValid) {
+        this.submit();
+    }
+});
+
+
+function validateSelect(name, message) {
+    const el = document.querySelector(`select[name='${name}']`);
+    if (!el.value) {
+        el.classList.add("input-error");
+        showError(el, message);
+        return false;
+    }
+    el.classList.add("input-success");
+    return true;
+}
+
+function validateInput(el, condition, message) {
+    if (!condition(el.value.trim())) {
+        el.classList.add("input-error");
+        showError(el, message);
+        return false;
+    }
+    el.classList.add("input-success");
+    return true;
+}
+
+function showFieldError(el, message) {
+    el.classList.add("input-error");
+    showError(el, message);
+}
+
+function showError(el, msg) {
+    if (el.nextElementSibling?.classList.contains("error-message")) return;
+    const d = document.createElement("div");
+    d.className = "error-message";
+    d.innerText = msg;
+    el.insertAdjacentElement("afterend", d);
+}
+
+function clearValidation() {
+    document.querySelectorAll(".input-error, .input-success")
+        .forEach(el => el.classList.remove("input-error", "input-success"));
+
+    document.querySelectorAll(".error-message").forEach(e => e.remove());
+}

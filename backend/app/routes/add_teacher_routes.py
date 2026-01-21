@@ -162,3 +162,22 @@ def search_add_teacher(request: Request, id_search,
     )
 
 
+
+@add_teacher_router.post("/check_teacher")
+async def check_teacher(request: Request, db: Session = Depends(get_db)):
+    data = await request.json()
+    teacher_id = data.get("teacher_id")
+    
+    if not teacher_id:
+        return {"exists": False}
+
+    # safely convert to int
+    try:
+        teacher_id_int = int(teacher_id)
+    except ValueError:
+        return {"exists": False}
+    
+    # check in DB
+    teacher = db.query(AddTeacher).filter(AddTeacher.teacher_id == teacher_id_int).first()
+    
+    return {"exists": True if teacher else False}

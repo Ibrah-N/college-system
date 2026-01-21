@@ -95,7 +95,7 @@ def fee_form(teacher_id: int, department_id: int,
         TeacherPayment.department_id == department_id,
         TeacherPayment.contract_type_id == contract_type_id,
         TeacherPayment.shift_id == shift_id
-    ).all()
+    ).order_by(TeacherPayment.payment_id).all()
 
 
     # -- if paid salary record found --
@@ -190,6 +190,7 @@ def list_salary(request: Request, db: Session = Depends(get_db)):
         Shift.shift_name,
         TeacherRegesitration.salary,
     )
+    .order_by(TeacherRegesitration.teacher_id)
     .all()
     )
 

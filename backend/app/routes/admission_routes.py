@@ -204,3 +204,16 @@ async def search_student(request: Request, id_search,
         "pages/student/admission_table.html", 
         {"request": request, "students": students}
     )
+
+
+
+@admission_router.post("/check_student")
+async def check_student(request: Request, db: Session = Depends(get_db)):
+    data = await request.json()
+    student_id = data.get("student_id")
+
+    exists = db.query(Student).filter(Student.student_id == student_id).first()
+
+    return {
+        "exists": True if exists else False
+    }

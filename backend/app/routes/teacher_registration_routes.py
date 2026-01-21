@@ -54,6 +54,7 @@ def list_registration(request: Request, db: Session = Depends(get_db)):
         .join(Department, TeacherRegesitration.department_id == Department.department_id)
         .join(ContractType, TeacherRegesitration.contract_type_id == ContractType.contract_type_id)
         .join(Shift, TeacherRegesitration.shift_id == Shift.shift_id)
+        .order_by(TeacherRegesitration.teacher_id.asc())
         .all()
     )
 
@@ -193,6 +194,7 @@ async def registration_search(
         query = query.filter(
             TeacherRegesitration.teacher_id==int(form_data.get("id_search"))
         )
+        query = query.order_by(TeacherRegesitration.teacher_id.asc())
         result = query.all()
         # -- jsonify --
         registration_data = []
@@ -238,6 +240,7 @@ async def registration_search(
         query = query.filter(
             TeacherRegesitration.shift_id==int(form_data.get("shift_id"))
         )
+    query = query.order_by(TeacherRegesitration.teacher_id.asc())
     result = query.all()
 
     # -- jsonify --
@@ -295,6 +298,7 @@ async def export_registration(
         query = query.filter(
             TeacherRegesitration.teacher_id==int(form_data.get("id_search"))
         )
+        query = query.order_by(TeacherRegesitration.teacher_id.asc())
         result = query.all()
         # -- jsonify --
         registration_data = []
@@ -347,6 +351,7 @@ async def export_registration(
         query = query.filter(
             TeacherRegesitration.shift_id==int(form_data.get("shift_id"))
         )
+    query = query.order_by(TeacherRegesitration.teacher_id.asc())
     result = query.all()
 
     # -- jsonify --
@@ -378,4 +383,6 @@ async def export_registration(
             "Content-Disposition": "attachment; filename=registration_export.csv"
         }
     )
+
+
 

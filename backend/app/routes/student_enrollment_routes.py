@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import (HTMLResponse, JSONResponse,
                                 RedirectResponse, StreamingResponse)
+
 import pandas as pd
 import io
 
@@ -52,6 +53,7 @@ def list_enrolled(request: Request, db: Session = Depends(get_db)):
         .join(ClassCode, StudentEnrollment.class_code_id == ClassCode.class_code_id)
         .join(AdmissionType, StudentEnrollment.admission_type_id == AdmissionType.admission_type_id)
         .join(Semester, StudentEnrollment.semester_id == Semester.semester_id)
+        .order_by(StudentEnrollment.student_id.asc())
         .all()
     )
 
@@ -124,10 +126,14 @@ async def add_enrollment(request: Request, db : Session = Depends(get_db)):
 
     # -- add enrollment --
     new_enrollment = StudentEnrollment(
-        student_id=form_data.get("student_id"), department_id=form_data.get("department_id"),
-        course_id=form_data.get("course_id"), shift_id=form_data.get("shift_id"),
-        class_code_id=form_data.get("class_code_id"), admission_type_id=form_data.get("admission_type_id"),
-        semester_id=form_data.get("semester_id"), fee=form_data.get("fee")
+        student_id=form_data.get("student_id"), 
+        department_id=form_data.get("department_id"),
+        course_id=form_data.get("course_id"), 
+        shift_id=form_data.get("shift_id"),
+        class_code_id=form_data.get("class_code_id"), 
+        admission_type_id=form_data.get("admission_type_id"),
+        semester_id=form_data.get("semester_id"), 
+        fee=form_data.get("fee")
     )
     db.add(new_enrollment)
     db.commit()
@@ -198,6 +204,7 @@ async def search_enrollment(request: Request, db: Session = Depends(get_db)):
     # all other filter combinaly
     if form_data.get("id_search"):
         query = query.filter(StudentEnrollment.student_id==int(form_data.get("id_search")))
+        query = query.order_by(StudentEnrollment.student_id.asc())
         result = query.all()
         for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
             enrollment_data.append({
@@ -238,6 +245,7 @@ async def search_enrollment(request: Request, db: Session = Depends(get_db)):
         query = query.filter(StudentEnrollment.semester_id==int(form_data.get("semester_id")))
     if form_data.get("shift_id"):
         query = query.filter(StudentEnrollment.shift_id==int(form_data.get("shift_id")))
+    query = query.order_by(StudentEnrollment.student_id.asc())
     result = query.all()
 
     
@@ -302,7 +310,9 @@ async def export_enrollment(request: Request, db: Session = Depends(get_db)):
     if form_data.get("id_search"):
         search_flag = True
         query = query.filter(StudentEnrollment.student_id==int(form_data.get("id_search")))
+        query = query.order_by(StudentEnrollment.student_id.asc())
         result = query.all()
+
         for enrollment, student, department, course, shift, classcode, admissiontype, semester in result:
             enrollment_data.append({
                 "student_id": enrollment.student_id,
@@ -355,11 +365,9 @@ async def export_enrollment(request: Request, db: Session = Depends(get_db)):
         query = query.filter(StudentEnrollment.shift_id==int(form_data.get("shift_id")))
         search_flag = True
 
-    result = None
-    if search_flag:
-        result = query.all()
-    else:
-        result = query.all()
+    query = query.order_by(StudentEnrollment.student_id.asc())
+    result = query.all()
+
 
     
     # -- jsonify record for fastapi responses --

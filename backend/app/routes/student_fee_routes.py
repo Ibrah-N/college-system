@@ -111,7 +111,7 @@ def fee_form(student_id: int, class_code_id: int,
         StudentFee.admission_type_id == admission_type_id,
         StudentFee.semester_id == semester_id,
         StudentFee.shift_id == shift_id
-    ).all()
+    ).order_by(StudentFee.payment_id).all()
 
 
     # -- if paid fee record found --
@@ -232,6 +232,7 @@ def list_fee(request: Request, db: Session = Depends(get_db)):
         Semester.semester,
         StudentEnrollment.fee,
     )
+    .order_by(StudentEnrollment.student_id)
     .all()
     )
 
@@ -692,7 +693,7 @@ async def search_student_fee(request: Request, db: Session = Depends(get_db)):
     if form_data.get("id_search"):
         result = query_.filter(
             StudentEnrollment.student_id == int(form_data.get("id_search")),
-        ).all()
+        ).order_by(StudentEnrollment.student_id).all()
 
         # -- jsonify record for fastapi responses --
         student_fee_records = []
@@ -748,6 +749,7 @@ async def search_student_fee(request: Request, db: Session = Depends(get_db)):
     #     query = query.filter(StudentEnrollment.semester_id==int(form_data.get("semester_id")))
     # if form_data.get("shift_id"):
     #     query = query.filter(StudentEnrollment.shift_id==int(form_data.get("shift_id")))
+    query = query.order_by(StudentEnrollment.student_id)
     result = query.all()
 
     

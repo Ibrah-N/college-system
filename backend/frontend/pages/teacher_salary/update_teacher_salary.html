@@ -14,14 +14,14 @@
     <h1>Update Student Fee Form</h1>
     </div>
 
-    <form id="teacherForm", action="/salary/update_teacher_salary" method="POST">
+    <form id="salaryForm" action="/salary/update_teacher_salary" method="POST">
       <section>
         <h3>Personal Information</h3>
 
         <div id="zero-row">
             <div class="form-row">
             <label>Payment ID:</label>
-            <input type="number" name="payment_id" value="{{ payment_old.payment_id }}" required>
+            <input type="number" name="payment_id" value="{{ payment_old.payment_id }}" readonly>
             </div>
         </div>
         
@@ -29,7 +29,7 @@
         <div id="first-row">
             <div class="form-row">
             <label>Paid Salary:</label>
-            <input type="number" name="salary" value="{{ payment_old.paid_salary }}" required>
+            <input type="number" name="salary" value="{{ payment_old.paid_salary }}">
             </div>
 
             <div class="form-row">
@@ -53,6 +53,68 @@
     </form>
   </div>
 
-  <!-- <script src="js/teacher/xyz.js"></script> -->
+<script>
+    document.getElementById("salaryForm").addEventListener("submit", function(e) {
+        e.preventDefault(); // stop form submission
+        clearValidation();
+
+        let isValid = true;
+
+        // ===== Paid Salary =====
+        const salaryInput = document.querySelector("input[name='salary']");
+        const salaryValue = salaryInput.value.trim();
+        if (!salaryValue || isNaN(salaryValue) || Number(salaryValue) < 0) {
+            showFieldError(salaryInput, "Salary must be a valid non-negative number");
+            isValid = false;
+        } else {
+            markSuccess(salaryInput);
+        }
+
+        // ===== Deduction (optional) =====
+        const deductionInput = document.querySelector("input[name='deduction']");
+        const deductionValue = deductionInput.value.trim();
+        if (deductionValue && (isNaN(deductionValue) || Number(deductionValue) < 0)) {
+            showFieldError(deductionInput, "Deduction must be a valid non-negative number");
+            isValid = false;
+        } else if (deductionValue) {
+            markSuccess(deductionInput);
+        }
+
+        // ===== Salary >= Deduction =====
+        if (salaryValue && deductionValue && Number(deductionValue) > Number(salaryValue)) {
+            showFieldError(deductionInput, "Deduction cannot be greater than Salary");
+            isValid = false;
+        }
+
+        if (isValid) {
+            this.submit();
+        }
+    });
+
+    /* ===== Helper functions ===== */
+    function showFieldError(el, message) {
+        el.classList.add("input-error");
+        showError(el, message);
+    }
+
+    function markSuccess(el) {
+        el.classList.remove("input-error");
+        el.classList.add("input-success");
+    }
+
+    function showError(el, message) {
+        if (el.nextElementSibling?.classList.contains("error-message")) return;
+        const div = document.createElement("div");
+        div.className = "error-message";
+        div.innerText = message;
+        el.insertAdjacentElement("afterend", div);
+    }
+
+    function clearValidation() {
+        document.querySelectorAll(".input-error, .input-success").forEach(el => el.classList.remove("input-error", "input-success"));
+        document.querySelectorAll(".error-message").forEach(e => e.remove());
+    }
+</script>
+
 </body>
 </html>

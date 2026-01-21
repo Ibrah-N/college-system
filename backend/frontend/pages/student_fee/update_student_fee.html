@@ -14,14 +14,14 @@
     <h1>Update Student Fee Form</h1>
     </div>
 
-    <form id="teacherForm", action="/student_fee/update_student_fee" method="POST">
+    <form id="studentfeeForm" action="/student_fee/update_student_fee" method="POST">
       <section>
         <h3>Personal Information</h3>
 
         <div id="zero-row">
             <div class="form-row">
             <label>Payment ID:</label>
-            <input type="number" name="payment_id" value="{{ payment_old.payment_id }}" required>
+            <input type="number" name="payment_id" value="{{ payment_old.payment_id }}" readonly>
             </div>
         </div>
         
@@ -29,7 +29,7 @@
         <div id="first-row">
             <div class="form-row">
             <label>Fee:</label>
-            <input type="number" name="fee" value="{{ payment_old.paid }}" required>
+            <input type="number" name="fee" value="{{ payment_old.paid }}">
             </div>
 
             <div class="form-row">
@@ -56,6 +56,62 @@
       </div>
     </form>
   </div>
+
+  
+  <script>
+      document.getElementById("studentfeeForm").addEventListener("submit", function(e) {
+          e.preventDefault(); // stop default submission
+          clearValidation();
+
+          let isValid = true;
+
+          // ===== Fee =====
+          const feeInput = document.querySelector("input[name='fee']");
+          if (!feeInput.value.trim() || isNaN(feeInput.value) || Number(feeInput.value) < 0) {
+              showFieldError(feeInput, "Fee must be a valid non-negative number");
+              isValid = false;
+          } else {
+              markSuccess(feeInput);
+          }
+
+          // ===== Discount (optional) =====
+          const discountInput = document.querySelector("input[name='discount']");
+          if (discountInput.value.trim() && (isNaN(discountInput.value) || Number(discountInput.value) < 0)) {
+              showFieldError(discountInput, "Discount must be a valid non-negative number");
+              isValid = false;
+          } else if (discountInput.value.trim()) {
+              markSuccess(discountInput);
+          }
+
+          if (isValid) {
+              this.submit();
+          }
+      });
+
+      /* ===== Helper functions ===== */
+      function showFieldError(el, message) {
+          el.classList.add("input-error");
+          showError(el, message);
+      }
+
+      function markSuccess(el) {
+          el.classList.remove("input-error");
+          el.classList.add("input-success");
+      }
+
+      function showError(el, message) {
+          if (el.nextElementSibling?.classList.contains("error-message")) return;
+          const div = document.createElement("div");
+          div.className = "error-message";
+          div.innerText = message;
+          el.insertAdjacentElement("afterend", div);
+      }
+
+      function clearValidation() {
+          document.querySelectorAll(".input-error, .input-success").forEach(el => el.classList.remove("input-error", "input-success"));
+          document.querySelectorAll(".error-message").forEach(e => e.remove());
+      }
+</script>
 
   <!-- <script src="js/teacher/xyz.js"></script> -->
 </body>
