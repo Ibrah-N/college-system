@@ -34,7 +34,7 @@ class Course(Base):
     __tablename__ = "course"
 
     course_id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String(70))
     department_id = Column(Integer, ForeignKey("department.department_id"))
 
 
@@ -61,7 +61,7 @@ class PaymentType(Base):
     __tablename__ = "payment_type"
 
     payment_type_id = Column(Integer, primary_key=True)
-    payment_type_name = Column(String(15))
+    payment_type_name = Column(String(50))
 
 
 
