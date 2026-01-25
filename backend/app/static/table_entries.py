@@ -109,6 +109,22 @@ def table_entries():
 		('22'), ('23'), ('24'),
 		('15'), ('26'), ('27'),
 		('28'), ('29'), ('30'), ('31');
+
+
+
+	INSERT INTO semester (semester)
+	VALUES ('Semester 1'), 
+		('Semester 2'), 
+		('Semester 3'),
+		('Semester 4'), 
+		('Semester 5'), 
+		('Semester 6'),	   
+		('Semester 7'), 
+		('Semester 8');
+
+
+	INSERT INTO class_code (class_code_name)
+	VALUES ('001'), ('002'), ('003');
 		''')
 
 

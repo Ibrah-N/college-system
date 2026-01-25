@@ -29,15 +29,15 @@ async function loadSelection() {
 
 
   // == Contract type ==
-  const response2 = await fetch(`/helper/get_contract_type`);
+  const response2 = await fetch(`/helper/get_admission_type`);
   const contractData = await response2.json();
 
   const contractSelected = document.getElementById("contract_type_id");
   contractSelected.innerHTML = '<option value="">-- Select Contract --</option>';
-  contractData.contract_type.forEach(ct => {
+  contractData.admission_type.forEach(ct => {
     const option = document.createElement("option");
-    option.value = ct.id;
-    option.textContent = ct.name;
+    option.value = ct.admission_type_id;
+    option.textContent = ct.admission_type;
     contractSelected.appendChild(option);
   });
 
