@@ -9,6 +9,12 @@ def table_entries():
 		('Semester'),
 		('Course');
 
+
+	INSERT INTO contract_type(contract_type_name)
+	VALUES ('Yearly'),
+		('Semester'),
+		('Course');
+
 		
 	INSERT INTO department (department_name)
 	VALUES ('FSc Programms'),
@@ -68,11 +74,6 @@ def table_entries():
 		('Diploma Fee'),
 		('Certificate Fee');
 
-
-	INSERT INTO salary_type (salary_type_name)
-	VALUES ('Yearly'),
-		('Semester'),
-		('Course');
 		
 
 	INSERT INTO session (session_id, session) 

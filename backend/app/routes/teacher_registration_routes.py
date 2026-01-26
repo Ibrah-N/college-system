@@ -90,6 +90,7 @@ def list_registration(request: Request, db: Session = Depends(get_db)):
 @teacher_registration_router.post("/register_teacher")
 async def register_teacher(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
+    print(form_data)
 
     # -- check teacher existance --
     teacher = db.query(AddTeacher).filter(

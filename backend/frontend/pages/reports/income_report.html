@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reports 01</title>
+  <title>Income Reports</title>
 
-<link href="{{ url_for('static', path='/css/reports/report_01_table.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', path='/css/reports/income_report.css') }}" rel="stylesheet">
 
 </head>
 <body>
   <div class="form-container">
 
     <div id="header"> 
-    <h1>Report Yearly, Monthly & Daily</h1>
+    <h1>Income Report Yearly, Monthly & Daily</h1>
     </div>
 
-    <form id="reportForm" action="/reports/report_01_income_statement" method="POST">
+    <form id="reportForm" action="/reports/institute_income_report" method="POST">
       <section>
         <h3>Report Information</h3>
 
@@ -53,6 +53,6 @@
     </form>
   </div>
 
-  <script src="{{ url_for('static', path='/js/reports/report_01_table.js') }}"></script>
+  <script src="{{ url_for('static', path='/js/reports/income_report.js') }}"></script>
 </body>
 </html>
