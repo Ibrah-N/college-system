@@ -1,0 +1,278 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #f8f8f8 0%, #eaeaea 100%);
+  /* You can replace with this for a soft paper texture feel */
+  /* background: repeating-linear-gradient(
+      45deg,
+      #f9f9f9,
+      #f9f9f9 10px,
+      #f0f0f0 10px,
+      #f0f0f0 20px
+  ); */
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+.form-container {
+  width: 800px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  border: 2px solid #4782ff;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+}
+
+div#header {
+    background-color: #4782ff;
+}
+
+h1, h2 {
+  text-align: center;
+  margin: 5px 0;
+  padding: 20px 0;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+h3 {
+  border-bottom: 2px solid #4782ff;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+hr {
+    height: 2px;
+    background-color: #4782ff;
+
+}
+
+input {
+    border: 1px solid #4782ff;
+    border-radius: 3px;
+    font-size: 15px;
+}
+
+input:focus {
+    border-color: #007bff;  /* change border color on focus */
+    outline: none;
+    box-shadow: 0 0 3px #007bff;
+}
+
+
+section {
+  margin-bottom: 25px;
+}
+
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+
+/* ==== BUTTON ===== */
+.submit-container {
+  margin-top: 15px;
+}
+
+.submit-container button {
+  background-color: #007bff;      /* primary blue */
+  color: white;                   /* white text */
+  border: none;                   /* remove default border */
+  padding: 10px 20px;             /* size */
+  border-radius: 8px;             /* rounded edges */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;      /* smooth hover effect */
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* subtle glow */
+}
+
+.submit-container button:hover {
+  background-color: #0056b3;      /* darker blue on hover */
+  box-shadow: 0 6px 14px rgba(0, 123, 255, 0.3);
+  transform: translateY(-2px);    /* gentle lift effect */
+}
+
+.submit-container button:active {
+  transform: translateY(0);       /* tap-down effect */
+  box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
+}
+
+
+
+/* ===== first row ===== */
+#first-row {
+  white-space: nowrap;
+  margin-top: 5px;
+}
+
+#first-row .form-row {
+  display: inline-block;
+  margin-right: 40px;
+  margin-top: 10px;
+}
+
+#first-row label {
+    margin-right: 5px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#first-row input {
+  display: inline-block;
+  width: 100px;
+  height: 25px;
+  margin-left: 10px;
+}
+
+
+/* ===== second row ===== */
+#second-row {
+    white-space: nowrap;
+    margin-top: 5px;
+}
+
+#second-row .form-row {
+  display: inline-block;
+  margin-right: 23px;
+}
+
+#second-row label {
+    margin-right: 5px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#second-row input {
+  display: inline-block;
+  width: 165px;
+  height: 25px;
+}
+
+select {
+    width: 155px;            /* set width */
+    padding: 8px 8px;       /* inner spacing */
+    border: 1px solid #007bff;  /* border color */
+    border-radius: 6px;      /* rounded corners */
+    background-color: #fff;  /* background */
+    font-size: 15px;         /* text size */
+    color: #333;             /* text color */
+    appearance: none;        /* remove default arrow (Chrome, Safari) */
+    -moz-appearance: none;   /* remove default arrow (Firefox) */
+    -webkit-appearance: none;/* remove default arrow (WebKit) */
+    background-repeat: no-repeat;
+    background-position: right 10px center; /* position of custom arrow */
+    background-size: 12px 8px;             /* arrow size */
+    text-align: center;
+}
+
+select:focus {
+  border-color: #007bff;  /* change border color on focus */
+  outline: none;
+  box-shadow: 0 0 3px #007bff;
+}
+
+
+
+
+/* ===== third row ===== */
+#third-row {
+    white-space: nowrap;
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+#third-row .form-row {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+#third-row label {
+    margin-right: 5px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#third-row input {
+  display: inline-block;
+  width: 520px;
+  height: 25px;
+  margin-left: 50px;
+}
+
+
+
+
+
+.input-error {
+  border: 2px solid #dc3545 !important;
+  box-shadow: 0 0 6px rgba(220, 53, 69, 0.6);
+}
+
+.input-success {
+  border: 2px solid #17cfcf !important;
+  box-shadow: 0 0 6px rgba(23, 207, 207, 0.6);
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 3px;
+  display: block;
+  width: 100%;
+  margin-left: 0;
+}
+
+.form-row {
+  position: relative;
+}
+
+
+/* ===== GLOBAL FORM ALIGNMENT FIX ===== */
+.form-row {
+  display: flex;
+  align-items: center;
+}
+
+/* consistent label width */
+.form-row label {
+  width: 140px;
+  text-align: right;
+  margin-right: 15px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ===== ROW LAYOUTS ===== */
+#first-row,
+#second-row,
+#fourth-row {
+  display: flex;
+  gap: 30px;
+  margin-top: 10px;
+}
+
+/* third row stays single but aligned */
+#third-row {
+  margin-top: 10px;
+  margin-left: 50px;
+}
+
+/* remove inline-block conflicts */
+#first-row .form-row,
+#second-row .form-row,
+#fourth-row .form-row {
+  display: flex;
+}
+
+
+/* input alignment */
+input {
+  height: 25px;
+}

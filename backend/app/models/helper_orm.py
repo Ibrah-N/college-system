@@ -104,3 +104,9 @@ class Day(Base):
     day = Column(String(3))
 
 
+
+class DocType(Base):
+    __tablename__ = "doc_type"
+
+    doc_type_id = Column(Integer, primary_key=True)
+    doc_type_name = Column(String(100))
