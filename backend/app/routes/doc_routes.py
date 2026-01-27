@@ -40,6 +40,8 @@ async def doc_form(request: Request):
     )
 
 
+
+
 # ============================================================
 #                  L I S T -  D O C U M E N TS               #
 # ============================================================
@@ -61,19 +63,20 @@ async def list_docs(request: Request, db: Session = Depends(get_db)):
     for docs_mng, doc_type, student in docs:
         doc_dict = {
             "id": docs_mng.id,
-            "student_name": f"{student.first_name} {student.last_name}",
+            "student_name": student.name,
             "father_name": student.father_name,
             "doc_type_name": doc_type.doc_type_name,
             "doc_number": docs_mng.doc_number,
             "recived_by": docs_mng.recived_by,
             "reciver_phone": docs_mng.reciver_phone,
-            "doc_note": docs_mng.doc_note,
+            "note": docs_mng.doc_note,
             "date": docs_mng.date
         }
         data.append(doc_dict)
 
+    # -- render template --
     return templates.TemplateResponse(
-        "pages/doc_management/list_docs.html", 
+        "pages/doc_management/doc_table.html", 
         {
             "request": request,
             "docs": data
@@ -95,23 +98,35 @@ async def submit_doc_form(
     # -- Extract form data --
     form_data = await request.form()
     student_id = form_data.get("student_id")
-    document_type_id = form_data.get("document_type_id")
-    document_number = form_data.get("document_number") if form_data.get("document_number") else ""
+    doc_type_id = form_data.get("doc_type_id")
+    doc_number = form_data.get("doc_number") if form_data.get("doc_number") else ""
     recived_by = title_case(form_data.get("recived_by")) if form_data.get("recived_by") else ""
     reciver_phone = validate_phone_number(form_data.get("reciver_phone")) if form_data.get("reciver_phone") else ""
-    doc_note = form_data.get("doc_note") if form_data.get("doc_note") else ""
+    note = form_data.get("note") if form_data.get("note") else ""
 
     # -- Create new document record --
     new_doc = DocsManagement(
         student_id=student_id,
-        doc_type_id=document_type_id,
-        doc_number=document_number,
+        doc_type_id=doc_type_id,
+        doc_number=doc_number,
         recived_by=recived_by,
         reciver_phone=reciver_phone,
-        doc_note=doc_note
+        doc_note=note
     )
     db.add(new_doc)
     db.commit()
     db.refresh(new_doc)
 
-    return RedirectResponse(url="/docs/list_docs", status_code=303)
+    # -- Redirect to document list --
+    return RedirectResponse(
+        url="/docs/list_docs", 
+        status_code=303
+    )
+
+
+
+
+
+# ============================================================
+#                    A D D  -  D O C U M E N T               #
+# ============================================================

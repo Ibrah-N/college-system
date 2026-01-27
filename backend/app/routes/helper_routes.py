@@ -7,7 +7,8 @@ from app.models.helper_orm import Department
 
 from app.models.helper_orm import (Department, Course, SalaryType,
                                     Shift, ClassCode, AdmissionType, Semester,
-                                    Session, Month, Day, PaymentType, ContractType)
+                                    Session, Month, Day, PaymentType, ContractType,
+                                    DocType)
 
 
 helper_router = APIRouter(prefix="/helper", tags=["Helper"])
@@ -122,7 +123,7 @@ def get_payment_type(db: Session = Depends(get_db)):
 
 @helper_router.get("/get_sessions")
 def get_sessions(db: Session = Depends(get_db)):
-    sessions = db.query(Session).all()
+    sessions = db.query(Session).order_by(Session.session_id).all()
 
     return JSONResponse(
         content={
@@ -134,7 +135,7 @@ def get_sessions(db: Session = Depends(get_db)):
     
 @helper_router.get("/get_months")
 def get_months(db: Session = Depends(get_db)):
-    months = db.query(Month).all()
+    months = db.query(Month).order_by(Month.month_id).all()
 
     return JSONResponse(
         content={
@@ -146,7 +147,7 @@ def get_months(db: Session = Depends(get_db)):
 
 @helper_router.get("/get_days")
 def get_days(db: Session = Depends(get_db)):
-    days = db.query(Day).all()
+    days = db.query(Day).order_by(Day.day_id).all()
 
     return JSONResponse(
         content={
@@ -166,6 +167,21 @@ def get_contract_type(db: Session = Depends(get_db)):
         content={
             "contract_type": [
                 {"id": c.contract_type_id, "name": c.contract_type_name} for c in contract_types
+            ]
+        }
+    )
+
+
+@helper_router.get("/get_doc_types")
+def get_doc_types(
+    db: Session = Depends(get_db)
+    ):
+    doc_types = db.query(DocType).order_by(DocType.doc_type_id).all()
+
+    return JSONResponse(
+        content = {
+            "doc_types": [
+                {"id": d.doc_type_id, "name": d.doc_type_name} for d in doc_types
             ]
         }
     )

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docs Table</title>
+    <link href="{{ url_for('static', path='/css/doc_management/doc_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+<div class="table-container">
+    <div id="header"> 
+    <h2> Student Document Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/docs/doc_search" method="POST">
+            <!-- INPUTS  -->
+            <input type="number" id="right-input" name="id_search" placeholder="Srch ID">
+            <input type="text" id="left-input" name="name_search" placeholder="Srch By Name">
+            
+            <!-- DROP DOWNS -->
+            <select name="class_code_id" id="class_code_id">
+                <option value="">-Cls Code-</option>
+            </select>
+
+            <select name="department_id" id="department">
+                <option value="">-Department-</option>
+            </select>
+
+            <select name="course_id" id="course">
+                <option value="">-Course-</option>
+            </select>
+
+            <select name="admission_type_id" id="admission_type_id">
+                <option value="">-Adm Type-</option>
+            </select>
+
+            <select name="semester_id" id="semester_id">
+                <option value="">-Semester-</option>
+            </select>
+
+            <select name="shift_id" id="shift_id">
+                <option value="">-Shift-</option>
+            </select>
+
+
+            <!-- BUTTONS -->
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/docs/list_docs'">Reset</button>
+                <a href="/docs/form">Add</a>
+                <button type="button" onclick="exportDoc()">Export</button>
+                <a href="/main/list_form">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Father Name</th>
+            <th>Doc Type</th>
+            <th>Doc Number</th>
+            <th>Recived By</th>
+            <th>Reciver Phone</th>
+            <th>Date</th>
+            <th>Note</th>
+            <th>Actions</th>
+        </tr>
+        {% for e in docs %}
+        <tr>
+            <td>{{e.id}}</td>
+            <td>{{e.student_name}}</td>
+            <td>{{e.father_name}}</td>
+            <td>{{e.doc_type_name}}</td>
+            <td>{{e.doc_number}}</td>
+            <td>{{e.recived_by}}</td>
+            <td>{{e.reciver_phone}}</td>
+            <td>{{e.date}}</td>
+            <td>{{e.note}}</td>
+            <td>
+                <button onclick="deleteEnrollment(
+                    '{{ e.id }}'
+                )">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script src="{{ url_for('static', path='/js/doc_management/doc_table.js')}}"></script>
+</body>
+</html>
+
+
