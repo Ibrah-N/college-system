@@ -1,0 +1,167 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #f8f8f8 0%, #eaeaea 100%);
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+.form-container {
+  width: 800px; /* Fixed width as requested */
+  margin: 40px auto;
+  padding: 30px 40px;
+  border: 2px solid #4782ff;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box; /* Ensures padding doesn't break width */
+}
+
+/* Header Styling */
+div#header {
+    background-color: #4782ff;
+    margin: -30px -40px 30px -40px; /* Pull header to edges ignoring padding */
+    border-radius: 8px 8px 0 0;
+}
+
+h1 {
+  text-align: center;
+  margin: 0;
+  padding: 20px 0;
+  color: white;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+h3 {
+  border-bottom: 2px solid #4782ff;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #333;
+}
+
+section {
+  margin-bottom: 25px;
+}
+
+/* =========================================
+   THE FIX: GRID LAYOUT SYSTEM
+   ========================================= */
+
+/* Group 1: Rows that have 2 columns (Split 50% / 50%) */
+#first-row, 
+#second-row, 
+#third-row, 
+#fifth-row, 
+#dropdown-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 30px; /* Space between column 1 and column 2 */
+  margin-bottom: 15px;
+}
+
+/* Group 2: Rows that have 1 column (Full Width) */
+#fourth-row, 
+#sixth-row {
+  display: grid;
+  grid-template-columns: 1fr; /* One full column */
+  margin-bottom: 15px;
+}
+
+/* Internal Row Flexbox (Aligns Label next to Input) */
+.form-row {
+  display: flex;
+  align-items: center; /* Vertically center label with input */
+  width: 100%;
+}
+
+/* THE ALIGNMENT TRICK: 
+   1. min-width on labels ensures all inputs start at the same point.
+   2. flex-shrink: 0 prevents long labels from squishing.
+*/
+.form-row label {
+    min-width: 140px; /* Adjust this if you have very long labels */
+    font-size: 15px;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0; 
+}
+
+/* Make inputs fill the remaining space perfectly */
+input[type="text"],
+input[type="date"],
+input[type="file"],
+select {
+    width: 100%; /* Fill the rest of the flex space */
+    height: 38px; /* Standardize height */
+    padding: 5px 10px;  
+    border: 1px solid #4782ff;
+    border-radius: 4px;
+    font-size: 15px;
+    box-sizing: border-box; /* Includes padding in width calculation */
+    transition: all 0.3s ease;
+}
+
+/* Special case for file input height */
+input[type="file"] {
+    padding-top: 8px; 
+}
+
+/* Focus States */
+input:focus, select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+}
+
+/* Dropdown specific styling */
+select {
+    background-color: #fff;
+    cursor: pointer;
+}
+
+
+/* =========================================
+   BUTTON STYLES
+   ========================================= */
+.submit-container {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px; /* Space between buttons */
+}
+
+.submit-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+}
+
+.submit-container button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.3);
+}
+
+.submit-container button[type="button"] {
+    background-color: #6c757d; /* Grey color for Close button */
+    box-shadow: 0 4px 6px rgba(108, 117, 125, 0.2);
+}
+.submit-container button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+/* Error/Success Visuals (Keep existing logic) */
+.input-error {
+  border-color: #dc3545 !important;
+}
+.input-success {
+  border-color: #17cfcf !important;
+}

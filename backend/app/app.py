@@ -19,7 +19,7 @@ from app.routes.login_routes import login_router
 from app.routes.account_routes import account_router
 from app.routes.reports_routes import reports_router
 from app.routes.doc_routes import doc_router
-
+from app.routes.scholarship_routes import scholarship_router
 
 from app.config.db_connect import Base, engine
 
@@ -46,6 +46,7 @@ app.include_router(teacher_salary_router)
 app.include_router(account_router)
 app.include_router(reports_router)
 app.include_router(doc_router)
+app.include_router(scholarship_router)
 
 
 @app.get("/", response_class=HTMLResponse)
