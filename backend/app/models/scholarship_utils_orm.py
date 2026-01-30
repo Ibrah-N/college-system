@@ -15,6 +15,7 @@ class TestInfo(Base):
     time_2 = Column(String(20))
 
 
+
 class SyllabusInfo(Base):
     __tablename__ = "syllabus_info"
 

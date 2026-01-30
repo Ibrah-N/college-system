@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Sequence, Date
+from sqlalchemy import Column, Integer, String, Sequence, Date, LargeBinary
 from sqlalchemy import ForeignKey
 from app.config.db_connect import Base
 
@@ -16,4 +16,4 @@ class Scholarship(Base):
     cnic_formb = Column(String(20))
     address = Column(String(200))
     registration_date = Column(Date)
-    photo = Column(String(255))
+    photo_blob = Column(LargeBinary, nullable=True)

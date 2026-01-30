@@ -15,7 +15,7 @@
       <h1>Scholarship Form</h1>
     </div>
 
-    <form id="scholarshipForm" action="/scholarship/add_scholarship" method="POST">
+    <form id="scholarshipForm" action="/scholarship/add_scholarship" method="POST" enctype="multipart/form-data">
 
       <section>
         <h3>Personal Information</h3>
@@ -72,7 +72,11 @@
           </div>
           <div class="form-row">
             <label>Course Applying For:</label>
-            <input type="text" name="course_apply_for">
+            <select name="course_apply_for_id" id="course_apply_for_id">
+                <option value="">Select Course</option>
+                <option value="1">ML</option>
+                <option value="2">Cs</option>
+            </select>
           </div>
         </div>
 

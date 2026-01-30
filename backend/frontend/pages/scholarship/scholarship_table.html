@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scholarship Table</title>
+    <link href="{{ url_for('static', path='/css/student/admission_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Scholarship Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/scholarship/search" method="get">
+            <input type="number" name="id_search" placeholder="Search By ID">
+            <input type="text" name="name_search" placeholder="Search By Name">
+            
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/scholarship/list_scholarship'">Reset</button>
+                <a href="/scholarship/scholarship_form">Add</a>
+                <a href="/main/list_form">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Father Name</th>
+            <th>Whatsapp</th>
+            <th>Cnic_formb</th>
+            <th>Qualification</th>
+            <th>Current Institute</th>
+            <th>Address</th>
+            <th>Course</th>
+            <th>Registration Date</th>
+            <th>Photo</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in students %}
+        <tr>
+            <td>{{s.id}}</td>
+            <td>{{s.name}}</td>
+            <td>{{s.father_name}}</td>
+            <td>{{s.whatsapp}}</td>
+            <td>{{s.cnic_formb}}</td>
+            <td>{{s.qualification}}</td>
+            <td>{{s.current_institute}}</td>
+            <td>{{s.address}}</td>
+            <td>{{s.course}}</td>
+            <td>{{s.registration_date}}</td>
+            <td>
+                <img src="/scholarship/image/{{ s.id }}" 
+                alt="Photo" 
+                style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+            </td>
+            <td>
+                <button onclick="deleteStudent('{{ s.id }}')">Delete</button>
+                <button onclick="updateStudent('{{ s.id }}')">Update</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<!-- <script src="{{ url_for('static', path='/js/student/admission_table.js')}}"></script> -->
+</body>
+</html>
+
+
