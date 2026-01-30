@@ -70,23 +70,42 @@ section {
 }
 
 /* Internal Row Flexbox (Aligns Label next to Input) */
+/* .form-row {
+  display: flex;
+  align-items: center; Vertically center label with input */
+  /* width: 100%;
+}*/
+
+/* Internal Row Flexbox */
 .form-row {
   display: flex;
-  align-items: center; /* Vertically center label with input */
+  align-items: center;
+  flex-wrap: wrap; /* <--- KEY FIX: Allows items to drop to the next line */
   width: 100%;
+  position: relative; /* Keeps things contained */
 }
+
 
 /* THE ALIGNMENT TRICK: 
    1. min-width on labels ensures all inputs start at the same point.
    2. flex-shrink: 0 prevents long labels from squishing.
 */
+/* .form-row label {
+    min-width: 140px; 
+    font-size: 15px;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0; 
+} */
+/* Label and Input styles (Keep as they are) */
 .form-row label {
-    min-width: 140px; /* Adjust this if you have very long labels */
+    min-width: 140px; 
     font-size: 15px;
     font-weight: 700;
     margin-right: 10px;
     flex-shrink: 0; 
 }
+
 
 /* Make inputs fill the remaining space perfectly */
 input[type="text"],
@@ -159,9 +178,30 @@ select {
 }
 
 /* Error/Success Visuals (Keep existing logic) */
-.input-error {
+/* .input-error {
   border-color: #dc3545 !important;
 }
 .input-success {
   border-color: #17cfcf !important;
+}
+ */
+
+/* Error Message Styling */
+.error-message {
+  width: 100%;           /* Force it to take a full line */
+  margin-left: 150px;    /* 140px label + 10px gap. Aligns text with the input! */
+  margin-top: 5px;       /* Spacing from the input */
+  color: #dc3545;        /* Red text */
+  font-size: 13px;
+  font-weight: 600;
+  display: block;        /* Ensures it breaks to a new line */
+}
+
+/* Success/Error borders (Keep existing logic) */
+.input-error {
+  border: 1px solid #dc3545 !important;
+  box-shadow: 0 0 4px rgba(220, 53, 69, 0.4);
+}
+.input-success {
+  border: 1px solid #17cfcf !important;
 }

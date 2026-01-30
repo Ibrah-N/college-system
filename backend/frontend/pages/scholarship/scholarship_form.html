@@ -68,14 +68,13 @@
         <div id="fifth-row">
           <div class="form-row">
             <label>Registration Date:</label>
-            <input type="date" name="registration_date">
+            <input type="date" name="registration_date" id="reg_date">
           </div>
+
           <div class="form-row">
             <label>Course Applying For:</label>
-            <select name="course_apply_for_id" id="course_apply_for_id">
-                <option value="">Select Course</option>
-                <option value="1">ML</option>
-                <option value="2">Cs</option>
+            <select name="course_apply_for" id="course_apply_for_id">
+                <option value="">-- Select Course --</option>
             </select>
           </div>
         </div>
@@ -92,21 +91,15 @@
         <div id="dropdown-row">
           <div class="form-row">
             <label>Select Test:</label>
-            <select name="select_test">
-              <option value="">Select Test</option>
-              <option>Test 1</option>
-              <option>Test 2</option>
-              <option>Test 3</option>
+            <select name="select_test" id="test_info">
+              <option value="">-- Select Test --</option>
             </select>
           </div>
 
           <div class="form-row">
             <label>Select Syllabus:</label>
-            <select name="select_syllabus">
-              <option value="">Select Syllabus</option>
-              <option>Syllabus 1</option>
-              <option>Syllabus 2</option>
-              <option>Syllabus 3</option>
+            <select name="select_syllabus" id="syllabus">
+              <option value="">-- Select Syllabus --</option>
             </select>
           </div>
         </div>
@@ -121,6 +114,11 @@
     </form>
   </div>
 
-  <!-- <script src="{{ url_for('static', path='/js/student/scholarship_form.js') }}"></script> -->
+  <script src="{{ url_for('static', path='/js/scholarship/scholarship_form.js') }}">
+    // Get the element
+    const dateInput = document.getElementById('reg_date');
+    // Set its value to the current date (Browser time)
+    dateInput.valueAsDate = new Date();
+  </script>
 </body>
 </html>

@@ -185,3 +185,45 @@ def get_doc_types(
             ]
         }
     )
+
+
+@helper_router.get("/get_courses_only")
+def get_courses(db: Session = Depends(get_db)):
+    courses = db.query(Course).order_by(Course.course_id).all()
+    return JSONResponse(
+        content={
+            "courses": [
+                {"id": c.course_id, "name": c.name} for c in courses
+            ]
+        }
+    )
+
+
+@helper_router.get("/tests_info")
+def get_tests_info(
+    db: Session = Depends(get_db)
+    ):
+    doc_types = db.query(DocType).order_by(DocType.doc_type_id).all()
+
+    return JSONResponse(
+        content = {
+            "tests_info": [
+                {"id": d.doc_type_id, "name": d.doc_type_name} for d in doc_types
+            ]
+        }
+    )
+
+
+@helper_router.get("/syllabus_info")
+def get_syllabus_info(
+    db: Session = Depends(get_db)
+    ):
+    doc_types = db.query(DocType).order_by(DocType.doc_type_id).all()
+
+    return JSONResponse(
+        content = {
+            "syllabus_info": [
+                {"id": d.doc_type_id, "name": d.doc_type_name} for d in doc_types
+            ]
+        }
+    )

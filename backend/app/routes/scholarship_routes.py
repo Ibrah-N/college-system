@@ -73,7 +73,7 @@ async def add_scholarship(
     cnic_formb: str = Form(None),      # Added (was in your HTML)
     address: str = Form(None),         # Added (was in your HTML)
     registration_date: str = Form(None), # Added (was in your HTML)
-    course_apply_for_id: str = Form(None),
+    course_apply_for: str = Form(None),
     select_test: str = Form(None),
     select_syllabus: str = Form(None), # HTML name is "select_syllabus"
     # === File Upload ===
@@ -82,7 +82,7 @@ async def add_scholarship(
     db: Session = Depends(get_db)
     ):
 
-
+    print("scholarship called")
     # -- if image --
     img = None
     if photo and photo.filename:
@@ -97,11 +97,11 @@ async def add_scholarship(
         father_name=title_case(father_name),
         qualification=qualification,
         whatsapp=validate_phone_number(whatsapp),
-        current_institute=title_case(current_institute),
+        current_institute=current_institute,
         cnic_formb=validate_cnic(cnic_formb),
         address=title_case(address),
         registration_date=registration_date,
-        course_id=course_apply_for_id,
+        course_id=course_apply_for,
         photo_blob=img  # <--- Saving the binary image here
     )
     db.add(new_student)
@@ -134,6 +134,7 @@ async def list_scholarship(
         .options(
             defer(Scholarship.photo_blob)  
         )
+        .order_by(Scholarship.id)
         .all()
     )
 
