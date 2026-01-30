@@ -175,18 +175,96 @@ async def list_scholarship(
 # ============================================================
 #          D E L E T E - S C H O L A R S H I P               #
 # ============================================================
+@scholarship_router.delete("/delete/{id}")
+async def delete_scholarship(
+    id: int, 
+    db: Session = Depends(get_db)
+    ):
+    scholarship = db.query(Scholarship).filter(Scholarship.id == id).first()
+    if scholarship:
+        db.delete(scholarship)
+        db.commit()
+        return RedirectResponse(
+            url="/scholarship/list_scholarship",
+            status_code=303
+        )
+    return JSONResponse(
+        content={
+                "message": "Student not found."
+                }, status_code=404
+            )
 
 
 
 # ============================================================
 #          E X P O R T - S C H O L A R S H I P               #
 # ============================================================
+@scholarship_router.post("/export")
+async def export_scholarship(
+    request: Request,
+    db: Session = Depends(get_db)
+    ):
+
+    # -- form data --
+    form_data = await request.form()
+    id_search = form_data.get("id_search")
+    name_search = form_data.get("name_search")
+    course_id = form_data.get("course_id")
+
+    # -- fetch filtered scholarship data --
+    data = get_data(
+        id = id_search if id_search else None,
+        name = name_search if name_search else None,
+        course_id = course_id if course_id else None,
+        db_ = db
+    )
+
+    # -- write csv --
+    df = pd.DataFrame(data)
+
+    # # --- Export as Excel ---
+    output = io.BytesIO()
+    df.to_csv(output, index=False)
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=scholarship_export.csv"}
+    )
 
 
 
 # ============================================================
 #          S E A R C H - S C H O L A R S H I P               #
 # ============================================================
+@scholarship_router.post("/search", response_class=HTMLResponse)
+async def search_scholarship(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    # -- form data --
+    form_data = await request.form()
+    id_search = form_data.get("id_search")
+    name_search = form_data.get("name_search")
+    course_id = form_data.get("course_id")
+
+    # -- fetch filtered scholarship data --
+    data = get_data(
+        id = id_search if id_search else None,
+        name = name_search if name_search else None,
+        course_id = course_id if course_id else None,
+        db_ = db
+    )
+
+    # -- render template --
+    return templates.TemplateResponse(
+        "pages/scholarship/scholarship_table.html", 
+        {
+            "request": request,
+            "students": data
+        }
+    )
 
 
 
@@ -209,3 +287,93 @@ def get_student_image(
 
     # 3. Return the binary data directly as an image response
     return Response(content=student.photo_blob, media_type="image/jpeg")
+
+
+
+def get_data(id: int= None, 
+            name: str = None, 
+            course_id: int = None,
+            db_ =  None
+    ):
+
+    # -- build query --
+    query = (
+        db_.query(Scholarship, Course)
+        .join(
+            Course,                            
+            Scholarship.course_id == Course.course_id 
+        )
+        .options(
+            defer(Scholarship.photo_blob)  
+        )
+    )
+
+    if id is not None:
+        query = query.filter(
+            Scholarship.id == id
+        )
+        results = query.order_by(Scholarship.id).all()
+
+        # -- jesonfiy --
+        data = []
+        for sc, c in results:
+            data.append({
+                "id" : sc.id,
+                "name": sc.name, 
+                "father_name": sc.father_name, 
+                "qualification": sc.qualification, 
+                "whatsapp": sc.whatsapp, 
+                "current_institute": sc.current_institute,
+                "cnic_formb": sc.cnic_formb, 
+                "address": sc.address, 
+                "registration_date": sc.registration_date,
+                "course": c.name
+            })
+
+        return data
+    else:
+        
+        if name is not None:
+            query = query.filter(
+                Scholarship.name.ilike(f"%{name}%")
+            )
+        if course_id is not None:
+            query = query.filter(
+                Scholarship.course_id == course_id
+            )
+        results = query.order_by(Scholarship.id).all()
+
+        # -- jesonfiy --
+        data = []
+        for sc, c in results:
+            data.append({
+                "id" : sc.id,
+                "name": sc.name, 
+                "father_name": sc.father_name, 
+                "qualification": sc.qualification, 
+                "whatsapp": sc.whatsapp, 
+                "current_institute": sc.current_institute,
+                "cnic_formb": sc.cnic_formb, 
+                "address": sc.address, 
+                "registration_date": sc.registration_date,
+                "course": c.name
+            })
+        return data
+
+    results = query.order_by(Scholarship.id).all()
+    # -- jesonfiy --
+    data = []
+    for sc, c in results:
+        data.append({
+            "id" : sc.id,
+            "name": sc.name, 
+            "father_name": sc.father_name, 
+            "qualification": sc.qualification, 
+            "whatsapp": sc.whatsapp, 
+            "current_institute": sc.current_institute,
+            "cnic_formb": sc.cnic_formb, 
+            "address": sc.address, 
+            "registration_date": sc.registration_date,
+            "course": c.name
+        })
+    return data

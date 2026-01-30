@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Scholarship Table</title>
-    <link href="{{ url_for('static', path='/css/student/admission_table.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/scholarship/scholarship_table.css') }}" rel="stylesheet">
 
 </head>
 <body>
@@ -13,14 +13,19 @@
     </div>
 
     <div class="search_and_buttons">
-        <form action="/scholarship/search" method="get">
-            <input type="number" name="id_search" placeholder="Search By ID">
-            <input type="text" name="name_search" placeholder="Search By Name">
-            
+        <form action="/scholarship/search" method="post">
+            <input type="number" name="id_search" placeholder="Srch By ID">
+            <input type="text" name="name_search" placeholder="Srch By Name">
+            <select name="course_id" id="course_apply_for_id">
+                <option value="">-- Course --</option>
+            </select>
+
+
             <div id="srch-button">
                 <button type="submit">Search</button>
                 <button type="button" onclick="window.location.href='/scholarship/list_scholarship'">Reset</button>
                 <a href="/scholarship/scholarship_form">Add</a>
+                <button type="button" onclick="exportScholarship()">Export</button>
                 <a href="/main/list_form">Close</a>
             </div>
         </form>
@@ -62,8 +67,7 @@
                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
             </td>
             <td>
-                <button onclick="deleteStudent('{{ s.id }}')">Delete</button>
-                <button onclick="updateStudent('{{ s.id }}')">Update</button>
+                <button onclick="deleteScholarship('{{ s.id }}')">Delete</button>
             </td>
         </tr>
         {% endfor %}
@@ -72,7 +76,7 @@
     </table>
     </div>
 </div>
-<!-- <script src="{{ url_for('static', path='/js/student/admission_table.js')}}"></script> -->
+<script src="{{ url_for('static', path='/js/scholarship/scholarship_table.js')}}"></script>
 </body>
 </html>
 

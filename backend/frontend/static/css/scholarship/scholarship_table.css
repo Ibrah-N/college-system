@@ -43,8 +43,9 @@ h1, h2 {
 .search_and_buttons #srch-button {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-left: 80px; /* small gap between input and buttons */
+  gap: 3px;
+  margin-left: 20px; /* small gap between input and buttons */
+  margin-right: 5px;
 }
 
 div.search_and_buttons {
@@ -62,7 +63,8 @@ div.search_and_buttons {
     border-radius: 3px;
     font-size: 15px;
     height: 25px;
-    margin-left: 40px;
+    margin-left: 15px;
+    width: 100px;
 }
 
 .search_and_buttons input:focus {
@@ -71,6 +73,12 @@ div.search_and_buttons {
     box-shadow: 0 0 3px #007bff;
 }
 
+#left-input {
+  margin-right: 20px;
+}
+#right-input {
+  width: 70px;
+}
 
 /*  BUTTON  */
 .search_and_buttons button {
@@ -135,6 +143,33 @@ div.search_and_buttons {
   transform: translateY(0);
   box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
 }
+
+
+/* SELECTS */
+select {
+  width: 155px;            /* set width */
+  padding: 8px 8px;       /* inner spacing */
+  border: 2px solid #007bff;  /* border color */
+  border-radius: 6px;      /* rounded corners */
+  background-color: #fff;  /* background */
+  font-size: 15px;         /* text size */
+  color: #333;             /* text color */
+  appearance: none;        /* remove default arrow (Chrome, Safari) */
+  -moz-appearance: none;   /* remove default arrow (Firefox) */
+  -webkit-appearance: none;/* remove default arrow (WebKit) */
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* position of custom arrow */
+  background-size: 12px 8px;             /* arrow size */
+  text-align: center;
+}
+
+select:focus {
+  border-color: #007bff;  /* change border color on focus */
+  outline: none;
+  box-shadow: 0 0 3px #007bff;
+}
+
+
 
 
 
