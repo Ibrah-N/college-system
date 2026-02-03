@@ -157,15 +157,100 @@ async def delete_testinfo(
 # ============================================================
 #             L O A D  - S Y L L A B U S _ I N F O           #
 # ============================================================
+@scholarship_utils_router.get("/syllabus_form", response_class=JSONResponse)
+async def get_syllabus_form(
+    request: Request, 
+    db: Session = Depends(get_db)
+    ):
+
+    return templates.TemplateResponse(
+        "pages/scholarship/syllabus_form.html", 
+        {
+            "request": request
+        }
+    )
+
 
 # ============================================================
 #              L I S T - S Y L L A B U S _ I N F O           #
 # ============================================================
+@scholarship_utils_router.get("/list_syllabus", response_class=JSONResponse)
+async def list_syllabus(
+    request: Request, 
+    db: Session = Depends(get_db)
+    ):
+
+    syllabus_records = db.query(SyllabusInfo).order_by(SyllabusInfo.syllabus_id.desc()).all()
+
+    results = []
+    for record in syllabus_records:
+        results.append(
+            {
+                "id": record.syllabus_id,
+                "chemistry": record.chemisty,
+                "physics": record.physics,
+                "english": record.english,
+                "general": record.general
+            }
+        )
+
+    return templates.TemplateResponse(
+        "pages/scholarship/syllabus_table.html",
+        {
+            "request": request,
+            "syllabus_records": results
+        }
+    )
+
 
 # ============================================================
 #              A D D - S Y L L A B U S _ I N F O           #
 # ============================================================
+@scholarship_utils_router.post("/add_syllabus", response_class=RedirectResponse)
+async def add_syllabus(
+    request: Request,
+    db: Session = Depends(get_db)
+    ):
+
+    form_data = await request.form()
+    chemistry_mcqs = int(form_data.get("chemistry_mcqs")) if form_data.get("chemistry_mcqs") else 0
+    physics_mcqs = int(form_data.get("physics_mcqs")) if form_data.get("physics_mcqs") else 0
+    english_mcqs = int(form_data.get("english_mcqs")) if form_data.get("english_mcqs") else 0
+    general_mcqs = int(form_data.get("general_mcqs")) if form_data.get("general_mcqs") else 0
+
+    new_syllabus = SyllabusInfo(
+        chemisty=chemistry_mcqs,
+        physics=physics_mcqs,
+        english=english_mcqs,
+        general=general_mcqs
+    )
+
+
+    db.add(new_syllabus)
+    db.commit()
+
+    return RedirectResponse(
+        url="/scholarship/list_syllabus", 
+        status_code=303
+    )
+
 
 # ============================================================
 #              D E L E T E - S Y L L A B U S _ I N F O      #
 # ============================================================
+@scholarship_utils_router.delete("/delete_syllabus/{id}", response_class=RedirectResponse)
+async def delete_syllabus(
+    id: int,
+    db: Session = Depends(get_db)
+    ):
+
+    syllabus_record = db.query(SyllabusInfo).filter(SyllabusInfo.syllabus_id == id).first()
+
+    if syllabus_record:
+        db.delete(syllabus_record)
+        db.commit()
+
+    return RedirectResponse(
+        url="/scholarship/list_syllabus", 
+        status_code=303
+    )

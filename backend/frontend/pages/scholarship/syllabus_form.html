@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syallbus Form</title>
+
+  <link href="{{ url_for('static', path='/css/scholarship/syllabus_form.css') }}" rel="stylesheet">
+
+</head>
+<body>
+  <div class="form-container">
+
+    <div id="header"> 
+      <h1>Syallbus Form</h1>
+    </div>
+
+    <form id="scholarshipForm" action="/scholarship/add_syllabus" method="POST" enctype="multipart/form-data">
+
+      <section>
+        <h3>General Information</h3>
+
+        <!-- First Row -->
+        <div id="first-row">
+          <div class="form-row">
+            <label>Chemistry MCQs:</label>
+            <input type="text" name="chemistry_mcqs" value="25">
+          </div>
+          <div class="form-row">
+            <label>Physics MCQs:</label>
+            <input type="text" name="physics_mcqs" value="25">
+          </div>
+        </div>
+
+        <!-- Second Row -->
+        <div id="second-row">
+          <div class="form-row">
+            <label>English MCQs:</label>
+            <input type="text" name="english_mcqs" value="25">
+          </div>
+          <div class="form-row">
+            <label>General MCQs:</label>
+            <input type="text" name="general_mcqs" value="25">
+          </div>
+        </div>
+      </section>
+
+      <div class="submit-container">
+        <button type="submit">Submit</button>
+        <button type="button" onclick="window.location.href='/main/list_form'">Close</button>
+      </div>
+      
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', path='/js/scholarship/syllabus_form.js') }}"></script>
+</body>
+</html>
