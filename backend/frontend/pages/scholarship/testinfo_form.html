@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Info Form</title>
+
+  <link href="{{ url_for('static', path='/css/scholarship/testinfo_form.css') }}" rel="stylesheet">
+
+</head>
+<body>
+  <div class="form-container">
+
+    <div id="header"> 
+      <h1>Test Info Form</h1>
+    </div>
+
+    <form id="scholarshipForm" action="/scholarship/add_testinfo" method="POST" enctype="multipart/form-data">
+
+      <section>
+        <h3>Personal Information</h3>
+
+        <!-- First Row -->
+        <div id="first-row">
+          <div class="form-row">
+            <label>Test Center:</label>
+            <input type="text" name="name">
+          </div>
+        </div>
+
+        <!-- Second Row -->
+        <div id="second-row">
+          <div class="form-row">
+            <label>Date 1:</label>
+            <input type="date" name="date1">
+          </div>
+          <div class="form-row">
+            <label>Date 2:</label>
+            <input type="date" name="date2">
+          </div>
+        </div>
+
+        <!-- Third Row -->
+        <div id="third-row">
+          <div class="form-row">
+            <label>Time 1:</label>
+            <input type="text" name="time1" placeholder="HH:MM PM/AM">
+          </div>
+          <div class="form-row">
+            <label>Time 2:</label>
+            <input type="text" name="time2" placeholder="HH:MM PM/AM">
+          </div>
+        </div>
+      </section>
+
+      <div class="submit-container">
+        <button type="submit">Submit</button>
+        <button type="button" onclick="window.location.href='/main/list_form'">Close</button>
+      </div>
+      
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', path='/js/scholarship/testinfo_form.js') }}"></script>
+</body>
+</html>

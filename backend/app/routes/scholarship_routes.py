@@ -47,7 +47,7 @@ def get_db():
 #              L O A D - S C H O L A R S H I P               #
 # ============================================================
 @scholarship_router.get("/scholarship_form")
-def get_form(request: Request):
+async def get_form(request: Request):
 
     return templates.TemplateResponse(
         "pages/scholarship/scholarship_form.html",
