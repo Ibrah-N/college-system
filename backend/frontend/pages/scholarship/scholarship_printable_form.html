@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholarship Form - Microsoft Institute</title>
+    <link href="{{ url_for('static', path='/css/scholarship/scholarship_printable_form.css') }}" rel="stylesheet">
+</head>
+<body>
+
+    <button class="no-print" onclick="window.print()" style="position:fixed; top:10px; right:10px; padding:10px 20px; font-weight:bold; cursor:pointer;">PRINT FORM</button>
+
+    <div class="page">
+        
+        <div class="header">
+            <div class="logo">LOGOS</div>
+            <div class="header-text">
+                <h1>Microsoft Institute of IT and Medical Sciences</h1>
+                <p>Main Kohi Chowk Near FC check Post Nihar Road Bara District Khyber</p>
+            </div>
+        </div>
+
+        <div class="control-area">
+            <div class="office-use">
+                <div><strong>Roll No:</strong> <u>{{ student.id }}</u></div>
+                <div style="font-size: 9px; border:none;">(Only for office use)</div>
+            </div>
+
+            <div class="syllabus-box">
+                <h4>Test Syllabus Breakdown</h4>
+                <div class="syllabus-grid">
+                    <div>✓ Chemistry: <strong>25 MCQs</strong></div>
+                    <div>✓ Physics: <strong>25 MCQs</strong></div>
+                    <div>✓ English: <strong>25 MCQs</strong></div>
+                    <div>✓ General: <strong>25 MCQs</strong></div>
+                </div>
+            </div>
+
+            <div class="photo-box">
+                <img src="/scholarship/image/{{ student.id }}" 
+                alt="Photo"
+                style="width: 90px; height: 100px; object-fit: cover;">
+            </div>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label-cell">Name</td>
+                <td class="input-cell" colspan="3">{{ student.name }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Father Name</td>
+                <td class="input-cell" colspan="3">{{ student.father_name }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Qualification</td>
+                <td class="input-cell">{{ student.qualification }}</td>
+                <td class="label-cell" style="width: 80px;">WhatsApp</td>
+                <td class="input-cell">{{ student.whatsapp }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Current Institute</td>
+                <td class="input-cell" colspan="3">{{ student.current_institute }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">CNIC / Form B</td>
+                <td class="input-cell" colspan="3">
+                    <div class="cnic-container">
+                        
+                        <!-- <div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div> -->
+                        <span class="cnic-dash">{{ student.cnic_formb }}</span>
+                        <!-- <div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div><div class="cnic-digit"></div>
+                        <span class="cnic-dash">-</span>
+                        <div class="cnic-digit"></div> -->
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="label-cell">Address</td>
+                <td class="input-cell" colspan="3">{{ student.address }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Reg. Date</td>
+                <td class="input-cell">{{ student.registration_date }}</td>
+                <td class="label-cell">Course Apply</td>
+                <td class="input-cell">{{ student.course }}</td>
+            </tr>
+        </table>
+
+        <div class="schedule-box">
+            <div style="background:#eee; font-weight:bold; padding:2px 5px; border-bottom:1px solid #000;">Test Center & Schedule Info</div>
+            <div style="margin: 5px 0;"><strong>Test Center:</strong> {{ student.test_center_name }}</div>
+            <div class="schedule-row">
+                <div class="slot-option">
+                    <input type="checkbox" 
+                            data-date="{{ student.test_date_1 }}" 
+                            data-time="{{ student.test_time_1 }}"
+                            onclick="updateStudentSlip(this)"> 
+                            <strong>Slot 1:</strong> {{ student.test_date_1 }} @ {{ student.test_time_1 }}
+                </div>
+                <div class="slot-option">
+                    <input type="checkbox" 
+                            data-date="{{ student.test_date_2 }}" 
+                            data-time="{{ student.test_time_2 }}"
+                            onclick="updateStudentSlip(this)">
+                            <strong>Slot 2:</strong> {{ student.test_date_2 }} @ {{ student.test_time_2 }}
+                </div>
+            </div>
+            <div style="font-size:9px; text-align:right; margin-top:2px;">*Tick the assigned slot</div>
+        </div>
+
+        <div class="instructions">
+            <strong>NOTE:</strong>
+            <ol>
+                <li>Mobile Phones, calculators, and any other electronic devices are not allowed. If found, paper will be cancelled.</li>
+                <li>No students will be allowed to the test center after 10 mins from starting time.</li>
+                <li>You are required to bring a clipboard and ball point (Black or Blue) with yourself.</li>
+                <li>Must bring this Roll Number Slip along with your original CNIC or recent student card on test date.</li>
+                <li>Once a course is selected, it cannot be changed.</li>
+                <li>Test date and time can be changed any time due to natural disasters or institute needs. Must contact us before the test date.</li>
+                <li>For more information: 0309-xxxxxxx | 0304-xxxxxxx | 0333-xxxxxxx</li>
+            </ol>
+        </div>
+
+        <div class="signatures">
+            <div class="sign-line">Sign</div>
+        </div>
+
+        <div class="cut-line"></div>
+        <div class="header" style="border:none; margin-bottom:0;">
+            <div class="logo" style="width:40px; height:40px;">LOGO</div>
+            <div class="header-text">
+                <h1 style="font-size: 16px;">Microsoft Institute of IT and Medical Sciences</h1>
+                <p>Roll No Slip / Student Copy</p>
+            </div>
+        </div>
+
+        <div class="control-area" style="border:none; padding:0; margin-bottom:5px;">
+             <div class="office-use" style="width: 50%; display:flex; gap:10px;">
+                <span><strong>Roll No:</strong> <u>{{ student.id }}</u></span>
+            </div>
+            <div class="photo-box" style="width: 70px; height: 80px;">
+                <img src="/scholarship/image/{{ student.id }}" 
+                alt="Photo"
+                style="width: 70px; height: 80px; object-fit: cover;">
+            </div>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label-cell" style="width:80px;">Name</td>
+                <td class="input-cell">{{ student.name }}</td>
+                <td class="label-cell" style="width:80px;">Father Name</td>
+                <td class="input-cell">{{ student.father_name }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">CNIC/Form B</td>
+                <td class="input-cell">{{ student.cnic_formb }}</td>
+                <td class="label-cell">WhatsApp</td>
+                <td class="input-cell">{{ student.whatsapp }}</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Course</td>
+                <td class="input-cell" colspan="3">{{ student.course }}</td>
+            </tr>
+        </table>
+
+        <div class="schedule-box">
+             <div style="font-weight:bold;">Assigned Test Schedule:</div>
+             <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                <span><strong>Date:</strong> <span id="slip-date" style="border-bottom:1px solid #000; padding:0 10px;">_________________</span></span>
+                <span><strong>Time:</strong> <span id="slip-time" style="border-bottom:1px solid #000; padding:0 10px;">_________________</span></span>
+             </div>
+             <div style="margin-top:5px;"><strong>Center:</strong> {{ student.test_center_name }}</div>
+        </div>
+
+        <div class="instructions" style="font-size: 8px;">
+            <strong>Note:</strong>
+            <ol>
+                <li>Bring this slip and original CNIC/Form B to the exam hall.</li>
+                <li>No mobile phones allowed. Clipboard & Black/Blue ballpoint required.</li>
+                <li>Late arrivals (>10 mins) will not be entertained.</li>
+            </ol>
+        </div>
+
+        <div class="signatures">
+            <div class="sign-line">Institute Sign</div>
+        </div>
+
+    </div>
+
+<script>
+        function updateStudentSlip(checkbox) {
+            // 1. Get all checkboxes with class 'slot-checkbox'
+            const allCheckboxes = document.querySelectorAll('.slot-checkbox');
+            
+            // 2. Uncheck all OTHER checkboxes (make it act like a radio button)
+            allCheckboxes.forEach(cb => {
+                if (cb !== checkbox) {
+                    cb.checked = false;
+                }
+            });
+
+            // 3. Get the target spans in the student slip
+            const dateSpan = document.getElementById('slip-date');
+            const timeSpan = document.getElementById('slip-time');
+
+            // 4. If the clicked box is Checked, fill data. If unchecked, clear data.
+            if (checkbox.checked) {
+                // Get data from data attributes
+                dateSpan.textContent = checkbox.getAttribute('data-date');
+                timeSpan.textContent = checkbox.getAttribute('data-time');
+            } else {
+                // Revert to underline
+                dateSpan.innerHTML = "_________________";
+                timeSpan.innerHTML = "_________________";
+            }
+        }
+    </script>
+
+</body>
+</html>

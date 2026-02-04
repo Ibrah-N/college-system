@@ -1,0 +1,222 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
+
+
+/* --- CRITICAL FIX: Removes Browser Date/URL/Title Headers --- */
+@page {
+    size: A4;
+    margin: 0; /* <--- THIS IS THE KEY LINE */
+}
+
+:root {
+    --border-color: #000;
+    --box-height: 25px;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    font-size: 12px;
+}
+
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    margin: 10mm auto;
+    padding: 10mm;
+    box-sizing: border-box;
+    position: relative;
+}
+
+@media print {
+    body { background: none; }
+    /* This padding acts as the new "margin" so text isn't cut off */
+    .page { margin: 0; width: 100%; height: 100%; padding: 5mm; box-shadow: none; } 
+    .no-print { display: none; }
+}
+
+/* --- layout Utilities --- */
+.row { display: flex; width: 100%; }
+.col { flex: 1; position: relative; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.text-center { text-align: center; }
+.bold { font-weight: bold; }
+.uppercase { text-transform: uppercase; }
+
+/* --- Header Section --- */
+.header {
+    border-bottom: 2px solid black;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+.logo {
+    width: 60px;
+    height: 60px;
+    background: #ddd; /* Placeholder for logo */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    text-align: center;
+    margin-right: 15px;
+}
+.header-text h1 {
+    margin: 0;
+    font-size: 22px;
+    color: #444; /* Dark Grey like the print */
+    text-transform: uppercase;
+}
+.header-text p {
+    margin: 2px 0 0;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* --- Top Control Area (Roll No / Syllabus / Photo) --- */
+.control-area {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    padding: 5px;
+}
+.office-use {
+    width: 25%;
+    font-size: 11px;
+}
+.office-use div { margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 2px;}
+
+.syllabus-box {
+    width: 40%;
+    border: 1px solid black;
+    padding: 5px;
+    font-size: 10px;
+    background: #f9f9f9;
+}
+.syllabus-box h4 { margin: 0 0 5px 0; text-align: center; text-decoration: underline; }
+.syllabus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+
+.photo-box {
+    width: 90px;
+    height: 100px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 10px;
+    color: #666;
+    margin-left: 10px;
+}
+
+/* --- Form Table Styling --- */
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+.form-table td {
+    border: 1px solid black;
+    padding: 4px;
+    vertical-align: middle;
+}
+.label-cell {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    width: 120px;
+    font-size: 11px;
+}
+.input-cell {
+    height: 20px;
+    font-size: 12px;
+    font-family: 'Courier New', monospace; /* Looks like typed text */
+}
+
+/* CNIC Boxes */
+.cnic-container {
+    display: flex;
+    gap: 2px;
+}
+.cnic-digit {
+    width: 18px;
+    height: 20px;
+    border: 1px solid #000;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+}
+.cnic-dash { line-height: 20px; padding: 0 2px; }
+
+/* --- Test Schedule (The New Digital Logic) --- */
+.schedule-box {
+    border: 1px solid black;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+.schedule-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 11px;
+}
+.slot-option {
+    border: 1px dashed #666;
+    padding: 3px 10px;
+    width: 45%;
+}
+
+/* --- Instructions --- */
+.instructions {
+    font-size: 9px;
+    margin-top: 5px;
+    line-height: 1.3;
+}
+.instructions ol { padding-left: 15px; margin: 0; }
+.instructions li { margin-bottom: 2px; }
+
+/* --- Footer/Signatures --- */
+.footer-contacts {
+    margin-top: 5px;
+    font-size: 9px;
+    border-top: 1px solid #999;
+    padding-top: 2px;
+    display: flex;
+    justify-content: space-between;
+}
+.signatures {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 50px;
+}
+.sign-line {
+    border-top: 1px solid black;
+    width: 120px;
+    text-align: center;
+    font-size: 10px;
+    padding-top: 2px;
+}
+
+/* --- Cut Line --- */
+.cut-line {
+    border-bottom: 2px dashed black;
+    margin: 20px 0;
+    position: relative;
+}
+.cut-line::after {
+    content: "✂ Cut Here";
+    position: absolute;
+    right: 0;
+    top: -10px;
+    background: white;
+    font-size: 10px;
+    padding-left: 5px;
+}
+

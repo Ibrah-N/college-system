@@ -9,6 +9,7 @@ from app.models.helper_orm import (Department, Course, SalaryType,
                                     Shift, ClassCode, AdmissionType, Semester,
                                     Session, Month, Day, PaymentType, ContractType,
                                     DocType)
+from app.models.scholarship_utils_orm import TestInfo, SyllabusInfo
 
 
 helper_router = APIRouter(prefix="/helper", tags=["Helper"])
@@ -199,16 +200,16 @@ def get_courses(db: Session = Depends(get_db)):
     )
 
 
-@helper_router.get("/tests_info")
+@helper_router.get("/testinfo")
 def get_tests_info(
     db: Session = Depends(get_db)
     ):
-    doc_types = db.query(DocType).order_by(DocType.doc_type_id).all()
+    test_infos = db.query(TestInfo).order_by(TestInfo.id).all()
 
     return JSONResponse(
         content = {
             "tests_info": [
-                {"id": d.doc_type_id, "name": d.doc_type_name} for d in doc_types
+                {"id": t.id, "name": f"{t.test_date_1} - {t.test_date_2}"} for t in test_infos
             ]
         }
     )
@@ -218,12 +219,16 @@ def get_tests_info(
 def get_syllabus_info(
     db: Session = Depends(get_db)
     ):
-    doc_types = db.query(DocType).order_by(DocType.doc_type_id).all()
+    syllabus_infos = db.query(SyllabusInfo).order_by(SyllabusInfo.syllabus_id).all()
 
     return JSONResponse(
         content = {
             "syllabus_info": [
-                {"id": d.doc_type_id, "name": d.doc_type_name} for d in doc_types
+                {"id": s.syllabus_id, "name": 
+                f"Che:{s.chemisty}: Phy:{s.physics}: Eng:{s.english}: Gnl:{s.general}"} 
+                for s in syllabus_infos
             ]
         }
     )
+
+

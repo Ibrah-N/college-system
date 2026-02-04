@@ -371,3 +371,45 @@ def get_data(id: int= None,
             "course": c.name
         })
     return data
+
+
+
+
+@scholarship_router.get("/scholarship_printable_form", response_class=HTMLResponse)
+def scholarship_printable_form(
+    request: Request,
+    db: Session = Depends(get_db)
+    ):
+
+    # student = db.query(Scholarship).filter(Scholarship.id == student_id).first()
+
+    data = []
+    data.append({
+        "id" : 6,
+        "name": "John Doe",
+        "father_name": "Richard Roe",
+        "qualification": "High School",
+        "whatsapp": "1234567890",
+        "current_institute": "ABC Institute",
+        "cnic_formb": "12345-6789012-3",
+        "address": "123 Main St, City",
+        "registration_date": "2023-10-01",
+        "course": "Computer Science",
+        "test_center_name": "Microsoft Institute Center",
+        "test_date_1": "2023-11-15",
+        "test_date_2": "2023-12-15",
+        "test_time_1": "10:00 AM",
+        "test_time_2": "2:00 PM",
+        "chemistry": "25",
+        "physics": "25",
+        "english": "25",
+        "general": "25"
+
+    })
+    return templates.TemplateResponse(
+        "pages/scholarship/scholarship_printable_form.html",
+        {
+            "request": request,
+            "student": data[0]
+        }
+    )

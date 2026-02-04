@@ -14,7 +14,7 @@ async function loadSelection() {
 
 
   // == Tests Info ==
-  const response2 = await fetch(`/helper/tests_info`);
+  const response2 = await fetch(`/helper/testinfo`);
   const testData = await response2.json();
 
   const testSelect = document.getElementById("test_info");
