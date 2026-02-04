@@ -14,18 +14,12 @@
 
     <div class="search_and_buttons">
         <form action="/scholarship/search" method="post">
-            <input type="number" name="id_search" placeholder="Srch By ID">
-            <!-- <input type="text" name="name_search" placeholder="Srch By Name">
-            <select name="course_id" id="course_apply_for_id">
-                <option value="">-- Course --</option>
-            </select> -->
 
 
             <div id="srch-button">
                 <!-- <button type="submit">Search</button> -->
                 <button type="button" onclick="window.location.href='/scholarship/list_testinfo'">Reset</button>
                 <a href="/scholarship/testinfo_form">Add</a>
-                <button type="button" onclick="exportTestInfo()">Export</button>
                 <a href="/main/list_form">Close</a>
             </div>
         </form>
