@@ -9,11 +9,14 @@
 <body>
 
     <button class="no-print" onclick="window.print()" style="position:fixed; top:10px; right:10px; padding:10px 20px; font-weight:bold; cursor:pointer;">PRINT FORM</button>
+    <button class="no-print" onclick="window.location.href='/scholarship/list_scholarship'" style="position:fixed; top:60px; right:10px; padding:10px 17px; font-weight:bold; cursor:pointer;">CLOSE FORM</button>
 
     <div class="page">
         
         <div class="header">
-            <div class="logo">LOGOS</div>
+            <div ><img src="../../static/assets/mitm_logo.jpg" alt="logo"
+                class="logo"
+                ></div>
             <div class="header-text">
                 <h1>Microsoft Institute of IT and Medical Sciences</h1>
                 <p>Main Kohi Chowk Near FC check Post Nihar Road Bara District Khyber</p>
@@ -23,16 +26,16 @@
         <div class="control-area">
             <div class="office-use">
                 <div><strong>Roll No:</strong> <u>{{ student.id }}</u></div>
-                <div style="font-size: 9px; border:none;">(Only for office use)</div>
+                <!-- <div style="font-size: 9px; border:none;">(Only for office use)</div> -->
             </div>
 
             <div class="syllabus-box">
                 <h4>Test Syllabus Breakdown</h4>
                 <div class="syllabus-grid">
-                    <div>✓ Chemistry: <strong>25 MCQs</strong></div>
-                    <div>✓ Physics: <strong>25 MCQs</strong></div>
-                    <div>✓ English: <strong>25 MCQs</strong></div>
-                    <div>✓ General: <strong>25 MCQs</strong></div>
+                    <div>✓ Chemistry: <strong>{{ student.chemistry }} MCQs</strong></div>
+                    <div>✓ Physics: <strong>{{ student.physics }} MCQs</strong></div>
+                    <div>✓ English: <strong>{{ student.english }} MCQs</strong></div>
+                    <div>✓ General: <strong>{{ student.general }} MCQs</strong></div>
                 </div>
             </div>
 
@@ -82,7 +85,7 @@
             <tr>
                 <td class="label-cell">Reg. Date</td>
                 <td class="input-cell">{{ student.registration_date }}</td>
-                <td class="label-cell">Course Apply</td>
+                <td class="label-cell">Course Apply For</td>
                 <td class="input-cell">{{ student.course }}</td>
             </tr>
         </table>
@@ -118,7 +121,7 @@
                 <li>Must bring this Roll Number Slip along with your original CNIC or recent student card on test date.</li>
                 <li>Once a course is selected, it cannot be changed.</li>
                 <li>Test date and time can be changed any time due to natural disasters or institute needs. Must contact us before the test date.</li>
-                <li>For more information: 0309-xxxxxxx | 0304-xxxxxxx | 0333-xxxxxxx</li>
+                <li>For more information: 0304-9062803 | 0309-8910253 </li>
             </ol>
         </div>
 
@@ -128,10 +131,13 @@
 
         <div class="cut-line"></div>
         <div class="header" style="border:none; margin-bottom:0;">
-            <div class="logo" style="width:40px; height:40px;">LOGO</div>
+            <div>
+                <img src="../../static/assets/mitm_logo.jpg" alt="photo"
+                class="logo" style="width:40px; height:40px;">
+            </div>
             <div class="header-text">
                 <h1 style="font-size: 16px;">Microsoft Institute of IT and Medical Sciences</h1>
-                <p>Roll No Slip / Student Copy</p>
+                <p>Main Kohi Chowk Near FC check Post Nihar Road Bara District Khyber</p>
             </div>
         </div>
 

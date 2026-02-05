@@ -82,7 +82,6 @@ async def add_scholarship(
     db: Session = Depends(get_db)
     ):
 
-    print("scholarship called")
     # -- if image --
     img = None
     if photo and photo.filename:
@@ -108,10 +107,18 @@ async def add_scholarship(
     db.commit()
     db.refresh(new_student)
 
+
+    data = prepare_data(syllabus_id=select_syllabus, 
+                        test_info_id=select_test,
+                        db=db)
+
     # -- redirect to page--
-    return RedirectResponse(
-        url="/scholarship/list_scholarship", 
-        status_code=303
+    return templates.TemplateResponse(
+        "pages/scholarship/scholarship_printable_form.html",
+        {
+            "request": request,
+            "student": data[0]
+        }
     )
 
 
@@ -374,42 +381,51 @@ def get_data(id: int= None,
 
 
 
+def prepare_data(test_info_id: int = None, syllabus_id: int = None, db=None):
+    """Fetch TestInfo and SyllabusInfo based on provided IDs along with the last entered student_id
 
-@scholarship_router.get("/scholarship_printable_form", response_class=HTMLResponse)
-def scholarship_printable_form(
-    request: Request,
-    db: Session = Depends(get_db)
-    ):
+    Args:
+        test_info_id (int, optional): ID of the TestInfo to fetch. Defaults to
+        syllabus_id (int, optional): ID of the SyllabusInfo to fetch. Defaults to None.
+        db (Session, optional): Database session. Defaults to None.
 
-    # student = db.query(Scholarship).filter(Scholarship.id == student_id).first()
+    Returns:
+        Tuple[StudentScholarship, TestInfo, SyllabusInfo]: Fetched Scholarship, TestInfo and SyllabusInfo objects.
+    """
+    # -- fetch TestInfo --
+    test_info = db.query(TestInfo).filter(TestInfo.id == test_info_id).first()
 
+    # -- fetch SyllabusInfo --
+    syllabus_info = db.query(SyllabusInfo).filter(SyllabusInfo.syllabus_id == syllabus_id).first()
+
+    # -- student info --
+    scholarship = (db.query(Scholarship, Course)
+                    .join(Course, Scholarship.course_id == Course.course_id)
+                    .order_by(Scholarship.id.desc()).first())
+
+
+    # -- desonify --
     data = []
     data.append({
-        "id" : 6,
-        "name": "John Doe",
-        "father_name": "Richard Roe",
-        "qualification": "High School",
-        "whatsapp": "1234567890",
-        "current_institute": "ABC Institute",
-        "cnic_formb": "12345-6789012-3",
-        "address": "123 Main St, City",
-        "registration_date": "2023-10-01",
-        "course": "Computer Science",
-        "test_center_name": "Microsoft Institute Center",
-        "test_date_1": "2023-11-15",
-        "test_date_2": "2023-12-15",
-        "test_time_1": "10:00 AM",
-        "test_time_2": "2:00 PM",
-        "chemistry": "25",
-        "physics": "25",
-        "english": "25",
-        "general": "25"
-
+        "id" : scholarship[0].id,
+        "name": scholarship[0].name,
+        "father_name": scholarship[0].father_name,
+        "qualification": scholarship[0].qualification,
+        "whatsapp": scholarship[0].whatsapp,
+        "current_institute": scholarship[0].current_institute,
+        "cnic_formb": scholarship[0].cnic_formb,
+        "address": scholarship[0].address,
+        "registration_date": scholarship[0].registration_date,
+        "course": scholarship[1].name,
+        "test_center_name": test_info.center if test_info else "",
+        "test_date_1": test_info.test_date_1 if test_info else "",
+        "test_date_2": test_info.test_date_2 if test_info else "",
+        "test_time_1": test_info.time_1 if test_info else "",
+        "test_time_2": test_info.time_2 if test_info else "",
+        "chemistry": syllabus_info.chemisty if syllabus_info else "",
+        "physics": syllabus_info.physics if syllabus_info else "",
+        "english": syllabus_info.english if syllabus_info else "",
+        "general": syllabus_info.general if syllabus_info else ""
     })
-    return templates.TemplateResponse(
-        "pages/scholarship/scholarship_printable_form.html",
-        {
-            "request": request,
-            "student": data[0]
-        }
-    )
+
+    return data
