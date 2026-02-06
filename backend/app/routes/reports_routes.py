@@ -8,6 +8,7 @@ from sqlalchemy import text
 
 
 from sqlalchemy import and_, extract
+
 from app.models.admission_orm import Student
 from app.models.student_enrollment_orm import StudentEnrollment
 from app.models.student_fee_orm import StudentFee
@@ -21,6 +22,8 @@ from app.models.institute_income_orm import InstituteIncome
 from app.models.helper_orm import (Shift, ClassCode, AdmissionType,
                                     Semester, Department, Course,
                                     PaymentType, SalaryType)
+
+
 
 
 import pandas as pd
@@ -558,3 +561,139 @@ async def report_01_income_statement(
             "Content-Disposition": f"attachment; filename=finance_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         }
     )
+
+
+
+@reports_router.get("/student_mini_report/{student_id}", response_class=HTMLResponse)
+async def student_mini_report(
+    request: Request,
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+
+    # -- 1. Fetch Student --
+    student = db.query(Student).filter(Student.student_id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    # -- 2. Fetch Enrollments --
+    enrollments = (
+        db.query(StudentEnrollment, Department, Course, 
+                Shift, ClassCode, AdmissionType, Semester
+                )
+        .join(Department, StudentEnrollment.department_id == Department.department_id)
+        .join(Course, StudentEnrollment.course_id == Course.course_id)
+        .join(Shift, StudentEnrollment.shift_id == Shift.shift_id)
+        .join(ClassCode, StudentEnrollment.class_code_id == ClassCode.class_code_id)
+        .join(AdmissionType, StudentEnrollment.admission_type_id == AdmissionType.admission_type_id)
+        .join(Semester, StudentEnrollment.semester_id == Semester.semester_id)
+        .filter(StudentEnrollment.student_id == student_id)
+        .order_by(StudentEnrollment.student_id.asc())
+        .all()
+    )
+
+    # -- 3. Build Enrollment Data with Nested Fees --
+    enrollment_list = []
+    for en, dep, course, shift, class_code, admission_type, semester in enrollments:
+        
+        # Fetch fees for THIS specific enrollment
+        fee_info = util_fee_extract(
+            en.student_id, en.department_id, 
+            en.course_id, en.shift_id, en.class_code_id, 
+            en.admission_type_id, en.semester_id, db
+        )
+
+        enrollment_list.append({
+            "course_name": course.name,
+            "status": "Active",  # You can make this dynamic if you have a status column
+            "department": dep.department_name,  # HTML expects 'department'
+            "class_code": class_code.class_code_name,
+            "shift": shift.shift_name,
+            "semester": semester.semester,
+            # "admission_date": en.date, # Assuming StudentEnrollment has a date column
+            "total_fee": en.fee,
+            "fees": fee_info  # <--- CRITICAL: Nesting the fees here
+        })
+
+    # -- 4. Build Student Data (Matching HTML keys) --
+    student_data = {
+        "id": student.student_id,
+        "name": student.name,
+        "father_name": student.father_name,
+        "dob": student.date_of_birth.strftime("%Y-%m-%d") if student.date_of_birth else "N/A", # HTML expects 'dob'
+        "cnic": student.cnic,
+        "nationality": student.nationality,
+        "gender": student.gender,
+        "mobile": student.mobile, # HTML expects 'mobile'
+        "emergency_contact": student.emergency,
+        "temp_address": student.temporary_address,
+        "perm_address": student.permanent_address, # HTML expects 'perm_address'
+    }
+
+    print("ENROLLMENT DATA:", enrollment_list)
+
+    return templates.TemplateResponse(
+        "pages/reports/student_mini_report.html",
+        {
+            "request": request,
+            "student": student_data,
+            "enrollments_list": enrollment_list # We pass this as a standalone list
+        }
+    )
+
+
+
+def util_fee_extract(
+    student_id: int = None,
+    department_id: int = None, 
+    course_id: int = None, 
+    shift_id: int = None,
+    class_code_id: int = None,
+    admission_type_id: int = None,
+    semester_id: int = None,
+    db = None
+    ):
+
+    # -- extract filters --
+    result = (
+        db.query(StudentFee, PaymentType)
+        .join(
+            PaymentType,
+            PaymentType.payment_type_id == StudentFee.fee_type_id
+        )
+        .filter(
+            and_(
+                StudentFee.student_id == student_id if student_id else True,
+                StudentFee.department_id == department_id if department_id else True,
+                StudentFee.course_id == course_id if course_id else True,
+                StudentFee.shift_id == shift_id if shift_id else True,
+                StudentFee.class_code_id == class_code_id if class_code_id else True,
+                StudentFee.admission_type_id == admission_type_id if admission_type_id else True,
+                StudentFee.semester_id == semester_id if semester_id else True
+            )
+        )
+        .order_by(StudentFee.payment_id.asc())
+        .all()
+    )
+    
+    # FIX: Check if result exists first
+    if result:
+        # FIX: Unpack the result or access via Class Name
+        # result[0] is StudentFee, result[1] is PaymentType
+        data = []
+        for student_fee_obj, payment_type_obj in result:
+            data.append({
+                "fee_type": payment_type_obj.payment_type_name, # Access name from PaymentType entity
+                "paid_amount": student_fee_obj.paid,       # Access amount from StudentFee entity
+                "discount": student_fee_obj.discount,
+                "date": student_fee_obj.date
+            })
+        return data
+    
+    # Return default if no fee record found
+    return {
+        "fee_type": "N/A",
+        "paid_amount": 0.0,
+        "discount": 0.0,
+        "date": None
+    }

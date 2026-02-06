@@ -1,0 +1,109 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.report-container {
+    max-width: 210mm; /* A4 Width */
+    margin: 0 auto;
+    background: white;
+    padding: 10mm;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    min-height: 297mm;
+}
+
+h1, h2, h3 { margin-top: 0; color: #2c3e50; }
+
+.header {
+    text-align: center;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+.header h1 { margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+.header p { margin: 0; color: #666; font-size: 14px; }
+
+/* --- Section Styling --- */
+.section-title {
+    background-color: #2c3e50;
+    color: white;
+    padding: 8px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* --- Data Grids --- */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 Columns */
+    gap: 10px 30px;
+    margin-bottom: 10px;
+}
+
+.info-item {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    font-size: 14px;
+}
+
+.info-label {
+    font-weight: bold;
+    width: 140px;
+    color: #555;
+}
+.info-value { flex: 1; color: #000; }
+
+/* --- Enrollment Block (The Loop Item) --- */
+.enrollment-block {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 25px;
+    background-color: #fafafa;
+    border-radius: 5px;
+    page-break-inside: avoid; /* Tries to keep course info + fees on same page */
+}
+
+.enrollment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.enrollment-header h3 { margin: 0; color: #0275d8; }
+
+/* --- Tables --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+th { background-color: #e9ecef; color: #333; }
+td { background-color: #fff; }
+
+/* --- Print Controls --- */
+@media print {
+    body { background: none; padding: 0; }
+    .report-container { box-shadow: none; margin: 0; width: 100%; max-width: 100%; padding: 0; }
+    .no-print { display: none; }
+    .section-title { -webkit-print-color-adjust: exact; }
+    th { -webkit-print-color-adjust: exact; }
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile Report</title>
+    <link href="{{ url_for('static', path='/css/reports/student_mini_report.css') }}" rel="stylesheet">
+</head>
+<body>
+
+    <div style="text-align:right; max-width:210mm; margin:0 auto 10px auto;">
+        <button class="no-print" onclick="window.print()" style="padding:10px 20px; cursor:pointer; background:#2c3e50; color:white; border:none; border-radius:4px;">Print Report</button>
+        <button class="no-print" onclick="window.location.href='/main/list_form'" style="padding:10px 20px; cursor:pointer; background:#2c3e50; color:white; border:none; border-radius:4px;">Close Report</button>
+
+    </div>
+
+    <div class="report-container">
+        
+        <div class="header">
+            <h1>Student Profile Report</h1>
+            <p>Generated on: <span id="current-date"></span></p>
+        </div>
+
+        <div class="section-title">Personal Information</div>
+        <div class="info-grid">
+            <div class="info-item"><span class="info-label">Student ID:</span> <span class="info-value">{{ student.id }}</span></div>
+            <div class="info-item"><span class="info-label">Name:</span> <span class="info-value">{{ student.name }}</span></div>
+            
+            <div class="info-item"><span class="info-label">Father Name:</span> <span class="info-value">{{ student.father_name }}</span></div>
+            <div class="info-item"><span class="info-label">Date of Birth:</span> <span class="info-value">{{ student.dob }}</span></div>
+            
+            <div class="info-item"><span class="info-label">Gender:</span> <span class="info-value">{{ student.gender }}</span></div>
+            <div class="info-item"><span class="info-label">Nationality:</span> <span class="info-value">{{ student.nationality }}</span></div>
+            
+            <div class="info-item"><span class="info-label">CNIC:</span> <span class="info-value">{{ student.cnic }}</span></div>
+            <div class="info-item"><span class="info-label">Mobile:</span> <span class="info-value">{{ student.mobile }}</span></div>
+            
+            <div class="info-item"><span class="info-label">Emergency Contact:</span> <span class="info-value">{{ student.emergency_contact }}</span></div>
+            <div class="info-item"><span class="info-label">Temp Address:</span> <span class="info-value">{{ student.temp_address }}</span></div>
+            
+            <div class="info-item" style="grid-column: 1 / -1;">
+                <span class="info-label">Permanent Address:</span> 
+                <span class="info-value">{{ student.perm_address }}</span>
+            </div>
+        </div>
+
+        <div class="section-title">Enrollment & Fee History</div>
+
+        {% for enrollment in enrollments_list %}
+        <div class="enrollment-block">
+            
+            <div class="enrollment-header">
+                <h3>{{ enrollment.course_name }}</h3>
+                <!-- <span style="font-size:12px; font-weight:bold; background:#eee; padding:5px 10px; border-radius:10px;">
+                    Status:
+                </span> -->
+            </div>
+
+            <div class="info-grid" style="margin-bottom: 15px;">
+                <div class="info-item"><span class="info-label">Department:</span> <span class="info-value">{{ enrollment.department }}</span></div>
+                <div class="info-item"><span class="info-label">Class Code:</span> <span class="info-value">{{ enrollment.class_code }}</span></div>
+                
+                <div class="info-item"><span class="info-label">Shift:</span> <span class="info-value">{{ enrollment.shift }}</span></div>
+                <div class="info-item"><span class="info-label">Semester:</span> <span class="info-value">{{ enrollment.semester }}</span></div>
+                
+                <!-- <div class="info-item"><span class="info-label">Admission Date:</span> <span class="info-value">{{ enrollment.admission_date }}</span></div> -->
+                <div class="info-item"><span class="info-label">Total Course Fee:</span> <span class="info-value" style="font-weight:bold;">{{ enrollment.total_fee }}</span></div>
+            </div>
+
+            <h4 style="margin-bottom:5px; margin-top:0; border-bottom:1px solid #ccc; padding-bottom:5px; font-size:14px;">Payment History</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:15%">Date</th>
+                        <th style="width:25%">Fee Type</th>
+                        <th style="width:15%">Discount</th>
+                        <th style="width:20%">Paid Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fee in enrollment.fees %}
+                    <tr>
+                        <td>{{ fee.date }}</td>
+                        <td>{{ fee.fee_type }}</td> 
+                        <td>{{ fee.discount }}</td>
+                        <td style="font-weight:bold;">{{ fee.paid_amount }}</td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% if not enrollment.fees %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; color:#888;">No payment records found for this course.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+        </div>
+        {% endfor %}
+        </div>
+
+    <script>
+        // Set current date automatically
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+</html>
