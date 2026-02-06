@@ -1,6 +1,8 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
+/* =========================================
+   STANDARD SCREEN STYLES 
+   ========================================= */
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -10,12 +12,16 @@ body {
 }
 
 .report-container {
-    max-width: 210mm; /* A4 Width */
+    /* Screen View: Looks like a paper sheet */
+    max-width: 210mm; 
     margin: 0 auto;
     background: white;
     padding: 10mm;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     min-height: 297mm;
+    
+    /* CRITICAL FIX: Ensures padding doesn't make the box wider than 100% */
+    box-sizing: border-box; 
 }
 
 h1, h2, h3 { margin-top: 0; color: #2c3e50; }
@@ -40,12 +46,15 @@ h1, h2, h3 { margin-top: 0; color: #2c3e50; }
     margin-top: 25px;
     margin-bottom: 15px;
     text-transform: uppercase;
+    /* Print Color Fix */
+    -webkit-print-color-adjust: exact; 
+    print-color-adjust: exact;
 }
 
 /* --- Data Grids --- */
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 Columns */
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px 30px;
     margin-bottom: 10px;
 }
@@ -64,14 +73,14 @@ h1, h2, h3 { margin-top: 0; color: #2c3e50; }
 }
 .info-value { flex: 1; color: #000; }
 
-/* --- Enrollment Block (The Loop Item) --- */
+/* --- Enrollment Block --- */
 .enrollment-block {
     border: 1px solid #ddd;
     padding: 15px;
     margin-bottom: 25px;
     background-color: #fafafa;
     border-radius: 5px;
-    page-break-inside: avoid; /* Tries to keep course info + fees on same page */
+    page-break-inside: avoid;
 }
 
 .enrollment-header {
@@ -96,14 +105,49 @@ th, td {
     padding: 8px;
     text-align: left;
 }
-th { background-color: #e9ecef; color: #333; }
+th { 
+    background-color: #e9ecef; 
+    color: #333; 
+    /* Print Color Fix */
+    -webkit-print-color-adjust: exact; 
+    print-color-adjust: exact;
+}
 td { background-color: #fff; }
 
-/* --- Print Controls --- */
+/* =========================================
+   PRINT SPECIFIC CONTROLS (SINGLE BLOCK)
+   ========================================= */
 @media print {
-    body { background: none; padding: 0; }
-    .report-container { box-shadow: none; margin: 0; width: 100%; max-width: 100%; padding: 0; }
-    .no-print { display: none; }
-    .section-title { -webkit-print-color-adjust: exact; }
-    th { -webkit-print-color-adjust: exact; }
+    /* 1. Remove Browser Headers & Force A4 */
+    @page {
+        margin: 0;
+        size: A4; 
+    }
+
+    /* 2. Reset Body */
+    body { 
+        margin: 0;
+        padding: 0;
+        background: white;
+    }
+
+    /* 3. Force Container to fill the page properly */
+    .report-container { 
+        width: 210mm;          /* Force exact A4 width */
+        max-width: none;       /* Remove limits */
+        margin: 0;             /* Remove centering margins */
+        padding: 10mm 15mm;    /* Add internal white space */
+        
+        box-shadow: none;      
+        border: none;
+        min-height: auto;
+        
+        /* Ensure padding is calculated INSIDE the 210mm width */
+        box-sizing: border-box; 
+    }
+
+    /* 4. Hide Buttons */
+    .no-print { 
+        display: none !important; 
+    }
 }

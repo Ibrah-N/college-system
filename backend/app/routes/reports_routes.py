@@ -564,6 +564,19 @@ async def report_01_income_statement(
 
 
 
+@reports_router.get("/student_mini_form", response_class=HTMLResponse)
+async def student_mini_form(
+    request: Request
+    ):
+
+    return templates.TemplateResponse(
+        "pages/reports/student_mini_form.html",
+        {
+            "request": request
+        }
+    )
+    
+
 @reports_router.get("/student_mini_report/{student_id}", response_class=HTMLResponse)
 async def student_mini_report(
     request: Request,
@@ -630,7 +643,6 @@ async def student_mini_report(
         "perm_address": student.permanent_address, # HTML expects 'perm_address'
     }
 
-    print("ENROLLMENT DATA:", enrollment_list)
 
     return templates.TemplateResponse(
         "pages/reports/student_mini_report.html",
