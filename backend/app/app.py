@@ -21,6 +21,7 @@ from app.routes.reports_routes import reports_router
 from app.routes.doc_routes import doc_router
 from app.routes.scholarship_routes import scholarship_router
 from app.routes.scholarship_utils_routes import scholarship_utils_router
+from app.routes.helper_add_routes import helper_add_router
 
 from app.config.db_connect import Base, engine
 
@@ -38,6 +39,7 @@ app.include_router(login_router)
 app.include_router(admission_router)
 app.include_router(add_teacher_router)
 app.include_router(helper_router)
+app.include_router(helper_add_router)
 app.include_router(enrollment_router)
 app.include_router(teacher_registration_router)
 app.include_router(expense_router)

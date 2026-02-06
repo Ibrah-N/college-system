@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Table</title>
+    <link href="{{ url_for('static', path='/css/helper_add/common_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Session Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/helper/search" method="post">
+
+
+            <div id="srch-button">
+                <!-- <button type="submit">Search</button> -->
+                <button type="button" onclick="window.location.href='/helper/list_sessions'">Reset</button>
+                <a href="/helper/session_form">Add</a>
+                <a href="/main/list_form">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>Session ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in sessions %}
+        <tr>
+            <td>{{s.session_id}}</td>
+            <td>{{s.session}}</td>
+            <td>
+                <button onclick="deleteSession('{{ s.session_id }}')">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script>
+    async function deleteSession(
+    id
+    ) {
+    const confirmed = confirm("Are you sure you want to delete this session record?");
+    if (!confirmed) return;
+
+    const response = await fetch(`/helper/delete_session/${id}`, {
+        method: "DELETE",
+    });
+
+    if (response.ok) {
+        alert("Session record deleted successfully");
+        window.location.reload();
+    } else {
+        const err = await response.json();
+        alert(`Error: ${err.message || "Failed to delete Session record"}`);
+    }
+    }
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Add Doc Type Form</title>
+
+  <link href="{{ url_for('static', path='/css/helper_add/common_form.css') }}" rel="stylesheet">
+
+</head>
+<body>
+  <div class="form-container">
+
+    <div id="header"> 
+      <h1>Add Doc Type Form</h1>
+    </div>
+
+    <form id="docTypeForm" action="/helper/add_doc_type" method="POST" enctype="multipart/form-data">
+
+      <section>
+        <h3>Doc Type Information</h3>
+
+        <!-- First Row -->
+        <div id="first-row">
+          <div class="form-row">
+            <label>Doc Type:</label>
+            <input type="text" name="doc_type_name">
+          </div>
+      </section>
+
+      <div class="submit-container">
+        <button type="submit">Submit</button>
+        <button type="button" onclick="window.location.href='/main/list_form'">Close</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+        // Form validation
+        document.getElementById("docTypeForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // Stop standard submission to validate first
+            clearValidation();
+
+            let isValid = true;
+
+            // 1. Validate Doc Type Name, should be not empty
+            const docTypeInput = document.querySelector("input[name='doc_type_name']");
+            if (docTypeInput.value.trim() === "") {
+                showFieldError(docTypeInput, "Doc Type is required");
+                isValid = false;
+            }
+
+            // 3. If everything is valid, submit the form
+            if (isValid) {
+                this.submit();
+            }
+        });
+
+        // ==========================================
+        //  HELPER FUNCTIONS
+        // ==========================================
+        function showFieldError(el, message) {
+            el.classList.add("input-error");
+            showError(el, message);
+        }
+
+        function showError(el, msg) {
+            if (el.nextElementSibling?.classList.contains("error-message")) return;
+            const d = document.createElement("div");
+            d.className = "error-message";
+            d.innerText = msg;
+            d.style.color = "red";
+            d.style.fontSize = "12px";
+            el.insertAdjacentElement("afterend", d);
+        }
+
+        function clearValidation() {
+            document.querySelectorAll(".input-error").forEach(el => el.classList.remove("input-error"));
+            document.querySelectorAll(".error-message").forEach(e => e.remove());
+        }
+
+  </script>
+</body>
+</html>

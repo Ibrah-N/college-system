@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doc Type Table</title>
+    <link href="{{ url_for('static', path='/css/helper_add/common_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Doc Type Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/helper/search" method="post">
+
+
+            <div id="srch-button">
+                <!-- <button type="submit">Search</button> -->
+                <button type="button" onclick="window.location.href='/helper/list_doc_types'">Reset</button>
+                <a href="/helper/doc_type_form">Add</a>
+                <a href="/main/list_form">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>Doc Type ID</th>
+            <th>Doc Type</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in doc_types %}
+        <tr>
+            <td>{{s.doc_type_id}}</td>
+            <td>{{s.doc_type_name}}</td>
+            <td>
+                <button onclick="deleteDocType('{{ s.doc_type_id }}')">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script>
+    async function deleteDocType(
+    id
+    ) {
+    const confirmed = confirm("Are you sure you want to delete this doc type record?");
+    if (!confirmed) return;
+
+    const response = await fetch(`/helper/delete_doc_type/${id}`, {
+        method: "DELETE",
+    });
+
+    if (response.ok) {
+        alert("Doc Type record deleted successfully");
+        window.location.reload();
+    } else {
+        const err = await response.json();
+        alert(`Error: ${err.message || "Failed to delete Doc Type record"}`);
+    }
+    }
+</script>
+</body>
+</html>
+
+

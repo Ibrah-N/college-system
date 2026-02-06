@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Class Code Table</title>
+    <link href="{{ url_for('static', path='/css/helper_add/common_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Class Code Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/helper/search" method="post">
+
+
+            <div id="srch-button">
+                <!-- <button type="submit">Search</button> -->
+                <button type="button" onclick="window.location.href='/helper/list_class_codes'">Reset</button>
+                <a href="/helper/class_code_form">Add</a>
+                <a href="/main/list_form">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>Class Code ID</th>
+            <th>Class Code</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for s in class_codes %}
+        <tr>
+            <td>{{s.class_code_id}}</td>
+            <td>{{s.class_code_name}}</td>
+            <td>
+                <button onclick="deleteClassCode('{{ s.class_code_id }}')">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<script>
+    async function deleteClassCode(
+    id
+    ) {
+    const confirmed = confirm("Are you sure you want to delete this class code record?");
+    if (!confirmed) return;
+
+    const response = await fetch(`/helper/delete_class_code/${id}`, {
+        method: "DELETE",
+    });
+
+    if (response.ok) {
+        alert("Class Code record deleted successfully");
+        window.location.reload();
+    } else {
+        const err = await response.json();
+        alert(`Error: ${err.message || "Failed to delete Class Code record"}`);
+    }
+    }
+</script>
+</body>
+</html>
+
+
