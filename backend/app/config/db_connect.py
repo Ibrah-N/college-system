@@ -11,7 +11,7 @@ import os
 DATABASE_URL = os.environ["DATABASE_URL"]
 
 # -- docker development --
-engine = create_engine(DATABASE_URL)
+engine = create_engine("postgresql://mitm_user:passWord123@db_c:5432/mitm_db")
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

@@ -11,12 +11,12 @@ services:
       - net_test
     volumes:
       # This is your bind mount for the DB data
-      - /Users/ibrahim/Documents/testing_dockers/read_db_data:/var/lib/postgresql/data
+      - /Users/ibrahim/Documents/testing_dockers/db_final_v0:/var/lib/postgresql/data
 
   # 2. THE FASTAPI APP
   read_app:
     build:
-      context: ./backend
+      # context: ./backend
       dockerfile: Dockerfile
     container_name: read_app_c1
     ports:
