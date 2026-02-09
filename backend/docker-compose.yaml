@@ -1,0 +1,33 @@
+services:
+  # 1. THE DATABASE
+  db_c:
+    image: postgres:14
+    container_name: db_c
+    environment:
+      POSTGRES_USER: mitm_user    # Your custom username
+      POSTGRES_PASSWORD: passWord123  # Your custom password
+      POSTGRES_DB: mitm_db         # Your custom database name
+    networks:
+      - net_test
+    volumes:
+      # This is your bind mount for the DB data
+      - /Users/ibrahim/Documents/testing_dockers/read_db_data:/var/lib/postgresql/data
+
+  # 2. THE FASTAPI APP
+  read_app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: read_app_c1
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db_c
+    networks:
+      - net_test
+    environment:
+      DATABASE_URL: "postgresql://mitm_user:passWord123@db_c:5432/mitm_db"
+
+networks:
+  net_test:
+    driver: bridge
