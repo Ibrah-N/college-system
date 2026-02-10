@@ -126,6 +126,9 @@ def table_entries():
 
 	INSERT INTO class_code (class_code_name)
 	VALUES ('001'), ('002'), ('003');
+
+	INSERT INTO (doc_type_name) 
+	VALUES ('DMC'), ('Diploma'), ('Certificate');
 		''')
 
 
