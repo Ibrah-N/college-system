@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fee Receipt Table</title>
+    <link href="{{ url_for('static', path='/css/student_fee/student_fee_table.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="table-container">
+    <div id="header"> 
+    <h2> Fee Receipt Table </h2>
+    </div>
+
+    <div class="search_and_buttons">
+        <form action="/student_fee/search_fee_recipt" method="POST">
+            <input type="number" name="id_search" placeholder="Search By ID">
+            
+            <div id="srch-button">
+                <button type="submit">Search</button>
+                <button type="button" onclick="window.location.href='/student_fee/fee_recipt_list'">Reset</button>
+                <a href="/main/list_form">Close</a>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="tablecontainer">
+    <table>
+        <tr>
+            <th>Receipt ID</th>
+            <th>Student Name</th>
+            <th>Father Name</th>
+            <th>Total Paid</th>
+            <th>Date</th>
+        </tr>
+
+        {% for s in recipt_records %}
+        <tr>
+            <td>{{s.recipt_id}}</td>
+            <td>{{s.student_name}}</td>
+            <td>{{s.father_name}}</td>
+            <td>{{s.total_paid}}</td>
+            <td>{{s.date}}</td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    </div>
+</div>
+<!-- <script src="{{ url_for('static', path='/js/student_fee/student_fee_table.js')}}"></script> -->
+</body>
+</html>
+
+

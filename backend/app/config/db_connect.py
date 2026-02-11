@@ -4,14 +4,13 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # -- local development --
-# DATABASE_URL = "postgresql://ibrahim@localhost/college_system"
-# engine = create_engine(DATABASE_URL)
-
-# -- env vars --
-DATABASE_URL = os.environ["DATABASE_URL"]
+DATABASE_URL = "postgresql://ibrahim@localhost/college_system"
+engine = create_engine(DATABASE_URL)
 
 # -- docker development --
-engine = create_engine("postgresql://mitm_user:passWord123@db_c:5432/mitm_db")
+# DATABASE_URL = os.environ["DATABASE_URL"]
+# engine = create_engine("postgresql://mitm_user:passWord123@db_c:5432/mitm_db")
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

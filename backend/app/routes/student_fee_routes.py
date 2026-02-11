@@ -11,6 +11,7 @@ from sqlalchemy import func, and_
 from app.models.admission_orm import Student
 from app.models.student_enrollment_orm import StudentEnrollment
 from app.models.student_fee_orm import StudentFee
+from app.models.student_fee_recipt_orm import StudentFeeRecipt
 from app.models.helper_orm import (Shift, ClassCode, AdmissionType,
                                     Semester, Department, Course,
                                     PaymentType)
@@ -370,7 +371,7 @@ async def add_student_fee(
             }
         )
 
-    
+     # ====== FEE COMMIT ===========
     for fee_type_n, fee_type_id, paid_fee, discount in zip(fee_type_names, fee_types, paid_fees, discounts):
         student_fee = StudentFee(
             student_id=student_id,
@@ -385,6 +386,15 @@ async def add_student_fee(
             discount=float(discount) if discount != "" else 0.0
         )
         db.add(student_fee)
+    db.commit()
+    # ====== RECIEPT COMMIT ===========
+    recipt_id = db.query(func.coalesce(func.max(StudentFeeRecipt.recipt_id), 0) + 1).scalar()
+    student_fee_recipt = StudentFeeRecipt(
+        recipt_id = recipt_id,
+        student_id = student_id,
+        total_paid = total_paid_fee,
+    )
+    db.add(student_fee_recipt)
     db.commit()
 
     total_paid_fee = (total_paid_discount[0].total_paid + running_discount + 
@@ -410,6 +420,7 @@ async def add_student_fee(
     # -- json for recipt --
     context = {
         "student_id": student_id,
+        "reciept_id": recipt_id,
         "student_name": student_name,
         "father_name": father_name,
         "course": course_name,
@@ -430,22 +441,7 @@ async def add_student_fee(
 
     html = templates.get_template("pages/student_fee/fee_recipt.html").render(context)
     pdf = HTML(string=html).write_pdf()
-
-    # return Response(
-    #     content=pdf,
-    #     media_type="application/pdf",
-    #     headers={
-    #         "Content-Disposition": f"inline; filename={student_name}_recipt.pdf"
-    #     }
-    # )
-
     link = f"/student_fee/pay_fee?payment_id=&student_id={student_id}&department_id={department_id}&course_id={course_id}&class_code_id={class_code_id}&semester_id={semester_id}&admission_type_id={admission_type_id}&shift_id={shift_id}"
-
-    # return RedirectResponse(
-    #     url = link,
-    #     status_code=303
-    # )
-
     pdf_base64 = base64.b64encode(pdf).decode()
     html = f"""
         <!DOCTYPE html>
@@ -458,12 +454,15 @@ async def add_student_fee(
         <script>
             setTimeout(() => {{
                 window.location.href = "{link}";
-            }}, 2000);
+            }}, 2000000);
         </script>
         </body>
         </html>
         """
-
+    # return RedirectResponse(
+    #     url = link,
+    #     status_code=303
+    # )
     return HTMLResponse(html)
 
 
@@ -788,5 +787,79 @@ async def search_student_fee(request: Request, db: Session = Depends(get_db)):
         {
             "request": request,
             "studend_fee_records": student_fee_records
+        }
+    )
+
+
+
+# ============================================================
+#            L I S T - F E E - R E C I P T                   #
+# ============================================================
+@student_fee_router.get("/fee_recipt_list", response_class=HTMLResponse)
+async def fee_recipt_list(request: Request, db: Session = Depends(get_db)):
+    recipt_list = (
+        db.query(StudentFeeRecipt, Student.name, Student.father_name)
+        .join(Student, Student.student_id == StudentFeeRecipt.student_id)
+        .order_by(StudentFeeRecipt.recipt_id)
+        .all()
+    )
+
+    recipt_records = []
+    for recipt, student_name, father_name in recipt_list:
+        recipt_records.append({
+            "recipt_id": recipt.recipt_id,
+            "student_name": student_name,
+            "father_name": father_name,
+            "date": recipt.date.strftime("%d %b %Y %I:%M %p"),
+            "total_paid": recipt.total_paid
+        })
+
+    return templates.TemplateResponse(
+        "pages/student_fee/fee_recipt_table.html",
+        {
+            "request": request,
+            "recipt_records": recipt_records
+        }
+    )
+
+
+# ============================================================
+#      S E A R C H  -  F E E - R E C I P T                   #
+# ============================================================
+@student_fee_router.post("/search_fee_recipt", response_class=HTMLResponse)
+async def fee_recipt(request: Request, 
+                    db: Session = Depends(get_db)
+                    ):
+    form_data = await request.form()
+    recipt_id = form_data.get("id_search")
+
+    if recipt_id == "":
+        return RedirectResponse(
+            "/student_fee/fee_recipt_list",
+            status_code=303
+        )
+    rrecipt_list = (
+        db.query(StudentFeeRecipt, Student.name, Student.father_name)
+        .join(Student, Student.student_id == StudentFeeRecipt.student_id)
+        .filter(StudentFeeRecipt.recipt_id == recipt_id)
+        .order_by(StudentFeeRecipt.recipt_id)
+        .all()
+    )
+
+    recipt_records = []
+    for recipt, student_name, father_name in rrecipt_list:
+        recipt_records.append({
+            "recipt_id": recipt.recipt_id,
+            "student_name": student_name,
+            "father_name": father_name,
+            "date": recipt.date.strftime("%d %b %Y %I:%M %p"),
+            "total_paid": recipt.total_paid
+        })
+
+    return templates.TemplateResponse(
+        "pages/student_fee/fee_recipt_table.html",
+        {
+            "request": request,
+            "recipt_records": recipt_records
         }
     )
