@@ -392,7 +392,7 @@ async def add_student_fee(
     student_fee_recipt = StudentFeeRecipt(
         recipt_id = recipt_id,
         student_id = student_id,
-        total_paid = total_paid_fee,
+        total_paid = running_discount + running_fee,
     )
     db.add(student_fee_recipt)
     db.commit()
@@ -454,7 +454,7 @@ async def add_student_fee(
         <script>
             setTimeout(() => {{
                 window.location.href = "{link}";
-            }}, 2000000);
+            }}, 3000);
         </script>
         </body>
         </html>
