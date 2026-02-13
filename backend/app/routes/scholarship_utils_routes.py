@@ -187,10 +187,10 @@ async def list_syllabus(
         results.append(
             {
                 "id": record.syllabus_id,
-                "chemistry": record.chemisty,
-                "physics": record.physics,
-                "english": record.english,
-                "general": record.general
+                "subject_1": record.chemisty,
+                "subject_2": record.physics,
+                "subject_3": record.english,
+                "subject_4": record.general
             }
         )
 
@@ -213,10 +213,10 @@ async def add_syllabus(
     ):
 
     form_data = await request.form()
-    chemistry_mcqs = int(form_data.get("chemistry_mcqs")) if form_data.get("chemistry_mcqs") else 0
-    physics_mcqs = int(form_data.get("physics_mcqs")) if form_data.get("physics_mcqs") else 0
-    english_mcqs = int(form_data.get("english_mcqs")) if form_data.get("english_mcqs") else 0
-    general_mcqs = int(form_data.get("general_mcqs")) if form_data.get("general_mcqs") else 0
+    chemistry_mcqs = form_data.get("chemistry_mcqs") if form_data.get("chemistry_mcqs") else ""
+    physics_mcqs = form_data.get("physics_mcqs") if form_data.get("physics_mcqs") else ""
+    english_mcqs = form_data.get("english_mcqs") if form_data.get("english_mcqs") else ""
+    general_mcqs = form_data.get("general_mcqs") if form_data.get("general_mcqs") else ""
 
     new_syllabus = SyllabusInfo(
         chemisty=chemistry_mcqs,

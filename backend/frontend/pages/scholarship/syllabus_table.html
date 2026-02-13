@@ -29,20 +29,20 @@
     <table>
         <tr>
             <th>ID</th>
-            <th>Chemistry</th>
-            <th>Physics</th>
-            <th>English</th>
-            <th>General</th>
+            <th>Subject_1</th>
+            <th>Subject_2</th>
+            <th>Subject_3</th>
+            <th>Subject_4</th>
             <th>Actions</th>
         </tr>
 
         {% for s in syllabus_records %}
         <tr>
             <td>{{s.id}}</td>
-            <td>{{s.chemistry}}</td>
-            <td>{{s.physics}}</td>
-            <td>{{s.english}}</td>
-            <td>{{s.general}}</td>
+            <td>{{s.subject_1}}</td>
+            <td>{{s.subject_2}}</td>
+            <td>{{s.subject_3}}</td>
+            <td>{{s.subject_4}}</td>
             <td>
                 <button onclick="deleteSyllabus('{{ s.id }}')">Delete</button>
             </td>

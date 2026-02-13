@@ -225,7 +225,7 @@ def get_syllabus_info(
         content = {
             "syllabus_info": [
                 {"id": s.syllabus_id, "name": 
-                f"Che:{s.chemisty}: Phy:{s.physics}: Eng:{s.english}: Gnl:{s.general}"} 
+                f"{s.chemisty} - {s.physics} - {s.english} - {s.general}"} 
                 for s in syllabus_infos
             ]
         }

@@ -20,7 +20,8 @@ class SyllabusInfo(Base):
     __tablename__ = "syllabus_info"
 
     syllabus_id = Column(Integer, primary_key=True)
-    chemisty = Column(String(10))
-    physics = Column(String(10))
-    english = Column(String(10))
-    general = Column(String(10))
+    chemisty = Column(String(30))
+    physics = Column(String(30))
+    english = Column(String(30))
+    general = Column(String(30))
+    

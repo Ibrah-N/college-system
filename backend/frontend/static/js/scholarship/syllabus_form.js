@@ -16,29 +16,29 @@ document.getElementById("scholarshipForm").addEventListener("submit", function(e
     // Chemistry MCQs
     isValid &= validateField(
         document.querySelector("input[name='chemistry_mcqs']"),
-        val => val !== "" && !isNaN(val) && val >= 0,
-        "Chemistry MCQs is required, Should be number"
+        val => val !== "",
+        "ChSubject & MCQs is required; format: Sub - #mcqs"
     );
 
     // Physics MCQs
     isValid &= validateField(
         document.querySelector("input[name='physics_mcqs']"),
-        val => val !== "" && !isNaN(val) && val >= 0,
-        "Physics MCQs is required, Should be number"
+        val => val !== "",
+        "Subject & MCQs is required; format: Sub - #mcqs"
     );
 
     // English MCQs
     isValid &= validateField(
         document.querySelector("input[name='english_mcqs']"),
-        val => val !== "" && !isNaN(val) && val >= 0,
-        "English MCQs is required, Should be number"
+        val => val !== "",
+        "Subject & MCQs is required; format: Sub - #mcqs"
     );
 
     // General MCQs
     isValid &= validateField(
         document.querySelector("input[name='general_mcqs']"),
-        val => val !== "" && !isNaN(val) && val >= 0,
-        "General MCQs is required, Should be number"
+        val => val !== "",
+        "Subject & MCQs is required; format: Sub - #mcqs"
     );
 
 
